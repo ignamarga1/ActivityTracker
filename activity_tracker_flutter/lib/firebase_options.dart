@@ -59,4 +59,5 @@ class DefaultFirebaseOptions {
     projectId: 'activitytrackertfg',
     storageBucket: 'activitytrackertfg.firebasestorage.app',
   );
+
 }
