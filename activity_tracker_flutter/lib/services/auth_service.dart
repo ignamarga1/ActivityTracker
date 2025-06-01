@@ -39,7 +39,8 @@ class AuthService {
       if (e.code == 'invalid-email') {
         message = 'La dirección de correo electrónico introducida no es válida';
       } else if (e.code == 'email-already-in-use') {
-        message = 'La dirección de correo electrónico introducida ya se encuentra en uso';
+        message =
+            'La dirección de correo electrónico introducida ya se encuentra en uso';
       } else if (e.code == 'weak-password') {
         message = 'La contraseña es demasiado débil';
       }
@@ -78,7 +79,8 @@ class AuthService {
       if (e.code == 'invalid-email') {
         message = 'La dirección de correo electrónico introducida no es válida';
       } else if (e.code == 'email-already-in-use') {
-        message = 'La dirección de correo electrónico introducida ya se encuentra en uso';
+        message =
+            'La dirección de correo electrónico introducida ya se encuentra en uso';
       } else if (e.code == 'user-not-found') {
         message =
             'La dirección de correo electrónico introducida no está asociada a ningún usuario';
@@ -93,7 +95,23 @@ class AuthService {
 
   // LOG OUT
   Future<void> logOut({required BuildContext context}) async {
-    FirebaseAuth.instance.signOut();
+    try {
+      await FirebaseAuth.instance.signOut();
+
+      if (context.mounted) {
+        Fluttertoast.showToast(
+          msg: '¡Sesión cerrada con éxito!',
+          toastLength: Toast.LENGTH_LONG,
+        );
+
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'No se ha podido cerrar sesión',
+        toastLength: Toast.LENGTH_LONG,
+      );
+    }
   }
 
   // RESET PASSWORD
