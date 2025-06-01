@@ -1,89 +1,125 @@
 import 'package:activity_tracker_flutter/components/std_button.dart';
-import 'package:activity_tracker_flutter/components/std_textfield.dart';
+import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
-  final emailUsernameController = TextEditingController();
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
-  final void Function()? onTap;
-
-  LoginPage({super.key, this.onTap});
-
-  // Functions
-  void login() {}
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
+      resizeToAvoidBottomInset: false,
+      body: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(30.0),
 
-          // Form
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // App name
-                Text("Activity Tracker", style: TextStyle(fontSize: 20)),
-                const SizedBox(height: 40),
-            
-                // Email / Username
-                StdTextfield(
-                  labelText: "Correo electrónico o nombre de usuario",
-                  hintText: "",
-                  obscureText: false,
-                  controller: emailUsernameController,
-                ),
-                const SizedBox(height: 15),
-            
-                // Password 
-                StdTextfield(
-                  labelText: "Contraseña",
-                  hintText: "",
-                  obscureText: true,
-                  controller: passwordController,
-                ),
-                const SizedBox(height: 15),
-            
-                // Forgot your password?
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "¿Olvidaste tu contraseña?",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
+            // Form
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // App name
+                  Text("Activity Tracker", style: TextStyle(fontSize: 20)),
+                  const SizedBox(height: 40),
+
+                  // Email
+                  TextFormField(
+                    controller: emailController,
+                    obscureText: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El campo es obligatorio';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Correo electrónico",
                     ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-            
-                // Sign in button
-                StdButton(text: "Acceder", onTap: login),
-                const SizedBox(height: 70),
-            
-                // Register
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("¿No tienes cuenta? "),
-                    GestureDetector(
-                      onTap: onTap,
-                      child: Text(
-                        "Regístrate",
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Password
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El campo es obligatorio';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Contraseña",
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Forgot your password?
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "¿Olvidaste tu contraseña?",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Sign in button
+                  StdButton(
+                    text: "Acceder",
+                    onPressed: () async {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      if (_formKey.currentState!.validate()) {
+                        AuthService().signIn(
+                          email: emailController.text,
+                          password: passwordController.text,
+                          context: context,
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 70),
+
+                  // Register
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("¿No tienes cuenta? "),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/register');
+                        },
+                        child: Text(
+                          "Regístrate",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

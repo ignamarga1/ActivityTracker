@@ -16,9 +16,15 @@ class StdTextfield extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       obscureText: obscureText,
+      validator: (value) {
+        if(value == null || value.isEmpty) {
+          return 'El campo es obligatorio';
+        } 
+        return null;
+      },
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         labelText: labelText,

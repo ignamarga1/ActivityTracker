@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class StdButton extends StatelessWidget {
   final String text;
-  final void Function()? onTap;
+  final void Function()? onPressed;
 
-  const StdButton({super.key, required this.text, required this.onTap});
+  const StdButton({super.key, required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+    return FilledButton(
+      onPressed: onPressed,
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,

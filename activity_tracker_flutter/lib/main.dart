@@ -1,4 +1,6 @@
-import 'package:activity_tracker_flutter/auth/login_or_register.dart';
+import 'package:activity_tracker_flutter/pages/home_page.dart';
+import 'package:activity_tracker_flutter/pages/login_page.dart';
+import 'package:activity_tracker_flutter/pages/register_page.dart';
 import 'package:activity_tracker_flutter/themes/dark_mode.dart';
 import 'package:activity_tracker_flutter/themes/light_mode.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +19,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const LoginOrRegister(),
       theme: lightMode,
       darkTheme: darkMode,
       themeMode: ThemeMode.system,
+      initialRoute: '/login',
+      routes: {
+        '/' : (context) => HomePage(),
+        '/login' : (context) => LoginPage(),
+        '/register' : (context) => RegisterPage(),
+      },
     );
   }
 }

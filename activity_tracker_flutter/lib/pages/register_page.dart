@@ -1,106 +1,188 @@
 import 'package:activity_tracker_flutter/components/std_button.dart';
-import 'package:activity_tracker_flutter/components/std_textfield.dart';
+import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-
-  final void Function()? onTap;
-
-  RegisterPage({super.key, this.onTap});
-
-  void register() {}
+  final passwordConfirmationController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
+      resizeToAvoidBottomInset: false,
+      body: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(30.0),
 
-          // Form
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // App name
-                Text("Activity Tracker", style: TextStyle(fontSize: 20)),
-                const SizedBox(height: 20),
-            
-                // Informative text
-                Text(
-                  "Regístrate para poder empezar a hacer un seguimiento de las diferentes actividades que te propongas",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontStyle: FontStyle.italic,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+            // Form
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // App name
+                  Text("Activity Tracker", style: TextStyle(fontSize: 20)),
+                  const SizedBox(height: 20),
+
+                  // Information text
+                  Text(
+                    "Regístrate para poder empezar a hacer un seguimiento de las diferentes actividades que te propongas",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontStyle: FontStyle.italic,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 40),
-            
-                // Email
-                StdTextfield(
-                  labelText: "Correo electrónico",
-                  hintText: "",
-                  obscureText: false,
-                  controller: emailController,
-                ),
-                const SizedBox(height: 15),
-            
-                // Username
-                StdTextfield(
-                  labelText: "Nombre de usuario",
-                  hintText: "",
-                  obscureText: false,
-                  controller: usernameController,
-                ),
-                const SizedBox(height: 15),
-            
-                // Password
-                StdTextfield(
-                  labelText: "Contraseña",
-                  hintText: "",
-                  obscureText: true,
-                  controller: passwordController,
-                ),
-                const SizedBox(height: 15),
-            
-                // Confirm password
-                StdTextfield(
-                  labelText: "Confirma la contraseña",
-                  hintText: "",
-                  obscureText: true,
-                  controller: confirmPasswordController,
-                ),
-                const SizedBox(height: 30),
-            
-                // Sign in button
-                StdButton(text: "Acceder", onTap: register),
-                const SizedBox(height: 70),
-            
-                // Register
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Ya tienes una cuenta? "),
-                    GestureDetector(
-                      onTap: onTap,
-                      child: Text(
-                        "Inicia sesión",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
+                  const SizedBox(height: 40),
+
+                  // Email
+                  TextFormField(
+                    controller: emailController,
+                    obscureText: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El campo es obligatorio';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Correo electrónico",
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Username
+                  TextFormField(
+                    controller: usernameController,
+                    obscureText: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El campo es obligatorio';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Nombre de usuario",
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Password
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El campo es obligatorio';
+                      }
+
+                      if (value.length < 8) {
+                        return 'Debe tener al menos 8 caracteres';
+                      }
+
+                      if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                        return 'Debe contener al menos una letra mayúscula';
+                      }
+
+                      if (!RegExp(r'[a-z]').hasMatch(value)) {
+                        return 'Debe contener al menos una letra minúscula';
+                      }
+
+                      if (!RegExp(r'[0-9]').hasMatch(value)) {
+                        return 'Debe contener al menos un número';
+                      }
+
+                      if (!RegExp(
+                        r'[\^$*.\[\]{}()?"!@#%&/\\,><\:;|_~]',
+                      ).hasMatch(value)) {
+                        return 'Debe contener al menos un carácter especial';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Contraseña",
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Confirm password
+                  TextFormField(
+                    controller: passwordConfirmationController,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El campo es obligatorio';
+                      }
+
+                      if (value != passwordController.text) {
+                        return 'Las contraseñas no coinciden';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Confirma la contraseña",
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Sign up button
+                  StdButton(
+                    text: "Crear cuenta",
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        AuthService().signUp(
+                          email: emailController.text,
+                          username: usernameController.text,
+                          password: passwordController.text,
+                          passwordConfirmation:
+                              passwordConfirmationController.text,
+                          context: context,
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 70),
+
+                  // Register
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("¿Ya tienes una cuenta? "),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Inicia sesión",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
