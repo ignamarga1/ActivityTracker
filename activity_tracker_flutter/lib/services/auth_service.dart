@@ -95,4 +95,36 @@ class AuthService {
   Future<void> logOut({required BuildContext context}) async {
     FirebaseAuth.instance.signOut();
   }
+
+  // RESET PASSWORD
+  Future<void> resetPassword({
+    required String email,
+    required BuildContext context,
+  }) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
+      await Future.delayed(const Duration(seconds: 1));
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, '/login');
+
+        if (FirebaseAuth.instance.currentUser != null) {
+          Fluttertoast.showToast(
+            msg: 'Correo de restablecimiento enviado',
+            toastLength: Toast.LENGTH_LONG,
+          );
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      String message = '';
+
+      if (e.code == 'invalid-email') {
+        message = 'La dirección de correo electrónico introducida no es válida';
+      } else if (e.code == 'user-not-found') {
+        message =
+            'La dirección de correo electrónico introducida no está asociada a ningún usuario';
+      }
+      Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+    }
+  }
 }

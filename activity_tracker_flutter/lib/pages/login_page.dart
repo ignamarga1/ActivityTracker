@@ -93,10 +93,15 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        "¿Olvidaste tu contraseña?",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/forgotPassword');
+                        },
+                        child: Text(
+                          "¿Olvidaste tu contraseña?",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                       ),
                     ],
