@@ -1,3 +1,4 @@
+import 'package:activity_tracker_flutter/pages/email_verification_page.dart';
 import 'package:activity_tracker_flutter/pages/home_page.dart';
 import 'package:activity_tracker_flutter/pages/login_page.dart';
 import 'package:activity_tracker_flutter/pages/register_page.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/' : (context) => HomePage(),
         '/login' : (context) => LoginPage(),
         '/register' : (context) => RegisterPage(),
+        '/emailVerification' : (context) => EmailVerificationPage(),
       },
     );
   }

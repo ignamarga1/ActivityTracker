@@ -14,6 +14,15 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  var _isObscuredPassword = true;
+
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        behavior: HitTestBehavior.translucent,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(30.0),
@@ -55,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                   // Password
                   TextFormField(
                     controller: passwordController,
-                    obscureText: true,
+                    obscureText: _isObscuredPassword,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'El campo es obligatorio';
@@ -65,6 +75,16 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Contraseña",
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _isObscuredPassword = !_isObscuredPassword;
+                          });
+                        },
+                        icon: _isObscuredPassword
+                            ? const Icon(Icons.visibility_off)
+                            : const Icon(Icons.visibility),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15),

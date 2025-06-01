@@ -21,18 +21,25 @@ class AuthService {
       // Sends email verification
       FirebaseAuth.instance.currentUser?.sendEmailVerification();
 
-      // Navigate to Login page to login with the new account
+      // Navigate to Login page to log in with the new account
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+        Navigator.pushReplacementNamed(context, '/emailVerification');
+
+        if (FirebaseAuth.instance.currentUser != null) {
+          Fluttertoast.showToast(
+            msg: '¡Cuenta creada con éxito!',
+            toastLength: Toast.LENGTH_LONG,
+          );
+        }
       }
     } on FirebaseAuthException catch (e) {
       String message = '';
 
       if (e.code == 'invalid-email') {
-        message = 'El email introducido no es un email válido';
+        message = 'La dirección de correo electrónico introducida no es válida';
       } else if (e.code == 'email-already-in-use') {
-        message = 'El email introducido ya se encuentra en uso';
+        message = 'La dirección de correo electrónico introducida ya se encuentra en uso';
       } else if (e.code == 'weak-password') {
         message = 'La contraseña es demasiado débil';
       }
@@ -56,15 +63,22 @@ class AuthService {
       // Navigate to Home page
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
-        Navigator.popAndPushNamed(context, '/');
+        Navigator.pushNamed(context, '/');
+
+        if (FirebaseAuth.instance.currentUser != null) {
+          Fluttertoast.showToast(
+            msg: '¡Sesión iniciada con éxito!',
+            toastLength: Toast.LENGTH_LONG,
+          );
+        }
       }
     } on FirebaseAuthException catch (e) {
       String message = '';
 
       if (e.code == 'invalid-email') {
-        message = 'El email introducido no es un email válido';
+        message = 'La dirección de correo electrónico introducida no es válida';
       } else if (e.code == 'email-already-in-use') {
-        message = 'El email introducido ya se encuentra en uso';
+        message = 'La dirección de correo electrónico introducida ya se encuentra en uso';
       } else if (e.code == 'user-not-found') {
         message =
             'La dirección de correo electrónico introducida no está asociada a ningún usuario';
