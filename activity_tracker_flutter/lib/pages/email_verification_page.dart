@@ -46,6 +46,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      resizeToAvoidBottomInset: false,
       body: Align(
         alignment: Alignment.center,
         child: Padding(
@@ -95,7 +97,6 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                   );
                 },
               ),
-              const SizedBox(height: 70),
             ],
           ),
         ),
