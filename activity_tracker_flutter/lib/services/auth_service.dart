@@ -21,7 +21,7 @@ class AuthService {
       // Sends email verification
       FirebaseAuth.instance.currentUser?.sendEmailVerification();
 
-      // Navigate to Login page to log in with the new account
+      // Navigate to email verification page to wait for user verification
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
         Navigator.pushReplacementNamed(context, '/emailVerification');
@@ -55,16 +55,20 @@ class AuthService {
     required BuildContext context,
   }) async {
     try {
-      // Creates a new user
+      // Sign in with email and password
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Navigate to Home page
+      // Navigate to Home page after login
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
-        Navigator.pushNamed(context, '/');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/',
+          (Route<dynamic> route) => false,
+        );
 
         if (FirebaseAuth.instance.currentUser != null) {
           Fluttertoast.showToast(
@@ -96,6 +100,7 @@ class AuthService {
   // LOG OUT
   Future<void> logOut({required BuildContext context}) async {
     try {
+      // User log out
       await FirebaseAuth.instance.signOut();
 
       if (context.mounted) {
@@ -104,7 +109,12 @@ class AuthService {
           toastLength: Toast.LENGTH_LONG,
         );
 
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+        // Clears app route stack leaving just the login page
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/login',
+          (Route<dynamic> route) => false,
+        );
       }
     } catch (e) {
       Fluttertoast.showToast(
@@ -120,18 +130,18 @@ class AuthService {
     required BuildContext context,
   }) async {
     try {
+      // Reset password with email
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
 
+      // Navigate back to login after the email is sent
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+        Navigator.pop(context);
 
-        if (FirebaseAuth.instance.currentUser != null) {
-          Fluttertoast.showToast(
-            msg: 'Correo de restablecimiento enviado',
-            toastLength: Toast.LENGTH_LONG,
-          );
-        }
+        Fluttertoast.showToast(
+          msg: 'Correo de restablecimiento enviado',
+          toastLength: Toast.LENGTH_LONG,
+        );
       }
     } on FirebaseAuthException catch (e) {
       String message = '';
