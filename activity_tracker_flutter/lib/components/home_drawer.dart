@@ -1,3 +1,5 @@
+import 'package:activity_tracker_flutter/models/user.dart';
+import 'package:activity_tracker_flutter/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'drawer_tile.dart'; // si lo separas en otro archivo
@@ -16,52 +18,104 @@ class HomeDrawer extends StatelessWidget {
       child: Column(
         children: [
           // DRAWER HEADER
-          DrawerHeader(
-            margin: EdgeInsets.zero,
-            padding: EdgeInsets.zero,
-            decoration: BoxDecoration(color: Colors.grey.shade800),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // App name
-                Text(
-                  'Activity Tracker',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+          FutureBuilder<AppUser?>(
+            // Get current user data
+            future: UserService().getCurrentUserData(),
+            builder: (context, asyncSnapshot) {
+              if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                return DrawerHeader(
+                  margin: EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(color: Colors.grey.shade800),
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.white),
                   ),
-                ),
-                const SizedBox(height: 20),
+                );
+              }
 
-                // User profile
-                Row(
+              if (!asyncSnapshot.hasData || asyncSnapshot.data == null) {
+                return DrawerHeader(
+                  margin: EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(color: Colors.grey.shade800),
+                  child: Center(
+                    child: Text(
+                      'Usuario no encontrado',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                );
+              }
+
+              final user = asyncSnapshot.data!;
+
+              // DRAWER HEADER
+              return DrawerHeader(
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(color: Colors.grey.shade800),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: null,
-                      backgroundColor: Colors.grey.shade700,
-                      child: Icon(Icons.person, size: 40, color: Colors.white),
+                    // App name
+                    Text(
+                      'Activity Tracker',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          'nombreDeUsuario',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                    const SizedBox(height: 20),
+
+                    // User profile
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage:
+                              user.profilePictureURL != null &&
+                                  user.profilePictureURL!.isNotEmpty
+                              ? NetworkImage(user.profilePictureURL!)
+                              : null,
+                          backgroundColor: Colors.grey.shade700,
+                          child:
+                              (user.profilePictureURL == null ||
+                                  user.profilePictureURL!.isEmpty)
+                              ? Icon(
+                                  Icons.person,
+                                  size: 40,
+                                  color: Colors.white,
+                                )
+                              : null,
                         ),
-                        Text(
-                          '@apodo',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        const SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '@${user.username}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              user.nickname,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
 
           // DRAWER OPTIONS
@@ -121,6 +175,8 @@ class HomeDrawer extends StatelessWidget {
                     }
                   },
                 ),
+
+                // Messages
                 DrawerTile(
                   icon: Icons.mail,
                   label: 'Mensajes',
@@ -135,6 +191,8 @@ class HomeDrawer extends StatelessWidget {
                     }
                   },
                 ),
+
+                // Challenges
                 DrawerTile(
                   icon: Icons.shield,
                   label: 'Desafíos',

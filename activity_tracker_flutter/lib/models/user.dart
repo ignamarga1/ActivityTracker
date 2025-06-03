@@ -28,9 +28,20 @@ class AppUser {
   String get username => _username;
   String get nickname => _nickname;
   String? get profilePictureURL => _profilePictureURL;
-  Timestamp get createdAt => _createdAt; 
+  Timestamp get createdAt => _createdAt;
 
-  // Map method
+  // Converts Firestore map into AppUser
+  factory AppUser.fromMap(Map<String, dynamic> map) {
+    return AppUser(
+      uid: map['uid'] ?? '',
+      email: map['email'] ?? '',
+      username: map['username'] ?? '',
+      nickname: map['nickname'] ?? '',
+      profilePictureURL: map['profilePictureURL'],
+    );
+  }
+
+  // Converts AppUser into map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'uid': _uid,
