@@ -1,8 +1,13 @@
+import 'package:activity_tracker_flutter/services/user_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthService {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final UserService _userService = UserService();
+
   // SIGN UP
   Future<void> signUp({
     required String email,
@@ -12,21 +17,41 @@ class AuthService {
     required BuildContext context,
   }) async {
     try {
-      // Creates a new user
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      // Check if the username is being use already by other user
+      final existingUser = await FirebaseFirestore.instance
+          .collection("Users")
+          .where("username", isEqualTo: username)
+          .limit(1)
+          .get();
 
-      // Sends email verification
-      FirebaseAuth.instance.currentUser?.sendEmailVerification();
+      // Throw exception (catch in AuthService SignUp)
+      if (existingUser.docs.isNotEmpty) {
+        Fluttertoast.showToast(
+            msg: 'El nombre de usuario introducido ya se encuentra en uso',
+            toastLength: Toast.LENGTH_LONG,
+          );
+          return;
+      }
+
+      // Create a new user
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      // Send email verification
+      await _firebaseAuth.currentUser?.sendEmailVerification();
+
+      // Save new user into Firestore
+      await _userService.createUserDocument(
+        userCredential: userCredential,
+        username: username,
+      );
 
       // Navigate to email verification page to wait for user verification
       await Future.delayed(const Duration(milliseconds: 300));
       if (context.mounted) {
         Navigator.pushReplacementNamed(context, '/emailVerification');
 
-        if (FirebaseAuth.instance.currentUser != null) {
+        if (_firebaseAuth.currentUser != null) {
           Fluttertoast.showToast(
             msg: '¡Cuenta creada con éxito!',
             toastLength: Toast.LENGTH_LONG,
@@ -45,6 +70,11 @@ class AuthService {
         message = 'La contraseña es demasiado débil';
       }
       Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Ha ocurrido un error inesperado",
+        toastLength: Toast.LENGTH_LONG,
+      );
     }
   }
 
@@ -56,7 +86,7 @@ class AuthService {
   }) async {
     try {
       // Sign in with email and password
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -70,7 +100,7 @@ class AuthService {
           (Route<dynamic> route) => false,
         );
 
-        if (FirebaseAuth.instance.currentUser != null) {
+        if (_firebaseAuth.currentUser != null) {
           Fluttertoast.showToast(
             msg: '¡Sesión iniciada con éxito!',
             toastLength: Toast.LENGTH_LONG,
@@ -101,7 +131,7 @@ class AuthService {
   Future<void> logOut({required BuildContext context}) async {
     try {
       // User log out
-      await FirebaseAuth.instance.signOut();
+      await _firebaseAuth.signOut();
 
       if (context.mounted) {
         Fluttertoast.showToast(
@@ -109,7 +139,7 @@ class AuthService {
           toastLength: Toast.LENGTH_LONG,
         );
 
-        // Clears app route stack leaving just the login page
+        // Clear app route stack leaving just the login page
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/login',
@@ -131,7 +161,7 @@ class AuthService {
   }) async {
     try {
       // Reset password with email
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
 
       // Navigate back to login after the email is sent
       await Future.delayed(const Duration(milliseconds: 300));
