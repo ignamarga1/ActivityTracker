@@ -22,7 +22,7 @@ class AuthService {
       FirebaseAuth.instance.currentUser?.sendEmailVerification();
 
       // Navigate to email verification page to wait for user verification
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(milliseconds: 300));
       if (context.mounted) {
         Navigator.pushReplacementNamed(context, '/emailVerification');
 
@@ -62,7 +62,7 @@ class AuthService {
       );
 
       // Navigate to Home page after login
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(milliseconds: 300));
       if (context.mounted) {
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -134,7 +134,7 @@ class AuthService {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
 
       // Navigate back to login after the email is sent
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(milliseconds: 300));
       if (context.mounted) {
         Navigator.pop(context);
 
