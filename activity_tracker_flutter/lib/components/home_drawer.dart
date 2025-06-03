@@ -1,5 +1,6 @@
-import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:activity_tracker_flutter/services/auth_service.dart';
+import 'drawer_tile.dart'; // si lo separas en otro archivo
 
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({super.key});
@@ -8,12 +9,13 @@ class HomeDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w500);
     final iconSize = 30.0;
+    final currentRoute = ModalRoute.of(context)?.settings.name;
 
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
-          // Drawer header
+          // DRAWER HEADER
           DrawerHeader(
             margin: EdgeInsets.zero,
             padding: EdgeInsets.zero,
@@ -21,6 +23,7 @@ class HomeDrawer extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // App name
                 Text(
                   'Activity Tracker',
                   style: TextStyle(
@@ -31,6 +34,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
+                // User profile
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -40,12 +44,10 @@ class HomeDrawer extends StatelessWidget {
                       backgroundColor: Colors.grey.shade700,
                       child: Icon(Icons.person, size: 40, color: Colors.white),
                     ),
-
                     const SizedBox(width: 16),
-
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: const [
                         Text(
                           'nombreDeUsuario',
                           style: TextStyle(color: Colors.white, fontSize: 16),
@@ -58,66 +60,94 @@ class HomeDrawer extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(width: 16),
               ],
             ),
           ),
 
-          // Home tile
+          // DRAWER OPTIONS
           Expanded(
             child: ListView(
-              padding: EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.only(top: 10),
               children: [
                 // Home
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, top: 5),
-                  child: ListTile(
-                    leading: Icon(Icons.home_rounded, size: iconSize),
-                    title: Text('Inicio', style: textStyle),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/');
-                    },
-                  ),
+                DrawerTile(
+                  icon: Icons.home_rounded,
+                  label: 'Inicio',
+                  iconSize: iconSize,
+                  textStyle: textStyle,
+                  selected: currentRoute == '/',
+                  onTap: () {
+                    if (currentRoute == '/') {
+                      Navigator.of(context).pop();
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                    } else {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/',
+                        (route) => false,
+                      );
+                    }
+                  },
                 ),
 
-                // Profile tile
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, top: 5),
-                  child: ListTile(
-                    leading: Icon(Icons.person, size: iconSize),
-                    title: Text('Perfil', style: textStyle),
-                    onTap: () {},
-                  ),
+                // Profile
+                DrawerTile(
+                  icon: Icons.person,
+                  label: 'Perfil',
+                  iconSize: iconSize,
+                  textStyle: textStyle,
+                  selected: currentRoute == '/userProfile',
+                  onTap: () {
+                    if (currentRoute != '/userProfile') {
+                      Navigator.pushNamed(context, '/userProfile');
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
                 ),
 
-                // Friends tile
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, top: 5),
-                  child: ListTile(
-                    leading: Icon(Icons.groups, size: iconSize),
-                    title: Text('Amigos', style: textStyle),
-                    onTap: () {},
-                  ),
+                // Friends
+                DrawerTile(
+                  icon: Icons.groups,
+                  label: 'Amigos',
+                  iconSize: iconSize,
+                  textStyle: textStyle,
+                  selected: currentRoute == '/friends',
+                  onTap: () {
+                    if (currentRoute != '/friends') {
+                      Navigator.pushNamed(context, '/friends');
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
                 ),
-
-                // Messages tile
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, top: 5),
-                  child: ListTile(
-                    leading: Icon(Icons.mail, size: iconSize),
-                    title: Text('Mensajes', style: textStyle),
-                    onTap: () {},
-                  ),
+                DrawerTile(
+                  icon: Icons.mail,
+                  label: 'Mensajes',
+                  iconSize: iconSize,
+                  textStyle: textStyle,
+                  selected: currentRoute == '/messages',
+                  onTap: () {
+                    if (currentRoute != '/messages') {
+                      Navigator.pushNamed(context, '/messages');
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
                 ),
-
-                // Challenges tile
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, top: 5),
-                  child: ListTile(
-                    leading: Icon(Icons.shield, size: iconSize),
-                    title: Text('Desafíos', style: textStyle),
-                    onTap: () {},
-                  ),
+                DrawerTile(
+                  icon: Icons.shield,
+                  label: 'Desafíos',
+                  iconSize: iconSize,
+                  textStyle: textStyle,
+                  selected: currentRoute == '/challenges',
+                  onTap: () {
+                    if (currentRoute != '/challenges') {
+                      Navigator.pushNamed(context, '/challenges');
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
                 ),
               ],
             ),
@@ -125,21 +155,31 @@ class HomeDrawer extends StatelessWidget {
 
           const Divider(color: Colors.grey),
 
+          // DRAWER BOTTOM OPTIONS
           Padding(
-            padding: const EdgeInsets.only(left: 25, top: 5),
+            padding: const EdgeInsets.only(bottom: 8),
             child: Column(
               children: [
-                // Settings button
-                ListTile(
-                  leading: Icon(Icons.settings, size: iconSize),
-                  title: Text('Ajustes', style: textStyle),
-                  onTap: () {},
+                DrawerTile(
+                  icon: Icons.settings,
+                  label: 'Ajustes',
+                  iconSize: iconSize,
+                  textStyle: textStyle,
+                  selected: currentRoute == '/settings',
+                  onTap: () {
+                    if (currentRoute != '/settings') {
+                      Navigator.pushNamed(context, '/settings');
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
                 ),
-
-                // Log out button
-                ListTile(
-                  leading: Icon(Icons.logout_outlined, size: iconSize),
-                  title: Text('Cerrar sesión', style: textStyle),
+                DrawerTile(
+                  icon: Icons.logout_outlined,
+                  label: 'Cerrar sesión',
+                  iconSize: iconSize,
+                  textStyle: textStyle,
+                  selected: false,
                   onTap: () {
                     showDialog(
                       context: context,
@@ -156,7 +196,6 @@ class HomeDrawer extends StatelessWidget {
                               },
                               child: const Text('Sí'),
                             ),
-
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
