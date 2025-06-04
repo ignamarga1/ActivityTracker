@@ -20,7 +20,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
   void initState() {
     super.initState();
 
-    timer = Timer.periodic(Duration(seconds: 3), (timer) {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Checks if the user has confirm the email
       FirebaseAuth.instance.currentUser?.reload();
       final user = FirebaseAuth.instance.currentUser;
