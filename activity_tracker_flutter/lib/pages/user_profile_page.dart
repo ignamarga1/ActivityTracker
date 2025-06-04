@@ -1,17 +1,26 @@
 import 'package:activity_tracker_flutter/components/home_drawer.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
+import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
+
+  @override
+  State<UserProfilePage> createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
+      // Appbar with title and edit button
       appBar: AppBar(
         title: const Text('Perfil'),
         actions: [
@@ -26,6 +35,8 @@ class UserProfilePage extends StatelessWidget {
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: const HomeDrawer(),
+
+      // User data
       body: user == null
           ? Center(
               child: Column(
@@ -133,7 +144,7 @@ class UserProfilePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // Account creation date
+                      // Account createdDate
                       Text.rich(
                         TextSpan(
                           text: 'Fecha de creación: ',
@@ -159,7 +170,7 @@ class UserProfilePage extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  // User Stadistics section
+                  // User Statistics section
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -183,30 +194,7 @@ class UserProfilePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      onPressed: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                '¿Estás seguro de que quieres eliminar tu cuenta? \nToda tu información será eliminada y no se podrá recuperar',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {},
-                                  child: const Text('Sí'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('No'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
+
                       child: const Text(
                         'Eliminar cuenta',
                         style: TextStyle(
@@ -214,6 +202,129 @@ class UserProfilePage extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
+
+                      onPressed: () async {
+                        final formKey = GlobalKey<FormState>();
+                        var isObscuredPassword = true;
+
+                        // Delete account dialog with textField for password
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return Form(
+                                  key: formKey,
+                                  child: AlertDialog(
+                                    insetPadding: const EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                      vertical: 24,
+                                    ),
+                                    titlePadding: const EdgeInsets.only(
+                                      top: 16,
+                                      left: 24,
+                                      right: 8,
+                                    ),
+
+                                    // Title and close button
+                                    title: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Eliminar cuenta',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                        ),
+                                      ],
+                                    ),
+
+                                    // Information and textField
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Esta acción es permanente.',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        SizedBox(height: 12),
+                                        Text(
+                                          'Toda tu información será eliminada de forma permanente y no se podrá recuperar.',
+                                        ),
+                                        SizedBox(height: 12),
+                                        Text(
+                                          'Introduce tu contraseña para confirmar la eliminación de tu cuenta:',
+                                        ),
+                                        SizedBox(height: 20),
+
+                                        TextFormField(
+                                          controller: passwordController,
+                                          obscureText: isObscuredPassword,
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'El campo es obligatorio';
+                                            }
+                                            return null;
+                                          },
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: "Contraseña",
+                                            suffixIcon: IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  isObscuredPassword =
+                                                      !isObscuredPassword;
+                                                });
+                                              },
+                                              icon: isObscuredPassword
+                                                  ? const Icon(
+                                                      Icons.visibility_off,
+                                                    )
+                                                  : const Icon(
+                                                      Icons.visibility,
+                                                    ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    // Actions (just the confirm button as the close is next to title)
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                          if (formKey.currentState!
+                                              .validate()) {
+                                            AuthService().deleteAccount(
+                                              context: context,
+                                              password: passwordController.text,
+                                            );
+                                          }
+                                        },
+                                        child: const Text('Confirmar'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],

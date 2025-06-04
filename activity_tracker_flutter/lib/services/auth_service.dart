@@ -187,9 +187,11 @@ class AuthService {
   }
 
   // DELETE ACCOUNT
-  Future<void> deleteAccount({required BuildContext context, required String password}) async {
+  Future<void> deleteAccount({
+    required BuildContext context,
+    required String password,
+  }) async {
     final user = FirebaseAuth.instance.currentUser!;
-    final uid = user.uid;
 
     try {
       // Authenticate again in case Firebase Aunthentication fails to delete the account
@@ -199,10 +201,10 @@ class AuthService {
       );
       await user.reauthenticateWithCredential(userCredentials);
 
-      // Deletes the account from Firestore
-      await FirebaseFirestore.instance.collection('users').doc(uid).delete();
+      // Delete the account from Firestore
+      await _userService.deleteUserDocument();
 
-      // Deletes the account from FirebaseAuth
+      // Delete the account from FirebaseAuth
       await user.delete();
 
       if (context.mounted) {
@@ -218,8 +220,18 @@ class AuthService {
           (Route<dynamic> route) => false,
         );
       }
+    } on FirebaseAuthException catch (e) {
+      String message = '';
+
+      if (e.code == 'invalid-credential') {
+        message = 'Las credenciales son incorrectas';
+      }
+      Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
     } catch (e) {
-      Fluttertoast.showToast(msg: "No se ha podido eliminar la cuenta", toastLength: Toast.LENGTH_LONG);
+      Fluttertoast.showToast(
+        msg: "No se ha podido eliminar la cuenta",
+        toastLength: Toast.LENGTH_LONG,
+      );
     }
   }
 }

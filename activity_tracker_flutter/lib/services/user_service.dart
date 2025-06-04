@@ -44,4 +44,14 @@ class UserService {
 
     return AppUser.fromMap(userData.data()!);
   }
+
+  // Delete user
+  Future<void> deleteUserDocument() async {
+    // Current user that has logged in
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      await FirebaseFirestore.instance.collection("Users").doc(currentUser.uid).delete();
+    }
+  }
 }
