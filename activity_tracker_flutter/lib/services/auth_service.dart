@@ -24,13 +24,13 @@ class AuthService {
           .limit(1)
           .get();
 
-      // Throw exception (catch in AuthService SignUp)
+      // Show error toast
       if (existingUser.docs.isNotEmpty) {
         Fluttertoast.showToast(
-            msg: 'El nombre de usuario introducido ya se encuentra en uso',
-            toastLength: Toast.LENGTH_LONG,
-          );
-          return;
+          msg: 'El nombre de usuario introducido ya se encuentra en uso',
+          toastLength: Toast.LENGTH_LONG,
+        );
+        return;
       }
 
       // Create a new user
@@ -183,6 +183,43 @@ class AuthService {
             'La dirección de correo electrónico introducida no está asociada a ningún usuario';
       }
       Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+    }
+  }
+
+  // DELETE ACCOUNT
+  Future<void> deleteAccount({required BuildContext context, required String password}) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final uid = user.uid;
+
+    try {
+      // Authenticate again in case Firebase Aunthentication fails to delete the account
+      final userCredentials = EmailAuthProvider.credential(
+        email: user.email!,
+        password: password,
+      );
+      await user.reauthenticateWithCredential(userCredentials);
+
+      // Deletes the account from Firestore
+      await FirebaseFirestore.instance.collection('users').doc(uid).delete();
+
+      // Deletes the account from FirebaseAuth
+      await user.delete();
+
+      if (context.mounted) {
+        Fluttertoast.showToast(
+          msg: '¡Usuario eliminado con éxito!',
+          toastLength: Toast.LENGTH_LONG,
+        );
+
+        // Clear app route stack leaving just the login page
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/login',
+          (Route<dynamic> route) => false,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "No se ha podido eliminar la cuenta", toastLength: Toast.LENGTH_LONG);
     }
   }
 }
