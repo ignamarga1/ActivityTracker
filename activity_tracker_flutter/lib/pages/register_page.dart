@@ -79,6 +79,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         if (value == null || value.isEmpty) {
                           return 'El campo es obligatorio';
                         }
+
+                        if (value.contains(' ')) {
+                          return 'No puede contener espacios en blanco';
+                        }
                         return null;
                       },
                       decoration: InputDecoration(
@@ -176,8 +180,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         FocusManager.instance.primaryFocus?.unfocus();
                         if (_formKey.currentState!.validate()) {
                           AuthService().signUp(
-                            email: emailController.text,
-                            username: usernameController.text,
+                            email: emailController.text.trim(),
+                            username: usernameController.text.replaceAll(' ', ''),
                             password: passwordController.text,
                             passwordConfirmation:
                                 passwordConfirmationController.text,

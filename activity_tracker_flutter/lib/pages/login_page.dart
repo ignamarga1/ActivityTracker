@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                       FocusManager.instance.primaryFocus?.unfocus();
                       if (_formKey.currentState!.validate()) {
                         AuthService().signIn(
-                          email: emailController.text,
+                          email: emailController.text.trim(),
                           password: passwordController.text,
                           context: context,
                         );
