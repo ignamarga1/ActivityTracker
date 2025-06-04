@@ -1,7 +1,7 @@
-import 'package:activity_tracker_flutter/models/user.dart';
-import 'package:activity_tracker_flutter/services/user_service.dart';
+import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
+import 'package:provider/provider.dart';
 import 'drawer_tile.dart'; // si lo separas en otro archivo
 
 class HomeDrawer extends StatelessWidget {
@@ -13,109 +13,87 @@ class HomeDrawer extends StatelessWidget {
     final iconSize = 30.0;
     final currentRoute = ModalRoute.of(context)?.settings.name;
 
+    final user = Provider.of<UserProvider>(context).user;
+
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           // DRAWER HEADER
-          FutureBuilder<AppUser?>(
-            // Get current user data
-            future: UserService().getCurrentUserData(),
-            builder: (context, asyncSnapshot) {
-              if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-                return DrawerHeader(
-                  margin: EdgeInsets.zero,
-                  padding: EdgeInsets.zero,
-                  decoration: BoxDecoration(color: Colors.grey.shade800),
-                  child: Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  ),
-                );
-              }
-
-              if (!asyncSnapshot.hasData || asyncSnapshot.data == null) {
-                return DrawerHeader(
-                  margin: EdgeInsets.zero,
-                  padding: EdgeInsets.zero,
-                  decoration: BoxDecoration(color: Colors.grey.shade800),
-                  child: Center(
-                    child: Text(
-                      'Usuario no encontrado',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              }
-
-              final user = asyncSnapshot.data!;
-
-              // DRAWER HEADER
-              return DrawerHeader(
-                margin: EdgeInsets.zero,
-                padding: EdgeInsets.zero,
-                decoration: BoxDecoration(color: Colors.grey.shade800),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // App name
-                    Text(
-                      'Activity Tracker',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // User profile
-                    Row(
+          DrawerHeader(
+            margin: EdgeInsets.zero,
+            padding: EdgeInsets.zero,
+            decoration: BoxDecoration(color: Colors.grey.shade800),
+            child: user == null
+                ? Center(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage:
-                              user.profilePictureURL != null &&
-                                  user.profilePictureURL!.isNotEmpty
-                              ? NetworkImage(user.profilePictureURL!)
-                              : null,
-                          backgroundColor: Colors.grey.shade700,
-                          child:
-                              (user.profilePictureURL == null ||
-                                  user.profilePictureURL!.isEmpty)
-                              ? Icon(
-                                  Icons.person,
-                                  size: 40,
-                                  color: Colors.white,
-                                )
-                              : null,
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '@${user.username}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              user.nickname,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
+                        CircularProgressIndicator(color: Colors.white),
+                        SizedBox(height: 12),
+                        Text(
+                          'Cargando datos...',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
-                  ],
-                ),
-              );
-            },
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // App name
+                      Text(
+                        'Activity Tracker',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // User profile
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage: user.profilePictureURL != ''
+                                ? NetworkImage(user.profilePictureURL!)
+                                : null,
+                            backgroundColor: Colors.grey.shade700,
+                            child: user.profilePictureURL == ''
+                                ? Icon(
+                                    Icons.person,
+                                    size: 40,
+                                    color: Colors.white,
+                                  )
+                                : null,
+                          ),
+                          const SizedBox(width: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '@${user.username}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                user.nickname,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
           ),
 
           // DRAWER OPTIONS
@@ -153,7 +131,11 @@ class HomeDrawer extends StatelessWidget {
                   selected: currentRoute == '/userProfile',
                   onTap: () {
                     if (currentRoute != '/userProfile') {
-                      Navigator.pushNamed(context, '/userProfile');
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/userProfile',
+                        (route) => false,
+                      );
                     } else {
                       Navigator.of(context).pop();
                     }
@@ -169,14 +151,16 @@ class HomeDrawer extends StatelessWidget {
                   selected: currentRoute == '/friends',
                   onTap: () {
                     if (currentRoute != '/friends') {
-                      Navigator.pushNamed(context, '/friends');
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/friends',
+                        (route) => false,
+                      );
                     } else {
                       Navigator.of(context).pop();
                     }
                   },
                 ),
-
-                // Messages
                 DrawerTile(
                   icon: Icons.mail,
                   label: 'Mensajes',
@@ -185,14 +169,16 @@ class HomeDrawer extends StatelessWidget {
                   selected: currentRoute == '/messages',
                   onTap: () {
                     if (currentRoute != '/messages') {
-                      Navigator.pushNamed(context, '/messages');
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/messages',
+                        (route) => false,
+                      );
                     } else {
                       Navigator.of(context).pop();
                     }
                   },
                 ),
-
-                // Challenges
                 DrawerTile(
                   icon: Icons.shield,
                   label: 'Desafíos',
@@ -201,7 +187,11 @@ class HomeDrawer extends StatelessWidget {
                   selected: currentRoute == '/challenges',
                   onTap: () {
                     if (currentRoute != '/challenges') {
-                      Navigator.pushNamed(context, '/challenges');
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/challenges',
+                        (route) => false,
+                      );
                     } else {
                       Navigator.of(context).pop();
                     }
@@ -226,7 +216,11 @@ class HomeDrawer extends StatelessWidget {
                   selected: currentRoute == '/settings',
                   onTap: () {
                     if (currentRoute != '/settings') {
-                      Navigator.pushNamed(context, '/settings');
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/settings',
+                        (route) => false,
+                      );
                     } else {
                       Navigator.of(context).pop();
                     }

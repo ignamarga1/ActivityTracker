@@ -8,6 +8,7 @@ import 'package:activity_tracker_flutter/pages/messages_page.dart';
 import 'package:activity_tracker_flutter/pages/register_page.dart';
 import 'package:activity_tracker_flutter/pages/settings_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile_page.dart';
+import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:activity_tracker_flutter/themes/dark_mode.dart';
 import 'package:activity_tracker_flutter/themes/light_mode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +25,14 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Normal Portrait
   ]);
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
