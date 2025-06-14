@@ -7,6 +7,7 @@ import 'package:activity_tracker_flutter/pages/login_register/login_page.dart';
 import 'package:activity_tracker_flutter/pages/messages/messages_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/register_page.dart';
 import 'package:activity_tracker_flutter/pages/settings_page.dart';
+import 'package:activity_tracker_flutter/pages/user_profile/edit_user_profile_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile/user_profile_page.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:activity_tracker_flutter/themes/dark_mode.dart';
@@ -15,21 +16,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await dotenv.load(fileName: ".env");
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Normal Portrait
   ]);
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
       child: MyApp(),
     ),
   );
@@ -51,13 +51,16 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegisterPage(),
         '/emailVerification': (context) => EmailVerificationPage(),
         '/forgotPassword': (context) => ForgotPasswordPage(),
-        
+
         // DRAWER ROUTER OPTIONS
         '/userProfile': (context) => UserProfilePage(),
         '/friends': (context) => FriendsPage(),
         '/messages': (context) => MessagesPage(),
         '/challenges': (context) => ChallengesPage(),
         '/settings': (context) => SettingsPage(),
+
+        // USER PROFILE
+        '/editUserProfile': (context) => EditUserProfilePage(),
       },
     );
   }
