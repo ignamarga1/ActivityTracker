@@ -17,6 +17,7 @@ class UserService {
         email: user.email!,
         username: username,
         nickname: username,
+        createdAt: Timestamp.now(),
       );
 
       await FirebaseFirestore.instance
@@ -36,9 +37,12 @@ class UserService {
     }
 
     // Data from Firestore of the current user
-    final userData = await FirebaseFirestore.instance.collection("Users").doc(currentUser.uid).get();
+    final userData = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(currentUser.uid)
+        .get();
 
-    if(!userData.exists) {
+    if (!userData.exists) {
       return null;
     }
 
@@ -51,7 +55,37 @@ class UserService {
     final currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser != null) {
-      await FirebaseFirestore.instance.collection("Users").doc(currentUser.uid).delete();
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(currentUser.uid)
+          .delete();
+    }
+  }
+
+  // Update user profile data
+  Future<void> updateUserDocument({
+    String? newNickname,
+    String? newImageUrl,
+  }) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      final Map<String, dynamic> profileDataToUpdate = {};
+
+      if (newNickname != null && newNickname.isNotEmpty) {
+        profileDataToUpdate['nickname'] = newNickname;
+      }
+
+      if (newImageUrl != null && newImageUrl.isNotEmpty) {
+        profileDataToUpdate['profilePictureURL'] = newImageUrl;
+      }
+
+      if (profileDataToUpdate.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(currentUser.uid)
+            .update(profileDataToUpdate);
+      }
     }
   }
 }

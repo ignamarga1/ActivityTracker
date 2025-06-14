@@ -15,12 +15,13 @@ class AppUser {
     required String username,
     required String nickname,
     String? profilePictureURL,
+    required Timestamp createdAt,
   }) : _uid = uid,
        _email = email,
        _username = username,
        _nickname = nickname,
        _profilePictureURL = profilePictureURL,
-       _createdAt = Timestamp.now();
+       _createdAt = createdAt;
 
   // Getters
   String get uid => _uid;
@@ -38,6 +39,7 @@ class AppUser {
       username: map['username'] ?? '',
       nickname: map['nickname'] ?? '',
       profilePictureURL: map['profilePictureURL'],
+      createdAt: map['createdAt'] ?? Timestamp.now(),
     );
   }
 
