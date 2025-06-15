@@ -1,3 +1,4 @@
+//import 'package:activity_tracker_flutter/themes/custom_page_transition.dart';
 import 'package:flutter/material.dart';
 
 ThemeData darkMode = ThemeData(
@@ -13,6 +14,11 @@ ThemeData darkMode = ThemeData(
     bodyColor: Colors.grey[300],
     displayColor: Colors.white,
   ),
+  // pageTransitionsTheme: const PageTransitionsTheme(
+  //     builders: {
+  //       TargetPlatform.android: CustomPageTransition(),
+  //     },
+  //   ),
 
   // brightness: Brightness.dark,
   // colorScheme: ColorScheme.dark(
