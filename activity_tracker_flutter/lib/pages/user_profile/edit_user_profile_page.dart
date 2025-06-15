@@ -228,13 +228,17 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                         onPressed: () async {
                           FocusManager.instance.primaryFocus?.unfocus();
                           String? imageUrl;
-                          final String newNickname = nickNameController.text.trim();
-                          final bool isNickNameChanged = newNickname.isNotEmpty && (newNickname != user.nickname);
-                          final bool isImageChanged = _selectedImagePath != null;
+                          final String newNickname = nickNameController.text
+                              .trim();
+                          final bool isNickNameChanged =
+                              newNickname.isNotEmpty &&
+                              (newNickname != user.nickname);
+                          final bool isImageChanged =
+                              _selectedImagePath != null;
 
                           // Checks if there are any changes in case the user presses the button (for not showing the Fluttertoast)
-                          if(!isNickNameChanged && !isImageChanged) {
-                            if(context.mounted) {
+                          if (!isNickNameChanged && !isImageChanged) {
+                            if (context.mounted) {
                               Navigator.pop(context);
                               return;
                             }
@@ -257,17 +261,19 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                             imageUrl = uploadedUrl;
                           }
 
-                          // Updates user nickname and imageUrl 
+                          // Updates user nickname and imageUrl
                           await UserService().updateUserDocument(
                             newNickname: newNickname,
                             newImageUrl: imageUrl,
                           );
 
                           // Refreshes the user data to show the latest changes
-                          await Provider.of<UserProvider>(
-                            context,
-                            listen: false,
-                          ).refreshUser();
+                          if (context.mounted) {
+                            await Provider.of<UserProvider>(
+                              context,
+                              listen: false,
+                            ).refreshUser();
+                          }
 
                           // Pop and Fluttertoast success message
                           if (context.mounted) {
