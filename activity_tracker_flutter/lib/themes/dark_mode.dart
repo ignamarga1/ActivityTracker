@@ -1,4 +1,5 @@
 //import 'package:activity_tracker_flutter/themes/custom_page_transition.dart';
+import 'package:activity_tracker_flutter/themes/custom_page_transition.dart';
 import 'package:flutter/material.dart';
 
 ThemeData darkMode = ThemeData(
@@ -14,21 +15,8 @@ ThemeData darkMode = ThemeData(
     bodyColor: Colors.grey[300],
     displayColor: Colors.white,
   ),
-  // pageTransitionsTheme: const PageTransitionsTheme(
-  //     builders: {
-  //       TargetPlatform.android: CustomPageTransition(),
-  //     },
-  //   ),
 
-  // brightness: Brightness.dark,
-  // colorScheme: ColorScheme.dark(
-  //   surface: Colors.grey.shade900,
-  //   primary: Colors.grey.shade800,
-  //   secondary: Colors.grey.shade700,
-  //   inversePrimary: Colors.grey.shade300,
-  // ),
-  // textTheme: ThemeData.dark().textTheme.apply(
-  //   bodyColor: Colors.grey[300],
-  //   displayColor: Colors.white,
-  // ),
+  pageTransitionsTheme: PageTransitionsTheme(
+    builders: {TargetPlatform.android: CustomPageTransition()},
+  ),
 );
