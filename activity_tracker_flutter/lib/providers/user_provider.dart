@@ -1,22 +1,30 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/models/user.dart';
 import 'package:activity_tracker_flutter/services/user_service.dart';
 
 class UserProvider with ChangeNotifier {
   AppUser? _user;
+  StreamSubscription<AppUser?>? _subscription;
 
   AppUser? get user => _user;
 
-  Future<void> loadUser() async {
-    _user = await UserService().getCurrentUserData();
-    notifyListeners();
+  UserProvider() {
+    _startListening();
   }
 
-  Future<void> refreshUser() async {
-    final updatedUser = await UserService().getCurrentUserData();
-    if(updatedUser != null) {
-      _user = updatedUser;
+  void _startListening() {
+    final service = UserService();
+    final userStream = service.streamCurrentUserData();
+
+    _subscription = userStream.listen((appUser) {
+      _user = appUser;
       notifyListeners();
-    }
+    });
+  }
+
+  void stopListening() {
+    _subscription?.cancel();
   }
 }

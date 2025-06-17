@@ -18,8 +18,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    userProvider.loadUser();
     _selectedDate = DateTime.now();
   }
 

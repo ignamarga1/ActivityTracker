@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:activity_tracker_flutter/services/cloudinary_service.dart';
 import 'package:activity_tracker_flutter/services/user_service.dart';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -266,14 +265,6 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                             newNickname: newNickname,
                             newImageUrl: imageUrl,
                           );
-
-                          // Refreshes the user data to show the latest changes
-                          if (context.mounted) {
-                            await Provider.of<UserProvider>(
-                              context,
-                              listen: false,
-                            ).refreshUser();
-                          }
 
                           // Pop and Fluttertoast success message
                           if (context.mounted) {

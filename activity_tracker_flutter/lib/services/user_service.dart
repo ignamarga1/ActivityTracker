@@ -28,25 +28,20 @@ class UserService {
   }
 
   // Get current user data
-  Future<AppUser?> getCurrentUserData() async {
-    // Current user that has logged in
+  Stream<AppUser?> streamCurrentUserData() {
     final currentUser = FirebaseAuth.instance.currentUser;
-
     if (currentUser == null) {
-      return null;
+      return Stream.value(null);
     }
 
-    // Data from Firestore of the current user
-    final userData = await FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection("Users")
         .doc(currentUser.uid)
-        .get();
-
-    if (!userData.exists) {
-      return null;
-    }
-
-    return AppUser.fromMap(userData.data()!);
+        .snapshots()
+        .map((snapshot) {
+          if (!snapshot.exists) return null;
+          return AppUser.fromMap(snapshot.data()!);
+        });
   }
 
   // Delete user
