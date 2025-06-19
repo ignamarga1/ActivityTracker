@@ -46,6 +46,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   http: ^1.4.0
   easy_date_timeline: ^2.0.9
+  numberpicker: ^2.1.2
 
 dev_dependencies:
   flutter_test:
