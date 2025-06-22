@@ -3,35 +3,50 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ActivityService {
   // Create new activity document in Firestore
-  Future<void> createActivityDocument({
+  Future<void> createActivity({
+    required String userId,
+
     required String title,
     String? description,
     required ActivityCategory category,
+
     required MilestoneType milestone,
+    int? quantity,
+    String? measurementUnit,
+    int? durationSeconds,
+
     required FrequencyType frequency,
     List<int>? frequencyDaysOfWeek,
     List<int>? frequencyDaysOfMonth,
+
     required bool reminder,
+    String? reminderTime,
     required Timestamp createdAt,
   }) async {
+    final docRef = FirebaseFirestore.instance.collection("Activities").doc();
     final newActivity = Activity(
+      id: docRef.id,
+      userId: userId,
+
       title: title,
       description: description,
       category: category,
+
       milestone: milestone,
+      quantity: quantity,
+      measurementUnit: measurementUnit,
+      durationSeconds: durationSeconds,
+
       frequency: frequency,
       frequencyDaysOfWeek: frequencyDaysOfWeek,
       frequencyDaysOfMonth: frequencyDaysOfMonth,
+      
       reminder: reminder,
-      completionStreak: 0,
-      maxCompletionStreak: 0,
+      reminderTime: reminderTime,
       createdAt: createdAt,
     );
 
-    await FirebaseFirestore.instance
-        .collection("Activities")
-        .doc()
-        .set(newActivity.toMap());
+    await docRef.set(newActivity.toMap());
   }
 
   // Delete activity

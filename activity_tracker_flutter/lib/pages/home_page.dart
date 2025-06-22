@@ -123,9 +123,8 @@ class _HomePageState extends State<HomePage> {
                       leading: const Icon(Icons.edit_document),
                       title: const Text('Actividad personalizada'),
                       onTap: () async {
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
+                        Navigator.of(context).pop();
+                        Navigator.pushNamed(context, '/createActivity');
                       },
                     ),
 
@@ -133,9 +132,8 @@ class _HomePageState extends State<HomePage> {
                       leading: const Icon(Icons.note_add),
                       title: const Text('Actividad con plantilla'),
                       onTap: () async {
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
+                        Navigator.of(context).pop();
+                        Navigator.pushNamed(context, '/createActivity');
                       },
                     ),
                   ],

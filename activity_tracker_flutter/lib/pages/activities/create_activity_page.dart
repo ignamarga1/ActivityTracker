@@ -1,5 +1,9 @@
 import 'package:activity_tracker_flutter/models/activity.dart';
+import 'package:activity_tracker_flutter/services/activity_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class CreateActivityPage extends StatefulWidget {
@@ -17,20 +21,20 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   final descriptionController = TextEditingController();
 
   // Selected category
-  String? selectedCategory;
+  ActivityCategory? selectedCategory;
   final List<Map<String, dynamic>> categories = [
-    {'label': 'Alimentación', 'icon': Icons.restaurant_rounded},
-    {'label': 'Deporte', 'icon': Icons.fitness_center_sharp},
-    {'label': 'Lectura', 'icon': Icons.menu_book_rounded},
-    {'label': 'Salud', 'icon': Icons.local_hospital_rounded},
-    {'label': 'Meditación', 'icon': Icons.self_improvement_rounded},
-    {'label': 'Dejar mal hábito', 'icon': Icons.not_interested_rounded},
-    {'label': 'Hogar', 'icon': Icons.home_rounded},
-    {'label': 'Ocio', 'icon': Icons.movie_creation_rounded},
-    {'label': 'Trabajo', 'icon': Icons.work},
-    {'label': 'Estudio', 'icon': Icons.school_rounded},
-    {'label': 'Social', 'icon': Icons.groups_rounded},
-    {'label': 'Otro', 'icon': Icons.more_horiz_rounded},
+    {'category': ActivityCategory.nutrition, 'label': 'Alimentación', 'icon': Icons.restaurant_rounded},
+    {'category': ActivityCategory.sport, 'label': 'Deporte', 'icon': Icons.fitness_center_sharp},
+    {'category': ActivityCategory.reading, 'label': 'Lectura', 'icon': Icons.menu_book_rounded},
+    {'category': ActivityCategory.health, 'label': 'Salud', 'icon': Icons.local_hospital_rounded},
+    {'category': ActivityCategory.meditation, 'label': 'Meditación', 'icon': Icons.self_improvement_rounded},
+    {'category': ActivityCategory.quitBadHabit, 'label': 'Dejar mal hábito', 'icon': Icons.not_interested_rounded},
+    {'category': ActivityCategory.home, 'label': 'Hogar', 'icon': Icons.home_rounded},
+    {'category': ActivityCategory.entertainment, 'label': 'Ocio', 'icon': Icons.movie_creation_rounded},
+    {'category': ActivityCategory.work, 'label': 'Trabajo', 'icon': Icons.work},
+    {'category': ActivityCategory.study, 'label': 'Estudio', 'icon': Icons.school_rounded},
+    {'category': ActivityCategory.social, 'label': 'Social', 'icon': Icons.groups_rounded},
+    {'category': ActivityCategory.other, 'label': 'Otro', 'icon': Icons.more_horiz_rounded},
   ];
 
   // Selected milestone
@@ -41,10 +45,25 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   int selectedMinutes = 0;
   int selectedSeconds = 0;
 
-  //final _formKey = GlobalKey<FormState>();
+  // Selected frequency
+  FrequencyType? selectedFrequency = FrequencyType.everyday;
+  final daysOfWeek = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  List<int> selectedDaysOfWeek = [];
+  List<int> selectedDaysOfMonth = [];
+
+  // Reminder
+  bool notificationToggled = false;
+  TimeOfDay? timeOfDayForReminder;
+
+  // Form validator
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    quantityController.dispose();
+    measurementeUnitController.dispose();
     super.dispose();
   }
 
@@ -55,26 +74,105 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.translucent,
-        child: Stepper(
-          physics: BouncingScrollPhysics(),
-          steps: getFormSteps(),
-          currentStep: currentStep,
-          onStepContinue: () {
-            final isLastStep = currentStep == getFormSteps().length - 1;
+        child: Form(
+          key: _formKey,
+          child: Stepper(
+            physics: BouncingScrollPhysics(),
+            steps: getFormSteps(),
+            currentStep: currentStep,
+            onStepContinue: () async {
+              final isLastStep = currentStep == getFormSteps().length - 1;
+              bool isValid = true;
 
-            if (!isLastStep) {
-              setState(() {
-                currentStep += 1;
-              });
-            }
-          },
-          onStepCancel: () {
-            currentStep == 0
-                ? null
-                : setState(() {
-                    currentStep -= 1;
-                  });
-          },
+              switch (currentStep) {
+                case 0:
+                  isValid = _formKey.currentState?.validate() ?? false;
+                  break;
+
+                case 1:
+                  isValid = selectedCategory != null;
+                  break;
+
+                case 2:
+                  isValid =
+                      selectedMilestone != null &&
+                      (selectedMilestone == MilestoneType.yesNo ||
+                          (selectedMilestone == MilestoneType.quantity &&
+                              _formKey.currentState?.validate() == true) ||
+                          (selectedMilestone == MilestoneType.timed &&
+                              (selectedHours +
+                                      selectedMinutes +
+                                      selectedSeconds >
+                                  0)));
+                  break;
+
+                case 3:
+                  isValid =
+                      selectedFrequency != null &&
+                      (selectedFrequency == FrequencyType.everyday ||
+                          (selectedFrequency == FrequencyType.specificDayWeek &&
+                              selectedDaysOfWeek.isNotEmpty) ||
+                          (selectedFrequency ==
+                                  FrequencyType.specificDayMonth &&
+                              selectedDaysOfMonth.isNotEmpty));
+                  break;
+
+                default:
+                  isValid = true;
+              }
+
+              if (isValid) {
+                if (_formKey.currentState?.validate() ?? false) {
+                  if (!isLastStep) {
+                    setState(() {
+                      currentStep += 1;
+                    });
+                  } else {
+                    await ActivityService().createActivity(
+                      userId: FirebaseAuth.instance.currentUser!.uid,
+
+                      title: titleController.text.trim(),
+                      description: descriptionController.text.trim(),
+                      category: selectedCategory!,
+
+                      milestone: selectedMilestone!,
+                      quantity: selectedMilestone == MilestoneType.quantity
+                          ? int.tryParse(quantityController.text) ?? 0
+                          : null,
+                      measurementUnit:
+                          selectedMilestone == MilestoneType.quantity
+                          ? measurementeUnitController.text.trim()
+                          : null,
+                      durationSeconds: selectedMilestone == MilestoneType.timed
+                          ? selectedSeconds
+                          : null,
+                      frequency: selectedFrequency!,
+                      frequencyDaysOfWeek: selectedDaysOfWeek,
+                      frequencyDaysOfMonth: selectedDaysOfMonth,
+                      reminder: notificationToggled,
+                      reminderTime:
+                          (notificationToggled && timeOfDayForReminder != null)
+                          ? _formatTime24h(timeOfDayForReminder!)
+                          : null,
+                      createdAt: Timestamp.now(),
+                    );
+                  }
+                }
+              } else {
+                Fluttertoast.showToast(
+                  msg: 'Hay opciones o campos obligatorios sin completar',
+                  toastLength: Toast.LENGTH_LONG,
+                );
+              }
+            },
+            onStepCancel: () {
+              currentStep == 0
+                  ? null
+                  : setState(() {
+                      currentStep -= 1;
+                    });
+            },
+          ),
         ),
       ),
     );
@@ -125,6 +223,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         // Category Grid
         content: Column(
           children: [
+            // Descriptive text
             Text.rich(
               textAlign: TextAlign.center,
               style: TextStyle(fontStyle: FontStyle.italic),
@@ -132,7 +231,9 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                 text: 'Selecciona la categoría más adecuada para la actividad',
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
+
+            // Grid with categories
             GridView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -145,12 +246,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
               ),
               itemBuilder: (context, index) {
                 final category = categories[index];
-                final isSelected = selectedCategory == category['label'];
+                final isSelected = selectedCategory == category['category'];
 
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      selectedCategory = category['label'];
+                      selectedCategory = category['category'];
                     });
                   },
                   child: Container(
@@ -211,6 +312,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         title: const Text('Hito'),
         content: Column(
           children: [
+            // Descriptive text
             const Text.rich(
               textAlign: TextAlign.center,
               style: TextStyle(fontStyle: FontStyle.italic),
@@ -252,6 +354,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
               // Quantity
               TextFormField(
                 controller: quantityController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'El campo es obligatorio';
+                  }
+                  return null;
+                },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Cantidad',
@@ -264,6 +372,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
               // Measurement unit
               TextFormField(
                 controller: measurementeUnitController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'El campo es obligatorio';
+                  }
+                  return null;
+                },
                 decoration: const InputDecoration(
                   labelText: 'Unidad de medida',
                   border: OutlineInputBorder(),
@@ -328,7 +442,118 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
       Step(
         isActive: currentStep >= 3,
         title: const Text('Frecuencia'),
-        content: Column(children: [
+        content: Column(
+          children: [
+            // Descriptive text
+            const Text.rich(
+              textAlign: TextAlign.center,
+              style: TextStyle(fontStyle: FontStyle.italic),
+              TextSpan(
+                text:
+                    'Selecciona la frecuencia con la que deseas realizar la actividad',
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            // Options
+            Wrap(
+              spacing: 2,
+              direction: Axis.vertical,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: FrequencyType.values.map((type) {
+                final label = {
+                  FrequencyType.everyday: "Diaria",
+                  FrequencyType.specificDayWeek:
+                      "Día/s concreto/s de la semana",
+                  FrequencyType.specificDayMonth: "Día/s concreto/s del mes",
+                }[type];
+
+                final isSelected = selectedFrequency == type;
+
+                return ChoiceChip(
+                  showCheckmark: false,
+                  label: Text(label!),
+                  selected: isSelected,
+                  onSelected: (_) {
+                    setState(() => selectedFrequency = type);
+                  },
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
+
+            // Additional fields for Days of week
+            if (selectedFrequency == FrequencyType.specificDayWeek) ...[
+              SizedBox(
+                width: 240,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: List.generate(7, (index) {
+                    final isSelected = selectedDaysOfWeek.contains(index);
+
+                    return FilterChip(
+                      showCheckmark: false,
+                      label: Text(daysOfWeek[index]),
+                      selected: isSelected,
+                      onSelected: (_) {
+                        setState(() {
+                          isSelected
+                              ? selectedDaysOfWeek.remove(index)
+                              : selectedDaysOfWeek.add(index);
+                        });
+                      },
+                    );
+                  }),
+                ),
+              ),
+            ],
+
+            // Additional fields for Days of month
+            if (selectedFrequency == FrequencyType.specificDayMonth) ...[
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final chipWidth = (constraints.maxWidth - (5 * 5)) / 7;
+
+                  return Wrap(
+                    spacing: 4,
+                    runSpacing: 2,
+                    alignment: WrapAlignment.center,
+                    children: List.generate(31, (index) {
+                      final day = index + 1;
+                      final isSelected = selectedDaysOfMonth.contains(day);
+
+                      return SizedBox(
+                        width: chipWidth,
+                        child: FilterChip(
+                          label: Text(
+                            '$day',
+                            style: const TextStyle(fontSize: 12),
+                            textAlign: TextAlign.center,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 2,
+                            vertical: 0,
+                          ),
+                          selected: isSelected,
+                          showCheckmark: false,
+                          onSelected: (_) {
+                            setState(() {
+                              if (isSelected) {
+                                selectedDaysOfMonth.remove(day);
+                              } else {
+                                selectedDaysOfMonth.add(day);
+                              }
+                            });
+                          },
+                        ),
+                      );
+                    }),
+                  );
+                },
+              ),
+            ],
           ],
         ),
       ),
@@ -337,7 +562,55 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
       Step(
         isActive: currentStep >= 4,
         title: const Text('Notificación'),
-        content: Column(children: [
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Descriptive text
+            const Text.rich(
+              textAlign: TextAlign.center,
+              style: TextStyle(fontStyle: FontStyle.italic),
+              TextSpan(
+                text:
+                    'Selecciona si deseas recibir un recordatorio para realizar la actividad y elige la hora a la que quieres que se te notifique',
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            // Time and toggle for Timepicker
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    notificationToggled && timeOfDayForReminder != null
+                        ? 'Recordatorio: ${_formatTime24h(timeOfDayForReminder!)}'
+                        : 'Recordatorio:',
+                  ),
+                ),
+                Switch(
+                  value: notificationToggled,
+                  onChanged: (value) async {
+                    if (value) {
+                      final pickedTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+                      if (pickedTime != null) {
+                        setState(() {
+                          notificationToggled = true;
+                          timeOfDayForReminder = pickedTime;
+                        });
+                      }
+                    } else {
+                      setState(() {
+                        notificationToggled = false;
+                        timeOfDayForReminder = null;
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -374,5 +647,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         ),
       ],
     );
+  }
+
+  // Converts time format for TimePicker
+  String _formatTime24h(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 }
