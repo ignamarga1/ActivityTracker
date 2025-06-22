@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserService {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   // Create new user document in Firestore
   Future<void> createUserDocument({
     required UserCredential? userCredential,
@@ -29,7 +31,7 @@ class UserService {
 
   // Get current user data
   Stream<AppUser?> streamCurrentUserData() {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = _firebaseAuth.currentUser;
     if (currentUser == null) {
       return Stream.value(null);
     }
@@ -47,7 +49,7 @@ class UserService {
   // Delete user
   Future<void> deleteUserDocument() async {
     // Current user that has logged in
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = _firebaseAuth.currentUser;
 
     if (currentUser != null) {
       await FirebaseFirestore.instance
@@ -62,7 +64,7 @@ class UserService {
     String? newNickname,
     String? newImageUrl,
   }) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = _firebaseAuth.currentUser;
 
     if (currentUser != null) {
       final Map<String, dynamic> profileDataToUpdate = {};

@@ -13,6 +13,7 @@ class EmailVerificationPage extends StatefulWidget {
 }
 
 class _EmailVerificationPageState extends State<EmailVerificationPage> {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late Timer timer;
   bool _isCheckingVerification = true;
 
@@ -22,10 +23,10 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Checks if the user has confirm the email
-      FirebaseAuth.instance.currentUser?.reload();
-      final user = FirebaseAuth.instance.currentUser;
+      _firebaseAuth.currentUser?.reload();
+      final user = _firebaseAuth.currentUser;
 
-      if (user != null && FirebaseAuth.instance.currentUser!.emailVerified) {
+      if (user != null && _firebaseAuth.currentUser!.emailVerified) {
         timer.cancel();
 
         if (mounted) {
@@ -97,7 +98,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                   text: "Volver a enviar",
                   onPressed: () async {
                     // Sends again the verification email
-                    await FirebaseAuth.instance.currentUser
+                    await _firebaseAuth.currentUser
                         ?.sendEmailVerification();
                     Fluttertoast.showToast(
                       msg: 'Correo de verificación reenviado',

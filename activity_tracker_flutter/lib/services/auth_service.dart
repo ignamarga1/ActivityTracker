@@ -34,7 +34,7 @@ class AuthService {
       }
 
       // Create a new user
-      final userCredential = await FirebaseAuth.instance
+      final userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
 
       // Send email verification
@@ -132,6 +132,8 @@ class AuthService {
     try {
       // User log out
       await _firebaseAuth.signOut();
+      await Future.delayed(Duration(milliseconds: 200));
+      
 
       if (context.mounted) {
         Fluttertoast.showToast(
@@ -191,7 +193,7 @@ class AuthService {
     required BuildContext context,
     required String password,
   }) async {
-    final user = FirebaseAuth.instance.currentUser!;
+    final user = _firebaseAuth.currentUser!;
 
     try {
       // Authenticate again in case Firebase Aunthentication fails to delete the account
