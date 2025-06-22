@@ -1,3 +1,5 @@
+import 'package:activity_tracker_flutter/pages/activities/activity_details_page.dart';
+import 'package:activity_tracker_flutter/pages/activities/create_activity_page.dart';
 import 'package:activity_tracker_flutter/pages/challenges/challenges_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/email_verification_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/forgot_password_page.dart';
@@ -17,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 
@@ -41,9 +44,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: lightMode,
       darkTheme: darkMode,
       themeMode: ThemeMode.system,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+        child: child!,
+      ),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('es'), // Spanish
+      ],
       initialRoute: FirebaseAuth.instance.currentUser == null ? '/login' : '/',
       routes: {
         '/': (context) => HomePage(),
@@ -61,6 +77,10 @@ class MyApp extends StatelessWidget {
 
         // USER PROFILE
         '/editUserProfile': (context) => EditUserProfilePage(),
+
+        // ACTIVITIES
+        '/createActivity': (context) => CreateActivityPage(),
+        '/activityDetails': (context) => ActivityDetailsPage(),
       },
     );
   }
