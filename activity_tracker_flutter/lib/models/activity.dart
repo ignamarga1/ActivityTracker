@@ -33,10 +33,14 @@ class Activity {
 
   final MilestoneType _milestone;
   final int? _quantity;
+  final int? _progressQuantity;
   final String? _measurementUnit;
   final int? _durationHours;
   final int? _durationMinutes;
   final int? _durationSeconds;
+  final int? _remainingHours;
+  final int? _remainingMinutes;
+  final int? _remainingSeconds;
 
   final FrequencyType _frequency;
   final List<int>? _frequencyDaysOfWeek;
@@ -60,10 +64,14 @@ class Activity {
 
     required MilestoneType milestone,
     int? quantity,
+    int? progressQuantity,
     String? measurementUnit,
     int? durationHours,
     int? durationMinutes,
     int? durationSeconds,
+    int? remainingHours,
+    int? remainingMinutes,
+    int? remainingSeconds,
 
     required FrequencyType frequency,
     List<int>? frequencyDaysOfWeek,
@@ -84,10 +92,14 @@ class Activity {
 
        _milestone = milestone,
        _quantity = quantity,
+       _progressQuantity = progressQuantity,
        _measurementUnit = measurementUnit,
        _durationHours = durationHours,
        _durationMinutes = durationMinutes,
        _durationSeconds = durationSeconds,
+       _remainingHours = remainingHours,
+       _remainingMinutes = remainingMinutes,
+       _remainingSeconds = remainingSeconds,
 
        _frequency = frequency,
        _frequencyDaysOfWeek = frequencyDaysOfWeek,
@@ -110,10 +122,14 @@ class Activity {
 
   MilestoneType get milestone => _milestone;
   int? get quantity => _quantity;
+  int? get progressQuantity => _progressQuantity;
   String? get measurementUnit => _measurementUnit;
   int? get durationHours => _durationHours;
   int? get durationMinutes => _durationMinutes;
   int? get durationSeconds => _durationSeconds;
+  int? get remainingHours => _remainingHours;
+  int? get remainingMinutes => _remainingMinutes;
+  int? get remainingSeconds => _remainingSeconds;
 
   FrequencyType get frequency => _frequency;
   List<int>? get frequencyDaysOfWeek => _frequencyDaysOfWeek;
@@ -142,10 +158,14 @@ class Activity {
       
       milestone: _enumFromString(MilestoneType.values, map['milestone']),
       quantity: map['quantity'] ?? 1,
+      progressQuantity: map['progressQuantity'] ?? 0,
       measurementUnit: map['measurementUnit'] ?? '',
       durationHours: map['durationHours'] ?? 0,
       durationMinutes: map['durationMinutes'] ?? 0,
       durationSeconds: map['durationSeconds'] ?? 1,
+      remainingHours: map['remainingHours'] ?? 0,
+      remainingMinutes: map['remainingMinutes'] ?? 0,
+      remainingSeconds: map['remainingSeconds'] ?? 1,
 
       frequency: _enumFromString(FrequencyType.values, map['frequency']),
       frequencyDaysOfWeek: (map['frequencyDaysOfWeek'] as List?)?.cast<int>(),
@@ -171,10 +191,14 @@ class Activity {
 
       'milestone': _milestone.name,
       'quantity': _quantity,
+      'progressQuantity': _progressQuantity,
       'measurementUnit': _measurementUnit,
       'durationHours': _durationHours,
       'durationMinutes': _durationMinutes,
       'durationSeconds': _durationSeconds,
+      'remainingHours': _remainingHours,
+      'remainingMinutes': _remainingMinutes,
+      'remainingSeconds': _remainingSeconds,
 
       'frequency': _frequency.name,
       'frequencyDaysOfWeek': _frequencyDaysOfWeek,

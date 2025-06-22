@@ -12,8 +12,14 @@ class ActivityService {
 
     required MilestoneType milestone,
     int? quantity,
+    int? progressQuantity,
     String? measurementUnit,
+    int? durationHours,
+    int? durationMinutes,
     int? durationSeconds,
+    int? remainingHours,
+    int? remainingMinutes,
+    int? remainingSeconds,
 
     required FrequencyType frequency,
     List<int>? frequencyDaysOfWeek,
@@ -34,19 +40,39 @@ class ActivityService {
 
       milestone: milestone,
       quantity: quantity,
+      progressQuantity: progressQuantity,
       measurementUnit: measurementUnit,
+      durationHours: durationHours,
+      durationMinutes: durationMinutes,
       durationSeconds: durationSeconds,
+      remainingHours: remainingHours,
+      remainingMinutes: remainingMinutes,
+      remainingSeconds: remainingSeconds,
 
       frequency: frequency,
       frequencyDaysOfWeek: frequencyDaysOfWeek,
       frequencyDaysOfMonth: frequencyDaysOfMonth,
-      
+
       reminder: reminder,
       reminderTime: reminderTime,
       createdAt: createdAt,
     );
 
     await docRef.set(newActivity.toMap());
+  }
+
+  // Get activities by user (ordered by title by default)
+  Stream<List<Activity>> getUserActivitiesStream(String userId) {
+    return FirebaseFirestore.instance
+        .collection("Activities")
+        .where("userId", isEqualTo: userId)
+        .orderBy("title")
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => Activity.fromMap(doc.data(), id: doc.id))
+              .toList(),
+        );
   }
 
   // Delete activity
