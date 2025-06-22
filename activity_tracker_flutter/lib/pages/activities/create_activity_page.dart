@@ -23,18 +23,62 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   // Selected category
   ActivityCategory? selectedCategory;
   final List<Map<String, dynamic>> categories = [
-    {'category': ActivityCategory.nutrition, 'label': 'Alimentación', 'icon': Icons.restaurant_rounded},
-    {'category': ActivityCategory.sport, 'label': 'Deporte', 'icon': Icons.fitness_center_sharp},
-    {'category': ActivityCategory.reading, 'label': 'Lectura', 'icon': Icons.menu_book_rounded},
-    {'category': ActivityCategory.health, 'label': 'Salud', 'icon': Icons.local_hospital_rounded},
-    {'category': ActivityCategory.meditation, 'label': 'Meditación', 'icon': Icons.self_improvement_rounded},
-    {'category': ActivityCategory.quitBadHabit, 'label': 'Dejar mal hábito', 'icon': Icons.not_interested_rounded},
-    {'category': ActivityCategory.home, 'label': 'Hogar', 'icon': Icons.home_rounded},
-    {'category': ActivityCategory.entertainment, 'label': 'Ocio', 'icon': Icons.movie_creation_rounded},
+    {
+      'category': ActivityCategory.nutrition,
+      'label': 'Alimentación',
+      'icon': Icons.restaurant_rounded,
+    },
+    {
+      'category': ActivityCategory.sport,
+      'label': 'Deporte',
+      'icon': Icons.fitness_center_sharp,
+    },
+    {
+      'category': ActivityCategory.reading,
+      'label': 'Lectura',
+      'icon': Icons.menu_book_rounded,
+    },
+    {
+      'category': ActivityCategory.health,
+      'label': 'Salud',
+      'icon': Icons.local_hospital_rounded,
+    },
+    {
+      'category': ActivityCategory.meditation,
+      'label': 'Meditación',
+      'icon': Icons.self_improvement_rounded,
+    },
+    {
+      'category': ActivityCategory.quitBadHabit,
+      'label': 'Dejar mal hábito',
+      'icon': Icons.not_interested_rounded,
+    },
+    {
+      'category': ActivityCategory.home,
+      'label': 'Hogar',
+      'icon': Icons.home_rounded,
+    },
+    {
+      'category': ActivityCategory.entertainment,
+      'label': 'Ocio',
+      'icon': Icons.movie_creation_rounded,
+    },
     {'category': ActivityCategory.work, 'label': 'Trabajo', 'icon': Icons.work},
-    {'category': ActivityCategory.study, 'label': 'Estudio', 'icon': Icons.school_rounded},
-    {'category': ActivityCategory.social, 'label': 'Social', 'icon': Icons.groups_rounded},
-    {'category': ActivityCategory.other, 'label': 'Otro', 'icon': Icons.more_horiz_rounded},
+    {
+      'category': ActivityCategory.study,
+      'label': 'Estudio',
+      'icon': Icons.school_rounded,
+    },
+    {
+      'category': ActivityCategory.social,
+      'label': 'Social',
+      'icon': Icons.groups_rounded,
+    },
+    {
+      'category': ActivityCategory.other,
+      'label': 'Otro',
+      'icon': Icons.more_horiz_rounded,
+    },
   ];
 
   // Selected milestone
@@ -70,7 +114,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Crear actividad')),
+      appBar: AppBar(
+        title: const Text('Crear actividad'),
+        scrolledUnderElevation: 0,
+      ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.translucent,
@@ -139,11 +186,30 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                       quantity: selectedMilestone == MilestoneType.quantity
                           ? int.tryParse(quantityController.text) ?? 0
                           : null,
+                      progressQuantity:
+                          selectedMilestone == MilestoneType.quantity
+                          ? 0
+                          : null,
                       measurementUnit:
                           selectedMilestone == MilestoneType.quantity
                           ? measurementeUnitController.text.trim()
                           : null,
+                      durationHours: selectedMilestone == MilestoneType.timed
+                          ? selectedHours
+                          : null,
+                      durationMinutes: selectedMilestone == MilestoneType.timed
+                          ? selectedMinutes
+                          : null,
                       durationSeconds: selectedMilestone == MilestoneType.timed
+                          ? selectedSeconds
+                          : null,
+                      remainingHours: selectedMilestone == MilestoneType.timed
+                          ? selectedHours
+                          : null,
+                      remainingMinutes: selectedMilestone == MilestoneType.timed
+                          ? selectedMinutes
+                          : null,
+                      remainingSeconds: selectedMilestone == MilestoneType.timed
                           ? selectedSeconds
                           : null,
                       frequency: selectedFrequency!,
@@ -156,6 +222,14 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                           : null,
                       createdAt: Timestamp.now(),
                     );
+                    Fluttertoast.showToast(
+                      msg: '¡Actividad creada con éxito!',
+                      toastLength: Toast.LENGTH_LONG,
+                    );
+
+                    if (context.mounted) {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    }
                   }
                 }
               } else {
@@ -171,6 +245,26 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   : setState(() {
                       currentStep -= 1;
                     });
+            },
+
+            controlsBuilder: (context, details) {
+              final isLastStep = currentStep == getFormSteps().length - 1;
+
+              return Row(
+                children: [
+                  TextButton(
+                    onPressed: details.onStepContinue,
+                    child: Text(isLastStep ? 'Confirmar' : 'Continuar'),
+                  ),
+                  const SizedBox(width: 8),
+
+                  if (currentStep > 0)
+                    TextButton(
+                      onPressed: details.onStepCancel,
+                      child: const Text('Atrás'),
+                    ),
+                ],
+              );
             },
           ),
         ),
