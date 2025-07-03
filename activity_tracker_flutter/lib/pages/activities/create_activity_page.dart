@@ -186,10 +186,6 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                       quantity: selectedMilestone == MilestoneType.quantity
                           ? int.tryParse(quantityController.text) ?? 0
                           : null,
-                      progressQuantity:
-                          selectedMilestone == MilestoneType.quantity
-                          ? 0
-                          : null,
                       measurementUnit:
                           selectedMilestone == MilestoneType.quantity
                           ? measurementeUnitController.text.trim()
@@ -201,15 +197,6 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                           ? selectedMinutes
                           : null,
                       durationSeconds: selectedMilestone == MilestoneType.timed
-                          ? selectedSeconds
-                          : null,
-                      remainingHours: selectedMilestone == MilestoneType.timed
-                          ? selectedHours
-                          : null,
-                      remainingMinutes: selectedMilestone == MilestoneType.timed
-                          ? selectedMinutes
-                          : null,
-                      remainingSeconds: selectedMilestone == MilestoneType.timed
                           ? selectedSeconds
                           : null,
                       frequency: selectedFrequency!,
