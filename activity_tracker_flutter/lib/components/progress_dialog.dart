@@ -1,19 +1,25 @@
 import 'dart:async';
-import 'package:activity_tracker_flutter/services/activity_service.dart';
+import 'package:activity_tracker_flutter/models/activity_progress.dart';
+import 'package:activity_tracker_flutter/services/activity_progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
 
 class ProgressDialog extends StatefulWidget {
   final Activity activity;
+  final ActivityProgress? progress;
 
-  const ProgressDialog({super.key, required this.activity});
+  const ProgressDialog({
+    super.key,
+    required this.activity,
+    required this.progress,
+  });
 
   @override
   State<ProgressDialog> createState() => _ProgressDialogState();
 }
 
 class _ProgressDialogState extends State<ProgressDialog> {
-  late int progress;
+  late int quantity;
   late int hours;
   late int minutes;
   late int seconds;
@@ -25,20 +31,24 @@ class _ProgressDialogState extends State<ProgressDialog> {
   bool isTimerRunning = false;
   Timer? countdownTimer;
 
+  bool isCompleted = false;
+
   @override
   void initState() {
     super.initState();
     final activity = widget.activity;
 
-    progress = activity.progressQuantity ?? 0;
+    quantity = widget.progress?.progressQuantity ?? 0;
 
-    hours = activity.remainingHours ?? 0;
-    minutes = activity.remainingMinutes ?? 0;
-    seconds = activity.remainingSeconds ?? 0;
+    hours = widget.progress?.remainingHours ?? 0;
+    minutes = widget.progress?.remainingMinutes ?? 0;
+    seconds = widget.progress?.remainingSeconds ?? 0;
 
     goalHours = activity.durationHours ?? 0;
     goalMinutes = activity.durationMinutes ?? 0;
     goalSeconds = activity.durationSeconds ?? 0;
+
+    isCompleted = widget.progress!.completed;
   }
 
   @override
@@ -55,7 +65,10 @@ class _ProgressDialogState extends State<ProgressDialog> {
       countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         if (hours == 0 && minutes == 0 && seconds == 0) {
           countdownTimer?.cancel();
-          setState(() => isTimerRunning = false);
+          setState(() {
+            isTimerRunning = false;
+            isCompleted = true;
+          });
         } else {
           setState(() {
             if (seconds > 0) {
@@ -79,11 +92,13 @@ class _ProgressDialogState extends State<ProgressDialog> {
     });
   }
 
-  void markAsCompleted() {
+  // Function to automatically complete the timed activity
+  void markTimedActivityAsCompleted() {
     setState(() {
       hours = 0;
       minutes = 0;
       seconds = 0;
+      isCompleted = true;
     });
     countdownTimer?.cancel();
     isTimerRunning = false;
@@ -100,20 +115,20 @@ class _ProgressDialogState extends State<ProgressDialog> {
     return AlertDialog(
       // Dialog text
       title: Text(
-        'Progreso de "${activity.title}"',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        'Progreso de la actividad \n"${activity.title}"',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
       ),
 
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Behaviour for Quantity activity
+          // Behavior for Quantity activity
           if (activity.milestone == MilestoneType.quantity) ...[
             Column(
               children: [
                 Text(
-                  'Cantidad actual: $progress / ${activity.quantity}',
+                  'Cantidad actual: $quantity / ${activity.quantity}',
                   style: TextStyle(fontSize: 15),
                 ),
                 const SizedBox(height: 5),
@@ -126,29 +141,56 @@ class _ProgressDialogState extends State<ProgressDialog> {
             ),
             const SizedBox(height: 10),
 
+            // Increment and decrement quantity buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: () {
-                    if (progress > 0) {
-                      setState(() => progress--);
-                    }
-                  },
+                  onPressed: quantity > 0
+                      ? () => setState(() {
+                          quantity--;
+                          isCompleted = false;
+                        })
+                      : null,
                 ),
+
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () {
-                    if (progress < (activity.quantity ?? 0)) {
-                      setState(() => progress++);
-                    }
-                  },
+                  onPressed: quantity < (activity.quantity ?? 0)
+                      ? () => setState(() {
+                          quantity++;
+                          if (quantity >= (activity.quantity ?? 0)) {
+                            isCompleted = true;
+                          }
+                        })
+                      : null,
                 ),
               ],
             ),
 
-            // Behaviour for Timed activity
+            // Complete quantity button
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black
+                    : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  quantity = activity.quantity ?? 0;
+                  isCompleted = true;
+                });
+              },
+              icon: const Icon(Icons.done),
+              label: const Text('Completar'),
+            ),
+
+            // Behavior for Timed activity
           ] else if (activity.milestone == MilestoneType.timed) ...[
             Text(
               'Tiempo restante: ${formatTime(hours, minutes, seconds)}',
@@ -159,27 +201,85 @@ class _ProgressDialogState extends State<ProgressDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Start / Stop button
                 ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : Colors.white,
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   onPressed: toggleTimer,
                   icon: Icon(isTimerRunning ? Icons.pause : Icons.play_arrow),
                   label: Text(isTimerRunning ? 'Pausar' : 'Iniciar'),
                 ),
                 const SizedBox(width: 10),
+
+                // Complete timer button
                 ElevatedButton.icon(
-                  onPressed: markAsCompleted,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: markTimedActivityAsCompleted,
+                  icon: const Icon(Icons.check),
                   label: const Text('Completar'),
                 ),
               ],
             ),
             const SizedBox(height: 25),
+
             Text(
               'Objetivo: ${formatTime(goalHours, goalMinutes, goalSeconds)}',
               style: TextStyle(fontSize: 15),
             ),
 
-            // Behaviour for yesNo activity
+            // Behavior for YesNo activity
           ] else ...[
-            const Text('WIP'),
+            Text(
+              '¿Estás seguro de que quieres marcar esta actividad como completada?',
+              style: TextStyle(fontSize: 15),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+
+            Text(
+              'Estado: ${isCompleted ? 'Completada' : 'Sin completar'}',
+              style: TextStyle(fontSize: 15),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+
+            // Complete button
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black
+                    : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  isCompleted = true;
+                });
+              },
+              icon: const Icon(Icons.done),
+              label: const Text('Completar'),
+            ),
           ],
         ],
       ),
@@ -190,12 +290,14 @@ class _ProgressDialogState extends State<ProgressDialog> {
         ),
         TextButton(
           onPressed: () {
-            ActivityService().updateActivityProgress(
-              id: activity.id,
-              progressQuantity: progress,
+            ActivityProgressService().updateActivityProgress(
+              activityId: activity.id,
+              date: DateTime.now(),
+              progressQuantity: quantity,
               remainingHours: hours,
               remainingMinutes: minutes,
               remainingSeconds: seconds,
+              completed: isCompleted,
             );
 
             Navigator.pop(context);
