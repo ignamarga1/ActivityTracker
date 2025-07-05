@@ -121,7 +121,7 @@ class Activity {
   List<int>? get frequencyDaysOfMonth => _frequencyDaysOfMonth;
 
   bool get reminder => _reminder;
-  String? get dateTime => _reminderTime;
+  String? get reminderTime => _reminderTime;
   int get completionStreak => _completionStreak;
   int get maxCompletionStreak => _maxCompletionStreak;
   Timestamp get createdAt => _createdAt;
