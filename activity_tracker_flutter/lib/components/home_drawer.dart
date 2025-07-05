@@ -1,12 +1,18 @@
+import 'package:activity_tracker_flutter/components/drawer_header.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'drawer_tile.dart'; // si lo separas en otro archivo
 
-class HomeDrawer extends StatelessWidget {
+class HomeDrawer extends StatefulWidget {
   const HomeDrawer({super.key});
 
+  @override
+  State<HomeDrawer> createState() => _HomeDrawerState();
+}
+
+class _HomeDrawerState extends State<HomeDrawer> {
   @override
   Widget build(BuildContext context) {
     final textStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w500);
@@ -20,82 +26,12 @@ class HomeDrawer extends StatelessWidget {
       child: Column(
         children: [
           // DRAWER HEADER
-          DrawerHeader(
-            margin: EdgeInsets.zero,
-            padding: EdgeInsets.zero,
-            decoration: BoxDecoration(color: Colors.grey.shade800),
-            child: user == null
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(color: Colors.white),
-                        SizedBox(height: 12),
-                        Text(
-                          'Cargando datos...',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // App name
-                      Text(
-                        'Activity Tracker',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // User profile
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundImage: user.profilePictureURL != ''
-                                ? NetworkImage(user.profilePictureURL!)
-                                : null,
-                            backgroundColor: Colors.grey.shade700,
-                            child: user.profilePictureURL == ''
-                                ? Icon(
-                                    Icons.person,
-                                    size: 40,
-                                    color: Colors.white,
-                                  )
-                                : null,
-                          ),
-                          const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '@${user.username}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                user.nickname,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+          ProfileCardHeader(
+            profileImageUrl: user!.profilePictureURL,
+            username: user.username,
+            nickname: user.nickname,
           ),
-
+          
           // DRAWER OPTIONS
           Expanded(
             child: ListView(
