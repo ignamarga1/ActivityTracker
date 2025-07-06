@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 
-class ProfileCardHeader extends StatefulWidget {
+class DrawerHeaderCard extends StatefulWidget {
   final String? profileImageUrl;
   final String username;
   final String nickname;
 
-  const ProfileCardHeader({
+  const DrawerHeaderCard({
     super.key,
     required this.profileImageUrl,
     required this.username,
@@ -14,10 +14,10 @@ class ProfileCardHeader extends StatefulWidget {
   });
 
   @override
-  State<ProfileCardHeader> createState() => _ProfileCardHeaderState();
+  State<DrawerHeaderCard> createState() => _DrawerHeaderCardState();
 }
 
-class _ProfileCardHeaderState extends State<ProfileCardHeader> {
+class _DrawerHeaderCardState extends State<DrawerHeaderCard> {
   static final Map<String, List<Color>> _colorCache = {};
 
   static const Color defaultColor1 = Colors.blue;
@@ -33,7 +33,7 @@ class _ProfileCardHeaderState extends State<ProfileCardHeader> {
 
   // Checks if the widget has updated
   @override
-  void didUpdateWidget(ProfileCardHeader oldWidget) {
+  void didUpdateWidget(DrawerHeaderCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.profileImageUrl != oldWidget.profileImageUrl) {
       _colorsFuture = _extractColors();

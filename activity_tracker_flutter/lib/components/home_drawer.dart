@@ -3,7 +3,7 @@ import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:provider/provider.dart';
-import 'drawer_tile.dart'; // si lo separas en otro archivo
+import 'drawer_tile.dart'; 
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({super.key});
@@ -26,7 +26,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       child: Column(
         children: [
           // DRAWER HEADER
-          ProfileCardHeader(
+          DrawerHeaderCard(
             profileImageUrl: user!.profilePictureURL,
             username: user.username,
             nickname: user.nickname,

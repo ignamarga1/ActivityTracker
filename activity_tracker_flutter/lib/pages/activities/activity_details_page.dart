@@ -33,7 +33,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalles de la actividad'),
+        title: const Text('Detalles'),
         backgroundColor: Theme.of(context).colorScheme.surface,
 
         // TabBar
@@ -91,7 +91,7 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                   const Text(
                     'Información general',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   _buildInfoRow('Título:', activity.title),
                   if (activity.description!.isNotEmpty)
@@ -103,7 +103,7 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                   const Text(
                     'Hito',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +136,7 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                   const Text(
                     'Frecuencia',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +166,7 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                   const Text(
                     'Recordatorio',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,7 +277,10 @@ Widget _buildInfoRow(String title, String value) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -285,6 +288,7 @@ Widget _buildInfoRow(String title, String value) {
             textAlign: TextAlign.right,
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
+            style: const TextStyle(fontSize: 16),
           ),
         ),
       ],
@@ -301,7 +305,10 @@ Widget _buildCategoryRow(String title, ActivityCategory category) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+        ),
         const SizedBox(width: 10),
 
         Row(
@@ -313,6 +320,7 @@ Widget _buildCategoryRow(String title, ActivityCategory category) {
               textAlign: TextAlign.right,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
+              style: const TextStyle(fontSize: 16),
             ),
           ],
         ),

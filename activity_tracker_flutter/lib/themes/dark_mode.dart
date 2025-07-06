@@ -1,4 +1,3 @@
-//import 'package:activity_tracker_flutter/themes/custom_page_transition.dart';
 import 'package:activity_tracker_flutter/themes/custom_page_transition.dart';
 import 'package:flutter/material.dart';
 
