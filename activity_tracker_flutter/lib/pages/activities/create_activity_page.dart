@@ -1,3 +1,4 @@
+import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:activity_tracker_flutter/services/activity_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -209,9 +210,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                           : null,
                       createdAt: Timestamp.now(),
                     );
-                    Fluttertoast.showToast(
-                      msg: '¡Actividad creada con éxito!',
-                      toastLength: Toast.LENGTH_LONG,
+                    StdFluttertoast.show(
+                      '¡Actividad creada con éxito!',
+                      Toast.LENGTH_LONG,
+                      ToastGravity.BOTTOM,
                     );
 
                     if (context.mounted) {
@@ -220,9 +222,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   }
                 }
               } else {
-                Fluttertoast.showToast(
-                  msg: 'Hay opciones o campos obligatorios sin completar',
-                  toastLength: Toast.LENGTH_LONG,
+                StdFluttertoast.show(
+                  'Hay opciones o campos obligatorios sin completar',
+                  Toast.LENGTH_LONG,
+                  ToastGravity.BOTTOM,
                 );
               }
             },
@@ -347,7 +350,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                       color: isSelected
                           ? Theme.of(
                               context,
-                            ).colorScheme.primary.withValues(alpha: 0.5)
+                            ).colorScheme.primary
                           : Theme.of(context).colorScheme.surface,
                     ),
                     padding: const EdgeInsets.symmetric(
@@ -359,21 +362,21 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                         Icon(
                           category['icon'],
                           color: isSelected
-                              ? Theme.of(context).colorScheme.inversePrimary
-                              : Colors.grey,
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurface,
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             category['label'],
                             style: TextStyle(
-                              fontSize: 13,
-                              color: isSelected
-                                  ? Theme.of(context).colorScheme.inversePrimary
-                                  : Colors.grey[300],
+                              fontSize: 12,
                               fontWeight: isSelected
                                   ? FontWeight.bold
                                   : FontWeight.normal,
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
