@@ -81,6 +81,13 @@ class ActivityService {
         );
   }
 
+  // Get activity by id
+  Stream<Activity> getActivityById(String activityId) {
+    return _collection.doc(activityId).snapshots().map((snapshot) {
+      return Activity.fromMap(snapshot.data()!, id: snapshot.id);
+    });
+  }
+
   // Update activity
   Future<void> updateActivity({
     required String id,

@@ -14,6 +14,7 @@ class ActivityDetailsPage extends StatefulWidget {
 class _ActivityDetailsPageState extends State<ActivityDetailsPage>
     with TickerProviderStateMixin {
   late final TabController tabBarController;
+  String? activityId;
 
   @override
   void initState() {
@@ -28,43 +29,64 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    activityId = ModalRoute.of(context)!.settings.arguments as String;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final activity = ModalRoute.of(context)!.settings.arguments as Activity;
+    return StreamBuilder<Activity>(
+      stream: ActivityService().getActivityById(activityId!),
+      builder: (context, snapshot) {
+        if (snapshot.hasError || !snapshot.hasData) {
+          return const Scaffold(
+            body: Center(child: Text('No se pudo cargar la actividad')),
+          );
+        }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detalles'),
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        final activity = snapshot.data!;
 
-        // TabBar
-        bottom: TabBar(
-          controller: tabBarController,
-          dividerColor: Colors.transparent,
-          tabs: [
-            Tab(text: 'Estadísticas', icon: Icon(Icons.bar_chart_rounded)),
-            Tab(text: 'Información', icon: Icon(Icons.assignment)),
-          ],
-        ),
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Detalles'),
+            backgroundColor: Theme.of(context).colorScheme.surface,
 
-        // Edit button
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.pushNamed(context, '/editActivity');
-            },
+            // TabBar
+            bottom: TabBar(
+              controller: tabBarController,
+              dividerColor: Colors.transparent,
+              tabs: [
+                Tab(text: 'Estadísticas', icon: Icon(Icons.bar_chart_rounded)),
+                Tab(text: 'Información', icon: Icon(Icons.assignment)),
+              ],
+            ),
+
+            // Edit button
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () async {
+                  Navigator.pushNamed(
+                    context,
+                    '/editActivity',
+                    arguments: activity,
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
 
-      // TabBar contents
-      body: TabBarView(
-        controller: tabBarController,
-        children: [
-          _buildStatisticsTab(context, activity),
-          _buildDetailsTab(context, activity),
-        ],
-      ),
+          // TabBar contents
+          body: TabBarView(
+            controller: tabBarController,
+            children: [
+              _buildStatisticsTab(context, activity),
+              _buildDetailsTab(context, activity),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -113,9 +135,12 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                         getMilestoneLabel(activity.milestone),
                       ),
                       if (activity.milestone == MilestoneType.quantity) ...[
-                        _buildInfoRow('Cantidad', activity.quantity.toString()),
                         _buildInfoRow(
-                          'Unidad de medida',
+                          'Cantidad:',
+                          activity.quantity.toString(),
+                        ),
+                        _buildInfoRow(
+                          'Unidad de medida:',
                           activity.measurementUnit.toString(),
                         ),
                       ],

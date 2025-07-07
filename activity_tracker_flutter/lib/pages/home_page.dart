@@ -357,7 +357,7 @@ class _HomePageState extends State<HomePage> {
                               Navigator.pushNamed(
                                 context,
                                 '/activityDetails',
-                                arguments: activity,
+                                arguments: activity.id,
                               );
                             },
 

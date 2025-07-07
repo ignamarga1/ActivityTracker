@@ -1,5 +1,6 @@
 import 'package:activity_tracker_flutter/pages/activities/activity_details_page.dart';
 import 'package:activity_tracker_flutter/pages/activities/create_activity_page.dart';
+import 'package:activity_tracker_flutter/pages/activities/edit_activity_page.dart';
 import 'package:activity_tracker_flutter/pages/challenges/challenges_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/email_verification_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/forgot_password_page.dart';
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
         // ACTIVITIES
         '/createActivity': (context) => CreateActivityPage(),
         '/activityDetails': (context) => ActivityDetailsPage(),
+        '/editActivity': (context) => EditActivityPage(),
       },
     );
   }
