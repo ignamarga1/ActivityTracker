@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                         activityId: activity.id,
                         date: _selectedDate,
                         createdAt: activity.createdAt,
-                        initialQuantity: activity.quantity,
+                        initialQuantity: activity.milestone == MilestoneType.quantity ? 0 : null,
                         remainingHours: activity.durationHours,
                         remainingMinutes: activity.durationMinutes,
                         remainingSeconds: activity.durationSeconds,

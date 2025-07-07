@@ -46,7 +46,7 @@ class ActivityProgressService {
           createdAt: createdAt,
           completed: false,
           date: DateFormat('dd-MM-yyyy').format(date),
-          progressQuantity: initialQuantity ?? 0,
+          progressQuantity: initialQuantity,
           remainingHours: remainingHours,
           remainingMinutes: remainingMinutes,
           remainingSeconds: remainingSeconds,

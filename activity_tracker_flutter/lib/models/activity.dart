@@ -33,7 +33,6 @@ class Activity {
 
   final MilestoneType _milestone;
   final int? _quantity;
-
   final String? _measurementUnit;
   final int? _durationHours;
   final int? _durationMinutes;
@@ -134,7 +133,7 @@ class Activity {
   factory Activity.fromMap(Map<String, dynamic> map, {required String id}) {
     return Activity(
       id: id,
-      userId: map['userId'] ?? '',
+      userId: map['userId'],
 
       title: map['title'] ?? '',
       description: map['description'] ?? '',
@@ -142,20 +141,20 @@ class Activity {
       category: _enumFromString(ActivityCategory.values, map['category']),
       
       milestone: _enumFromString(MilestoneType.values, map['milestone']),
-      quantity: map['quantity'] ?? 1,
-      measurementUnit: map['measurementUnit'] ?? '',
-      durationHours: map['durationHours'] ?? 0,
-      durationMinutes: map['durationMinutes'] ?? 0,
-      durationSeconds: map['durationSeconds'] ?? 1,
+      quantity: map['quantity'],
+      measurementUnit: map['measurementUnit'],
+      durationHours: map['durationHours'],
+      durationMinutes: map['durationMinutes'],
+      durationSeconds: map['durationSeconds'],
 
       frequency: _enumFromString(FrequencyType.values, map['frequency']),
       frequencyDaysOfWeek: (map['frequencyDaysOfWeek'] as List?)?.cast<int>(),
       frequencyDaysOfMonth: (map['frequencyDaysOfMonth'] as List?)?.cast<int>(),
 
       reminder: map['reminder'] ?? false,
-      reminderTime: map['reminderTime'] ?? '',
-      completionStreak: map['completionStreak'] ?? 0,
-      maxCompletionStreak: map['maxCompletionStreak'] ?? 0,
+      reminderTime: map['reminderTime'],
+      completionStreak: map['completionStreak'],
+      maxCompletionStreak: map['maxCompletionStreak'],
       createdAt: map['createdAt'] ?? Timestamp.now(),
     );
   }

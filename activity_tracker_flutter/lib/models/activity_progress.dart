@@ -54,15 +54,15 @@ class ActivityProgress {
   }) {
     return ActivityProgress(
       id: id,
-      activityId: map['activityId'] ?? '',
+      activityId: map['activityId'],
       createdAt: map['createdAt'] ?? Timestamp.now(),
       completed: map['completed'] ?? false,
-      date: map['date'] ?? '',
+      date: map['date'],
 
-      progressQuantity: map['progressQuantity'] ?? 0,
-      remainingHours: map['remainingHours'] ?? 0,
-      remainingMinutes: map['remainingMinutes'] ?? 0,
-      remainingSeconds: map['remainingSeconds'] ?? 1,
+      progressQuantity: map['progressQuantity'],
+      remainingHours: map['remainingHours'],
+      remainingMinutes: map['remainingMinutes'],
+      remainingSeconds: map['remainingSeconds'],
     );
   }
 
