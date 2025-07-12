@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 enum ActivityType { custom, template }
 
 enum ActivityCategory {
-  art,
+  // art,
   entertainment,
   health,
   home,
