@@ -24,7 +24,7 @@ enum FrequencyType { everyday, specificDayWeek, specificDayMonth }
 
 class Activity {
   final String _id;
-  final String _userId;
+  final String? _userId;
 
   final String _title;
   final String? _description;
@@ -51,7 +51,7 @@ class Activity {
   // Constructor
   Activity({
     required String id,
-    required String userId,
+    String? userId,
 
     required String title,
     String? description,
@@ -101,7 +101,7 @@ class Activity {
 
   // Getters
   String get id => _id;
-  String get userId => _userId;
+  String? get userId => _userId;
 
   String get title => _title;
   String? get description => _description;
