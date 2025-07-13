@@ -88,6 +88,19 @@ class ActivityService {
     });
   }
 
+  // Get template activities (ordered by title by default)
+  Stream<List<Activity>> getTemplateActivitiesStream() {
+    return _collection
+        .where("type", isEqualTo: "template")
+        .orderBy("title")
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => Activity.fromMap(doc.data(), id: doc.id))
+              .toList(),
+        );
+  }
+
   // Update activity
   Future<void> updateActivity({
     required String id,
