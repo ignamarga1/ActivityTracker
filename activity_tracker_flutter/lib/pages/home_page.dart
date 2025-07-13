@@ -62,7 +62,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         scrolledUnderElevation: 0,
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
+      resizeToAvoidBottomInset: false,
       drawer: HomeDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width / 5,
 
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -608,7 +610,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                     // Options: custom and with template
                     ListTile(
-                      leading: const Icon(Icons.edit_document),
+                      leading: const Icon(Icons.note_add),
                       title: const Text('Actividad personalizada'),
                       onTap: () async {
                         Navigator.of(context).pop();
@@ -617,11 +619,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
 
                     ListTile(
-                      leading: const Icon(Icons.note_add),
-                      title: const Text('Actividad con plantilla'),
+                      leading: const Icon(Icons.edit_document),
+                      title: const Text('Plantillas de actividades'),
                       onTap: () async {
                         Navigator.of(context).pop();
-                        Navigator.pushNamed(context, '/createActivity');
+                        Navigator.pushNamed(context, '/selectTemplateActivity');
                       },
                     ),
                   ],
