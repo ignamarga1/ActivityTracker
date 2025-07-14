@@ -27,4 +27,11 @@ class UserProvider with ChangeNotifier {
   void stopListening() {
     _subscription?.cancel();
   }
+
+  void restart() {
+    stopListening();
+    _user = null;
+    _startListening();
+    notifyListeners();
+  }
 }

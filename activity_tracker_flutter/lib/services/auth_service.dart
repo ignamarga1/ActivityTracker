@@ -1,8 +1,11 @@
+import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
+import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:activity_tracker_flutter/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -26,25 +29,27 @@ class AuthService {
 
       // Show error toast
       if (existingUser.docs.isNotEmpty) {
-        Fluttertoast.showToast(
-          msg: 'El nombre de usuario introducido ya se encuentra en uso',
-          toastLength: Toast.LENGTH_LONG,
+        StdFluttertoast.show(
+          'El nombre de usuario introducido ya se encuentra en uso',
+          Toast.LENGTH_LONG,
+          ToastGravity.BOTTOM,
         );
         return;
       }
 
       // Create a new user
-      final userCredential = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
 
       // Send email verification
       await _firebaseAuth.currentUser?.sendEmailVerification();
 
       // Save new user into Firestore
-      await _userService.createUserDocument(
-        userCredential: userCredential,
-        username: username,
-      );
+      await _userService.createUserDocument(userCredential: userCredential, username: username);
+
+      // Restart UserProvider
+      if (context.mounted) {
+        Provider.of<UserProvider>(context, listen: false).restart();
+      }
 
       // Navigate to email verification page to wait for user verification
       await Future.delayed(const Duration(milliseconds: 300));
@@ -52,10 +57,7 @@ class AuthService {
         Navigator.pushReplacementNamed(context, '/emailVerification');
 
         if (_firebaseAuth.currentUser != null) {
-          Fluttertoast.showToast(
-            msg: '¡Cuenta creada con éxito!',
-            toastLength: Toast.LENGTH_LONG,
-          );
+          StdFluttertoast.show('¡Cuenta creada con éxito!', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -64,66 +66,68 @@ class AuthService {
       if (e.code == 'invalid-email') {
         message = 'La dirección de correo electrónico introducida no es válida';
       } else if (e.code == 'email-already-in-use') {
-        message =
-            'La dirección de correo electrónico introducida ya se encuentra en uso';
+        message = 'La dirección de correo electrónico introducida ya se encuentra en uso';
       } else if (e.code == 'weak-password') {
         message = 'La contraseña es demasiado débil';
       }
-      Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+      StdFluttertoast.show(message, Toast.LENGTH_LONG, ToastGravity.BOTTOM);
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Ha ocurrido un error inesperado",
-        toastLength: Toast.LENGTH_LONG,
-      );
+      StdFluttertoast.show('Ha ocurrido un error inesperado', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
     }
   }
 
   // SIGN IN
-  Future<void> signIn({
-    required String email,
-    required String password,
-    required BuildContext context,
-  }) async {
+  Future<void> signIn({required String email, required String password, required BuildContext context}) async {
     try {
-      // Sign in with email and password
-      await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+      // Loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return const Center(child: CircularProgressIndicator());
+        },
       );
+
+      // Sign in with email and password
+      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+
+      if (context.mounted) {
+        // Restart UserProvider
+        Provider.of<UserProvider>(context, listen: false).restart();
+
+        // Pops loading dialog
+        if (Navigator.canPop(context)) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+      }
 
       // Navigate to Home page after login
       await Future.delayed(const Duration(milliseconds: 300));
       if (context.mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/',
-          (Route<dynamic> route) => false,
-        );
+        Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
 
-        if (_firebaseAuth.currentUser != null) {
-          Fluttertoast.showToast(
-            msg: '¡Sesión iniciada con éxito!',
-            toastLength: Toast.LENGTH_LONG,
-          );
-        }
+        StdFluttertoast.show('¡Sesión iniciada con éxito!', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
       }
     } on FirebaseAuthException catch (e) {
+      // Pops loading dialog when there is an error
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
       String message = '';
 
       if (e.code == 'invalid-email') {
         message = 'La dirección de correo electrónico introducida no es válida';
       } else if (e.code == 'email-already-in-use') {
-        message =
-            'La dirección de correo electrónico introducida ya se encuentra en uso';
+        message = 'La dirección de correo electrónico introducida ya se encuentra en uso';
       } else if (e.code == 'user-not-found') {
-        message =
-            'La dirección de correo electrónico introducida no está asociada a ningún usuario';
+        message = 'La dirección de correo electrónico introducida no está asociada a ningún usuario';
       } else if (e.code == 'wrong-password') {
         message = 'La contraseña introducida es incorrecta';
       } else if (e.code == 'invalid-credential') {
         message = 'Las credenciales son incorrectas';
       }
-      Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+      StdFluttertoast.show(message, Toast.LENGTH_LONG, ToastGravity.BOTTOM);
     }
   }
 
@@ -132,35 +136,23 @@ class AuthService {
     try {
       // User log out
       await _firebaseAuth.signOut();
-      await Future.delayed(Duration(milliseconds: 200));
-      
 
+      // Restart UserProvider
       if (context.mounted) {
-        Fluttertoast.showToast(
-          msg: '¡Sesión cerrada con éxito!',
-          toastLength: Toast.LENGTH_LONG,
-        );
+        Provider.of<UserProvider>(context, listen: false).restart();
 
         // Clear app route stack leaving just the login page
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/login',
-          (Route<dynamic> route) => false,
-        );
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+
+        StdFluttertoast.show('¡Sesión cerrada con éxito!', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: 'No se ha podido cerrar sesión',
-        toastLength: Toast.LENGTH_LONG,
-      );
+      StdFluttertoast.show('No se ha podido cerrar sesión', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
     }
   }
 
   // RESET PASSWORD
-  Future<void> resetPassword({
-    required String email,
-    required BuildContext context,
-  }) async {
+  Future<void> resetPassword({required String email, required BuildContext context}) async {
     try {
       // Reset password with email
       await _firebaseAuth.sendPasswordResetEmail(email: email);
@@ -170,10 +162,7 @@ class AuthService {
       if (context.mounted) {
         Navigator.pop(context);
 
-        Fluttertoast.showToast(
-          msg: 'Correo de restablecimiento enviado',
-          toastLength: Toast.LENGTH_LONG,
-        );
+        StdFluttertoast.show('Correo de restablecimiento enviado', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
       }
     } on FirebaseAuthException catch (e) {
       String message = '';
@@ -181,26 +170,19 @@ class AuthService {
       if (e.code == 'invalid-email') {
         message = 'La dirección de correo electrónico introducida no es válida';
       } else if (e.code == 'user-not-found') {
-        message =
-            'La dirección de correo electrónico introducida no está asociada a ningún usuario';
+        message = 'La dirección de correo electrónico introducida no está asociada a ningún usuario';
       }
-      Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+      StdFluttertoast.show(message, Toast.LENGTH_LONG, ToastGravity.BOTTOM);
     }
   }
 
   // DELETE ACCOUNT
-  Future<void> deleteAccount({
-    required BuildContext context,
-    required String password,
-  }) async {
+  Future<void> deleteAccount({required BuildContext context, required String password}) async {
     final user = _firebaseAuth.currentUser!;
 
     try {
       // Authenticate again in case Firebase Aunthentication fails to delete the account
-      final userCredentials = EmailAuthProvider.credential(
-        email: user.email!,
-        password: password,
-      );
+      final userCredentials = EmailAuthProvider.credential(email: user.email!, password: password);
       await user.reauthenticateWithCredential(userCredentials);
 
       // Delete the account from Firestore
@@ -209,18 +191,16 @@ class AuthService {
       // Delete the account from FirebaseAuth
       await user.delete();
 
+      // Restart UserProvider
       if (context.mounted) {
-        Fluttertoast.showToast(
-          msg: '¡Usuario eliminado con éxito!',
-          toastLength: Toast.LENGTH_LONG,
-        );
+        Provider.of<UserProvider>(context, listen: false).restart();
+      }
 
+      if (context.mounted) {
         // Clear app route stack leaving just the login page
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/login',
-          (Route<dynamic> route) => false,
-        );
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+
+        StdFluttertoast.show('¡Usuario eliminado con éxito!', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
       }
     } on FirebaseAuthException catch (e) {
       String message = '';
@@ -228,12 +208,9 @@ class AuthService {
       if (e.code == 'invalid-credential') {
         message = 'Las credenciales son incorrectas';
       }
-      Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+      StdFluttertoast.show(message, Toast.LENGTH_LONG, ToastGravity.BOTTOM);
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: "No se ha podido eliminar la cuenta",
-        toastLength: Toast.LENGTH_LONG,
-      );
+      StdFluttertoast.show('No se ha podido eliminar la cuenta', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
     }
   }
 }
