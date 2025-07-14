@@ -20,16 +20,12 @@ class StdTextfield extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       validator: (value) {
-        if(value == null || value.isEmpty) {
+        if (value == null || value.isEmpty) {
           return 'El campo es obligatorio';
-        } 
+        }
         return null;
       },
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: labelText,
-        hintText: hintText,
-      ),
+      decoration: InputDecoration(border: OutlineInputBorder(), labelText: labelText, hintText: hintText),
     );
   }
 }

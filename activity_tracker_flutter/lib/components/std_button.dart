@@ -14,15 +14,10 @@ class StdButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.primary,
           padding: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
         onPressed: onPressed,
-        child: Text(
-          text,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
+        child: Text(text, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
       ),
     );
   }

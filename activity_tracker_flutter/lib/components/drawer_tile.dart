@@ -20,31 +20,22 @@ class DrawerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background = selected
-        ? Theme.of(context).colorScheme.primary.withValues(alpha: .2)
-        : Colors.transparent;
+    final background = selected ? Theme.of(context).colorScheme.primary.withValues(alpha: .2) : Colors.transparent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Container(
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.circular(30),
-        ),
+        decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(30)),
         child: ListTile(
           leading: Icon(
             icon,
             size: iconSize,
-            color: selected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).iconTheme.color,
+            color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).iconTheme.color,
           ),
           title: Text(
             label,
             style: textStyle.copyWith(
-              color: selected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).textTheme.bodyLarge?.color,
+              color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
           onTap: onTap,

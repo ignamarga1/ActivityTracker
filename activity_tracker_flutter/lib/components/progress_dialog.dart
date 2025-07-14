@@ -8,11 +8,7 @@ class ProgressDialog extends StatefulWidget {
   final Activity activity;
   final ActivityProgress? progress;
 
-  const ProgressDialog({
-    super.key,
-    required this.activity,
-    required this.progress,
-  });
+  const ProgressDialog({super.key, required this.activity, required this.progress});
 
   @override
   State<ProgressDialog> createState() => _ProgressDialogState();
@@ -123,20 +119,14 @@ class _ProgressDialogState extends State<ProgressDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Behavior for Quantity activity
+          // Behaviour for Quantity activity
           if (activity.milestone == MilestoneType.quantity) ...[
             Column(
               children: [
-                Text(
-                  'Cantidad actual: $quantity / ${activity.quantity}',
-                  style: TextStyle(fontSize: 15),
-                ),
+                Text('Cantidad actual: $quantity / ${activity.quantity}', style: TextStyle(fontSize: 15)),
                 const SizedBox(height: 5),
 
-                Text(
-                  '(${activity.measurementUnit})',
-                  style: TextStyle(fontSize: 15),
-                ),
+                Text('(${activity.measurementUnit})', style: TextStyle(fontSize: 15)),
               ],
             ),
             const SizedBox(height: 10),
@@ -172,13 +162,9 @@ class _ProgressDialogState extends State<ProgressDialog> {
             // Complete quantity button
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black
-                    : Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
+                backgroundColor: Colors.green.shade800,
+                foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
               onPressed: () {
                 setState(() {
@@ -190,12 +176,9 @@ class _ProgressDialogState extends State<ProgressDialog> {
               label: const Text('Completar'),
             ),
 
-            // Behavior for Timed activity
+            // Behaviour for Timed activity
           ] else if (activity.milestone == MilestoneType.timed) ...[
-            Text(
-              'Tiempo restante: ${formatTime(hours, minutes, seconds)}',
-              style: TextStyle(fontSize: 15),
-            ),
+            Text('Tiempo restante: ${formatTime(hours, minutes, seconds)}', style: TextStyle(fontSize: 15)),
 
             const SizedBox(height: 5),
             Row(
@@ -205,14 +188,9 @@ class _ProgressDialogState extends State<ProgressDialog> {
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor:
-                        Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black
-                        : Colors.white,
+                    foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                   ),
                   onPressed: toggleTimer,
                   icon: Icon(isTimerRunning ? Icons.pause : Icons.play_arrow),
@@ -223,14 +201,9 @@ class _ProgressDialogState extends State<ProgressDialog> {
                 // Complete timer button
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor:
-                        Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black
-                        : Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                    backgroundColor: Colors.green.shade800,
+                    foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                   ),
                   onPressed: markTimedActivityAsCompleted,
                   icon: const Icon(Icons.check),
@@ -240,12 +213,9 @@ class _ProgressDialogState extends State<ProgressDialog> {
             ),
             const SizedBox(height: 25),
 
-            Text(
-              'Objetivo: ${formatTime(goalHours, goalMinutes, goalSeconds)}',
-              style: TextStyle(fontSize: 15),
-            ),
+            Text('Objetivo: ${formatTime(goalHours, goalMinutes, goalSeconds)}', style: TextStyle(fontSize: 15)),
 
-            // Behavior for YesNo activity
+            // Behaviour for YesNo activity
           ] else ...[
             Text(
               '¿Estás seguro de que quieres marcar esta actividad como completada?',
@@ -264,13 +234,9 @@ class _ProgressDialogState extends State<ProgressDialog> {
             // Complete button
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black
-                    : Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
+                backgroundColor: Colors.green.shade800,
+                foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
               onPressed: () {
                 setState(() {
@@ -284,10 +250,7 @@ class _ProgressDialogState extends State<ProgressDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
-        ),
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
         TextButton(
           onPressed: () {
             ActivityProgressService().updateActivityProgress(

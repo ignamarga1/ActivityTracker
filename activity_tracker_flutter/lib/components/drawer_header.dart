@@ -6,12 +6,7 @@ class DrawerHeaderCard extends StatefulWidget {
   final String username;
   final String nickname;
 
-  const DrawerHeaderCard({
-    super.key,
-    required this.profileImageUrl,
-    required this.username,
-    required this.nickname,
-  });
+  const DrawerHeaderCard({super.key, required this.profileImageUrl, required this.username, required this.nickname});
 
   @override
   State<DrawerHeaderCard> createState() => _DrawerHeaderCardState();
@@ -60,12 +55,8 @@ class _DrawerHeaderCardState extends State<DrawerHeaderCard> {
         maximumColorCount: 5,
       );
 
-      final c1 = palette.colors.isNotEmpty
-          ? palette.colors.first
-          : defaultColor1;
-      final c2 = palette.colors.length > 1
-          ? palette.colors.elementAt(1)
-          : defaultColor2;
+      final c1 = palette.colors.isNotEmpty ? palette.colors.first : defaultColor1;
+      final c2 = palette.colors.length > 1 ? palette.colors.elementAt(1) : defaultColor2;
 
       final result = [c1, c2];
       _colorCache[url] = result;
@@ -79,9 +70,7 @@ class _DrawerHeaderCardState extends State<DrawerHeaderCard> {
   // Darkens the colors (used in dark mode)
   Color _darken(Color color, [double amount = 0.25]) {
     final hsl = HSLColor.fromColor(color);
-    return hsl
-        .withLightness((hsl.lightness - amount).clamp(0.0, 1.0))
-        .toColor();
+    return hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0)).toColor();
   }
 
   Color _getTextColor(Color background) {
@@ -103,40 +92,25 @@ class _DrawerHeaderCardState extends State<DrawerHeaderCard> {
         // User profile container
         return Container(
           height: 200,
-          padding: const EdgeInsets.only(
-            top: 50,
-            bottom: 16,
-            left: 16,
-            right: 16,
-          ),
+          padding: const EdgeInsets.only(top: 50, bottom: 16, left: 16, right: 16),
 
           child: CustomPaint(
             painter: DiagonalBackgroundPainter(color1, color2),
             child: Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
 
               child: Row(
                 // Avatar
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundImage:
-                        widget.profileImageUrl != null &&
-                            widget.profileImageUrl!.isNotEmpty
+                    backgroundImage: widget.profileImageUrl != null && widget.profileImageUrl!.isNotEmpty
                         ? NetworkImage(widget.profileImageUrl!)
                         : null,
                     backgroundColor: Colors.grey.shade600,
-                    child:
-                        widget.profileImageUrl == null ||
-                            widget.profileImageUrl!.isEmpty
-                        ? const Icon(
-                            Icons.person,
-                            size: 32,
-                            color: Colors.white,
-                          )
+                    child: widget.profileImageUrl == null || widget.profileImageUrl!.isEmpty
+                        ? const Icon(Icons.person, size: 32, color: Colors.white)
                         : null,
                   ),
                   const SizedBox(width: 16),
@@ -149,31 +123,20 @@ class _DrawerHeaderCardState extends State<DrawerHeaderCard> {
                       // App name
                       Text(
                         'Activity Tracker',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: _getTextColor(color1),
-                        ),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: _getTextColor(color1)),
                       ),
                       const SizedBox(height: 5),
-
-                      // Username
-                      Text(
-                        '@${widget.username}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: _getTextColor(color1),
-                        ),
-                      ),
 
                       // Nickname
                       Text(
                         widget.nickname,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: _getTextColor(color1).withValues(alpha: 0.8),
-                        ),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: _getTextColor(color1)),
+                      ),
+
+                      // Username
+                      Text(
+                        '@${widget.username}',
+                        style: TextStyle(fontSize: 14, color: _getTextColor(color1).withValues(alpha: 0.8)),
                       ),
                     ],
                   ),
