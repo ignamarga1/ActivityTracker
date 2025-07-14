@@ -3,7 +3,7 @@ import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:provider/provider.dart';
-import 'drawer_tile.dart'; 
+import 'drawer_tile.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({super.key});
@@ -26,12 +26,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
       child: Column(
         children: [
           // DRAWER HEADER
-          DrawerHeaderCard(
-            profileImageUrl: user!.profilePictureURL,
-            username: user.username,
-            nickname: user.nickname,
-          ),
-          
+          DrawerHeaderCard(profileImageUrl: user!.profilePictureURL, username: user.username, nickname: user.nickname),
+
           // DRAWER OPTIONS
           Expanded(
             child: ListView(
@@ -49,11 +45,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       Navigator.of(context).pop();
                       Navigator.popUntil(context, (route) => route.isFirst);
                     } else {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/',
-                        (route) => false,
-                      );
+                      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
                     }
                   },
                 ),
@@ -67,11 +59,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   selected: currentRoute == '/userProfile',
                   onTap: () {
                     if (currentRoute != '/userProfile') {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/userProfile',
-                        (route) => false,
-                      );
+                      Navigator.pushNamedAndRemoveUntil(context, '/userProfile', (route) => false);
                     } else {
                       Navigator.of(context).pop();
                     }
@@ -87,11 +75,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   selected: currentRoute == '/friends',
                   onTap: () {
                     if (currentRoute != '/friends') {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/friends',
-                        (route) => false,
-                      );
+                      Navigator.pushNamedAndRemoveUntil(context, '/friends', (route) => false);
                     } else {
                       Navigator.of(context).pop();
                     }
@@ -105,11 +89,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   selected: currentRoute == '/messages',
                   onTap: () {
                     if (currentRoute != '/messages') {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/messages',
-                        (route) => false,
-                      );
+                      Navigator.pushNamedAndRemoveUntil(context, '/messages', (route) => false);
                     } else {
                       Navigator.of(context).pop();
                     }
@@ -123,11 +103,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   selected: currentRoute == '/challenges',
                   onTap: () {
                     if (currentRoute != '/challenges') {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/challenges',
-                        (route) => false,
-                      );
+                      Navigator.pushNamedAndRemoveUntil(context, '/challenges', (route) => false);
                     } else {
                       Navigator.of(context).pop();
                     }
@@ -152,11 +128,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   selected: currentRoute == '/settings',
                   onTap: () {
                     if (currentRoute != '/settings') {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/settings',
-                        (route) => false,
-                      );
+                      Navigator.pushNamedAndRemoveUntil(context, '/settings', (route) => false);
                     } else {
                       Navigator.of(context).pop();
                     }
@@ -175,20 +147,23 @@ class _HomeDrawerState extends State<HomeDrawer> {
                         return AlertDialog(
                           title: const Text(
                             '¿Estás seguro de que deseas cerrar sesión?',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                           ),
                           actions: [
                             TextButton(
+                              child: const Text('No'),
                               onPressed: () {
                                 Navigator.of(context).pop();
+                              },
+                            ),
+
+                            TextButton(
+                              child: const Text('Sí'),
+                              onPressed: () {
+                                // Logs out, pops to login and show toast
                                 AuthService().logOut(context: context);
                               },
-                              child: const Text('Sí'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('No'),
                             ),
                           ],
                         );
