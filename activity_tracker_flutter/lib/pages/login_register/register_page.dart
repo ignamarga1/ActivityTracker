@@ -1,6 +1,7 @@
 import 'package:activity_tracker_flutter/components/std_button.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -39,20 +40,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // App name
-                    Text("Activity Tracker", style: TextStyle(fontSize: 20)),
+                    SvgPicture.asset(
+                      'activity_tracker_logo.svg',
+                      width: 65,
+                      height: 65,
+                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                    ),
                     const SizedBox(height: 20),
 
                     // Information text
                     Text(
-                      "Regístrate para poder empezar a hacer un seguimiento de las diferentes actividades que te propongas",
+                      "Regístrate para empezar a hacer un seguimiento de las diferentes actividades que te propongas",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontStyle: FontStyle.italic,
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
 
                     // Email
                     TextFormField(
@@ -64,10 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Correo electrónico",
-                      ),
+                      decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Correo electrónico"),
                     ),
                     const SizedBox(height: 15),
 
@@ -85,10 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Nombre de usuario",
-                      ),
+                      decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Nombre de usuario"),
                     ),
                     const SizedBox(height: 15),
 
@@ -117,9 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return 'Debe contener al menos un número';
                         }
 
-                        if (!RegExp(
-                          r'[\^$*.\[\]{}()?"!@#%&/\\,><\:;|_~]',
-                        ).hasMatch(value)) {
+                        if (!RegExp(r'[\^$*.\[\]{}()?"!@#%&/\\,><\:;|_~]').hasMatch(value)) {
                           return 'Debe contener al menos un carácter especial';
                         }
                         return null;
@@ -133,9 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               _isObscuredPassword = !_isObscuredPassword;
                             });
                           },
-                          icon: _isObscuredPassword
-                              ? const Icon(Icons.visibility_off)
-                              : const Icon(Icons.visibility),
+                          icon: _isObscuredPassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
                         ),
                       ),
                     ),
@@ -161,8 +153,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
-                              _isObscuredPasswordConfirmation =
-                                  !_isObscuredPasswordConfirmation;
+                              _isObscuredPasswordConfirmation = !_isObscuredPasswordConfirmation;
                             });
                           },
                           icon: _isObscuredPasswordConfirmation
@@ -183,8 +174,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             email: emailController.text.trim(),
                             username: usernameController.text.replaceAll(' ', ''),
                             password: passwordController.text,
-                            passwordConfirmation:
-                                passwordConfirmationController.text,
+                            passwordConfirmation: passwordConfirmationController.text,
                             context: context,
                           );
                         }

@@ -1,7 +1,7 @@
 import 'package:activity_tracker_flutter/components/std_button.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/svg.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -17,6 +17,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
@@ -34,22 +35,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // App name
-                    Text("Activity Tracker", style: TextStyle(fontSize: 20)),
+                    /// App name
+                    SvgPicture.asset(
+                      'activity_tracker_logo.svg',
+                      width: 65,
+                      height: 65,
+                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                    ),
                     const SizedBox(height: 20),
-                
+
                     // Information text
                     Text(
-                      "¿Has olvidado tu contraseña? \n Introduce tu dirección de correo electrónico para que te enviemos un enlace desde el que podrás restablecer tu contraseña",
+                      "¿Has olvidado tu contraseña? \n Introduce tu dirección de correo electrónico para que te enviemos un enlace desde el que podrás restablecerla",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontStyle: FontStyle.italic,
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
                     ),
                     const SizedBox(height: 30),
-                
+
                     // Email
                     TextFormField(
                       controller: emailController,
@@ -60,25 +62,20 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Correo electrónico",
-                      ),
+                      decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Correo electrónico"),
                     ),
-                    const SizedBox(height: 15),
-                
+                    const SizedBox(height: 30),
+
                     StdButton(
                       text: "Enviar enlace",
                       onPressed: () {
                         FocusManager.instance.primaryFocus?.unfocus();
                         if (_formKey.currentState!.validate()) {
-                          AuthService().resetPassword(
-                            email: emailController.text,
-                            context: context,
-                          );
+                          AuthService().resetPassword(email: emailController.text, context: context);
                         }
                       },
                     ),
+                    const SizedBox(height: 160),
                   ],
                 ),
               ),

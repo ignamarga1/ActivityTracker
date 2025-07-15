@@ -1,6 +1,7 @@
 import 'package:activity_tracker_flutter/components/std_button.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -42,8 +43,13 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // App name
-                  Text("Activity Tracker", style: TextStyle(fontSize: 20)),
-                  const SizedBox(height: 40),
+                  SvgPicture.asset(
+                    'activity_tracker_logo.svg',
+                    width: 65,
+                    height: 65,
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                  ),
+                  const SizedBox(height: 30),
 
                   // Email
                   TextFormField(
@@ -55,10 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Correo electrónico",
-                    ),
+                    decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Correo electrónico"),
                   ),
                   const SizedBox(height: 15),
 
@@ -81,9 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                             _isObscuredPassword = !_isObscuredPassword;
                           });
                         },
-                        icon: _isObscuredPassword
-                            ? const Icon(Icons.visibility_off)
-                            : const Icon(Icons.visibility),
+                        icon: _isObscuredPassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
                       ),
                     ),
                   ),
@@ -99,9 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: Text(
                           "¿Olvidaste tu contraseña?",
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
+                          style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -135,10 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: Text(
                           "Regístrate",
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
