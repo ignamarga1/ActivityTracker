@@ -4,6 +4,7 @@ import 'package:activity_tracker_flutter/pages/activities/create_template_activi
 import 'package:activity_tracker_flutter/pages/activities/edit_activity_page.dart';
 import 'package:activity_tracker_flutter/pages/activities/select_template_activity.dart';
 import 'package:activity_tracker_flutter/pages/challenges/challenges_page.dart';
+import 'package:activity_tracker_flutter/pages/home_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/email_verification_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/forgot_password_page.dart';
 import 'package:activity_tracker_flutter/pages/friends/friends_page.dart';
@@ -14,9 +15,9 @@ import 'package:activity_tracker_flutter/pages/settings_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile/edit_user_profile_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile/user_profile_page.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
-import 'package:activity_tracker_flutter/services/auth_gate.dart';
 import 'package:activity_tracker_flutter/themes/dark_mode.dart';
 import 'package:activity_tracker_flutter/themes/light_mode.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -62,10 +63,12 @@ class MyApp extends StatelessWidget {
       supportedLocales: [
         Locale('es'), // Spanish
       ],
-      home: AuthGate(), 
+      //home: AuthGate(), 
+      initialRoute: FirebaseAuth.instance.currentUser == null ? '/login' : '/',
 
       routes: {
         // USERS
+        '/': (context) => HomePage(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/emailVerification': (context) => EmailVerificationPage(),

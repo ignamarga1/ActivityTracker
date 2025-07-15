@@ -161,6 +161,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
                             TextButton(
                               child: const Text('Sí'),
                               onPressed: () {
+                                // Pops dialog
+                                Navigator.of(context).pop();
+
                                 // Logs out, pops to login and show toast
                                 AuthService().logOut(context: context);
                               },
