@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:activity_tracker_flutter/components/std_button.dart';
+import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class EmailVerificationPage extends StatefulWidget {
@@ -36,10 +38,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
         }
 
         Navigator.pushReplacementNamed(context, '/login');
-        Fluttertoast.showToast(
-          msg: '¡Cuenta verificada con éxito!',
-          toastLength: Toast.LENGTH_LONG,
-        );
+        StdFluttertoast.show('¡Cuenta verificada con éxito!', Toast.LENGTH_SHORT, ToastGravity.BOTTOM);
       }
     });
   }
@@ -65,18 +64,19 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // App name
-                Text("Activity Tracker", style: TextStyle(fontSize: 20)),
+                SvgPicture.asset(
+                  'activity_tracker_logo.svg',
+                  width: 65,
+                  height: 65,
+                  colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                ),
                 const SizedBox(height: 20),
 
                 // Information text
                 Text(
                   "Te hemos enviado un email a la dirección de correo electrónico indicada para que la verifiques y puedas usar tu cuenta",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
                 ),
                 const SizedBox(height: 30),
 
@@ -85,27 +85,22 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                   const SizedBox(height: 15),
                   Text(
                     "Esperando verificación...",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ],
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
 
                 // Send email again button
                 StdButton(
                   text: "Volver a enviar",
                   onPressed: () async {
                     // Sends again the verification email
-                    await _firebaseAuth.currentUser
-                        ?.sendEmailVerification();
-                    Fluttertoast.showToast(
-                      msg: 'Correo de verificación reenviado',
-                      toastLength: Toast.LENGTH_LONG,
-                    );
+                    await _firebaseAuth.currentUser?.sendEmailVerification();
+                    Fluttertoast.showToast(msg: 'Correo de verificación reenviado', toastLength: Toast.LENGTH_LONG);
                   },
                 ),
+
+                const SizedBox(height: 100),
               ],
             ),
           ),

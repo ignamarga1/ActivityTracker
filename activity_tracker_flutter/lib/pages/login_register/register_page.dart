@@ -172,7 +172,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         if (_formKey.currentState!.validate()) {
                           AuthService().signUp(
                             email: emailController.text.trim(),
-                            username: usernameController.text.replaceAll(' ', ''),
+                            username: usernameController.text.replaceAll(' ', '').toLowerCase(),
                             password: passwordController.text,
                             passwordConfirmation: passwordConfirmationController.text,
                             context: context,
