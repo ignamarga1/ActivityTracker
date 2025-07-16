@@ -1,6 +1,7 @@
 import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:activity_tracker_flutter/services/activity_service.dart';
+import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -11,8 +12,7 @@ class ActivityDetailsPage extends StatefulWidget {
   State<ActivityDetailsPage> createState() => _ActivityDetailsPageState();
 }
 
-class _ActivityDetailsPageState extends State<ActivityDetailsPage>
-    with TickerProviderStateMixin {
+class _ActivityDetailsPageState extends State<ActivityDetailsPage> with TickerProviderStateMixin {
   late final TabController tabBarController;
   String? activityId;
 
@@ -40,9 +40,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage>
       stream: ActivityService().getActivityById(activityId!),
       builder: (context, snapshot) {
         if (snapshot.hasError || !snapshot.hasData) {
-          return const Scaffold(
-            body: Center(child: Text('No se pudo cargar la actividad')),
-          );
+          return const Scaffold(body: Center(child: Text('No se pudo cargar la actividad')));
         }
 
         final activity = snapshot.data!;
@@ -67,11 +65,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage>
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () async {
-                  Navigator.pushNamed(
-                    context,
-                    '/editActivity',
-                    arguments: activity,
-                  );
+                  Navigator.pushNamed(context, '/editActivity', arguments: activity);
                 },
               ),
             ],
@@ -80,10 +74,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage>
           // TabBar contents
           body: TabBarView(
             controller: tabBarController,
-            children: [
-              _buildStatisticsTab(context, activity),
-              _buildDetailsTab(context, activity),
-            ],
+            children: [_buildStatisticsTab(context, activity), _buildDetailsTab(context, activity)],
           ),
         );
       },
@@ -116,8 +107,7 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   _buildInfoRow('Título:', activity.title),
-                  if (activity.description!.isNotEmpty)
-                    _buildInfoRow('Descripción:', activity.description!),
+                  if (activity.description!.isNotEmpty) _buildInfoRow('Descripción:', activity.description!),
                   _buildCategoryRow('Categoría:', activity.category),
 
                   // ROW 2: Milestone
@@ -130,24 +120,15 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow(
-                        'Tipo:',
-                        getMilestoneLabel(activity.milestone),
-                      ),
+                      _buildInfoRow('Tipo:', getMilestoneLabel(activity.milestone)),
                       if (activity.milestone == MilestoneType.quantity) ...[
-                        _buildInfoRow(
-                          'Cantidad:',
-                          activity.quantity.toString(),
-                        ),
-                        _buildInfoRow(
-                          'Unidad de medida:',
-                          activity.measurementUnit.toString(),
-                        ),
+                        _buildInfoRow('Cantidad:', activity.quantity.toString()),
+                        _buildInfoRow('Unidad de medida:', activity.measurementUnit.toString()),
                       ],
                       if (activity.milestone == MilestoneType.timed)
                         _buildInfoRow(
                           'Tiempo:',
-                          formatTime(
+                          ActivityUtils().formatTime(
                             activity.durationHours!,
                             activity.durationMinutes!,
                             activity.durationSeconds!,
@@ -166,23 +147,16 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow(
-                        'Se repite:',
-                        getFrequencyLabel(activity.frequency),
-                      ),
+                      _buildInfoRow('Se repite:', getFrequencyLabel(activity.frequency)),
                       if (activity.frequency == FrequencyType.specificDayWeek &&
                           activity.frequencyDaysOfWeek!.isNotEmpty)
                         _buildInfoRow(
                           'Días de la semana:',
-                          formatWeekDays(activity.frequencyDaysOfWeek!),
+                          ActivityUtils().formatWeekDays(activity.frequencyDaysOfWeek!),
                         ),
-                      if (activity.frequency ==
-                              FrequencyType.specificDayMonth &&
+                      if (activity.frequency == FrequencyType.specificDayMonth &&
                           activity.frequencyDaysOfMonth!.isNotEmpty)
-                        _buildInfoRow(
-                          'Días del mes:',
-                          formatMonthDays(activity.frequencyDaysOfMonth!),
-                        ),
+                        _buildInfoRow('Días del mes:', ActivityUtils().formatMonthDays(activity.frequencyDaysOfMonth!)),
                     ],
                   ),
 
@@ -196,13 +170,9 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow(
-                        'Notificación:',
-                        activity.reminder ? 'Activada' : 'Desactivada',
-                      ),
+                      _buildInfoRow('Notificación:', activity.reminder ? 'Activada' : 'Desactivada'),
 
-                      if (activity.reminder)
-                        _buildInfoRow('Hora:', activity.reminderTime!),
+                      if (activity.reminder) _buildInfoRow('Hora:', activity.reminderTime!),
                     ],
                   ),
                   const SizedBox(height: 25),
@@ -216,17 +186,12 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                       style: FilledButton.styleFrom(
                         backgroundColor: Colors.red,
                         padding: const EdgeInsets.all(15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                       ),
 
                       child: const Text(
                         'Eliminar actividad',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       onPressed: () {
                         showDialog(
@@ -234,6 +199,8 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                           builder: (context) => AlertDialog(
                             title: Text(
                               '¿Estás seguro de que deseas eliminar la actividad "${activity.title}"?',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
                             ),
 
                             content: Column(
@@ -242,14 +209,12 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                               children: [
                                 Text(
                                   'Esta acción es permanente',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.redAccent,
-                                  ),
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
                                 ),
                                 SizedBox(height: 12),
                                 Text(
                                   'Toda la información y el progreso de la actividad serán eliminados de forma permanente y no se podrán recuperar',
+                                  textAlign: TextAlign.justify,
                                 ),
                                 SizedBox(height: 12),
                               ],
@@ -258,13 +223,15 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  ActivityService().deleteActivityById(
-                                    activity.id,
-                                  );
-                                  Navigator.popUntil(
-                                    context,
-                                    (route) => route.isFirst,
-                                  );
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancelar'),
+                              ),
+
+                              TextButton(
+                                onPressed: () {
+                                  ActivityService().deleteActivityById(activity.id);
+                                  Navigator.popUntil(context, (route) => route.isFirst);
                                   StdFluttertoast.show(
                                     "¡Actividad eliminada con éxito!",
                                     Toast.LENGTH_LONG,
@@ -272,12 +239,6 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
                                   );
                                 },
                                 child: const Text('Confirmar'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Cancelar'),
                               ),
                             ],
                           ),
@@ -295,17 +256,14 @@ Widget _buildDetailsTab(BuildContext context, Activity activity) {
   );
 }
 
-// Widget that builds a row with the information information passed by parameters
+// Widget that builds a row with the specified information 
 Widget _buildInfoRow(String title, String value) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-        ),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -323,17 +281,14 @@ Widget _buildInfoRow(String title, String value) {
 
 // Similar to buildInfoRow but with some modifications to fit Category necessities
 Widget _buildCategoryRow(String title, ActivityCategory category) {
-  final info = getCategoryInfo(category);
+  final info = ActivityUtils().getCategoryInfo(category);
 
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-        ),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
         const SizedBox(width: 10),
 
         Row(
@@ -354,75 +309,7 @@ Widget _buildCategoryRow(String title, ActivityCategory category) {
   );
 }
 
-// Function that returns the category's label and icon
-Map<String, dynamic> getCategoryInfo(ActivityCategory category) {
-  // Activity categories
-  final List<Map<String, dynamic>> categories = [
-    {
-      'category': ActivityCategory.nutrition,
-      'label': 'Alimentación',
-      'icon': Icons.restaurant_rounded,
-    },
-    {
-      'category': ActivityCategory.sport,
-      'label': 'Deporte',
-      'icon': Icons.fitness_center_sharp,
-    },
-    {
-      'category': ActivityCategory.reading,
-      'label': 'Lectura',
-      'icon': Icons.menu_book_rounded,
-    },
-    {
-      'category': ActivityCategory.health,
-      'label': 'Salud',
-      'icon': Icons.local_hospital_rounded,
-    },
-    {
-      'category': ActivityCategory.meditation,
-      'label': 'Meditación',
-      'icon': Icons.self_improvement_rounded,
-    },
-    {
-      'category': ActivityCategory.quitBadHabit,
-      'label': 'Dejar mal hábito',
-      'icon': Icons.not_interested_rounded,
-    },
-    {
-      'category': ActivityCategory.home,
-      'label': 'Hogar',
-      'icon': Icons.home_rounded,
-    },
-    {
-      'category': ActivityCategory.entertainment,
-      'label': 'Ocio',
-      'icon': Icons.movie_creation_rounded,
-    },
-    {'category': ActivityCategory.work, 'label': 'Trabajo', 'icon': Icons.work},
-    {
-      'category': ActivityCategory.study,
-      'label': 'Estudio',
-      'icon': Icons.school_rounded,
-    },
-    {
-      'category': ActivityCategory.social,
-      'label': 'Social',
-      'icon': Icons.groups_rounded,
-    },
-    {
-      'category': ActivityCategory.other,
-      'label': 'Otro',
-      'icon': Icons.more_horiz_rounded,
-    },
-  ];
-
-  return categories.firstWhere(
-    (c) => c['category'] == category,
-    orElse: () => {'label': 'Desconocido', 'icon': Icons.help_outline_rounded},
-  );
-}
-
-// Function that returns the Frequency's label
+// Function that returns the Frequency's label (different text than the function in ActivityUtils)
 String getFrequencyLabel(FrequencyType type) {
   return {
         FrequencyType.everyday: "Diariamente",
@@ -432,7 +319,7 @@ String getFrequencyLabel(FrequencyType type) {
       "Desconocida";
 }
 
-// Function that returns the Milestone's label
+// Function that returns the Milestone's label (different text than the function in ActivityUtils)
 String getMilestoneLabel(MilestoneType type) {
   return {
         MilestoneType.yesNo: "Sí/No",
@@ -440,28 +327,4 @@ String getMilestoneLabel(MilestoneType type) {
         MilestoneType.timed: "Por tiempo",
       }[type] ??
       "Desconocida";
-}
-
-// Function that formats the list of days of the week into a String
-String formatWeekDays(List<int> days) {
-  const weekDays = [
-    'Lunes',
-    'Martes',
-    'Miércoles',
-    'Jueves',
-    'Viernes',
-    'Sábado',
-    'Domingo',
-  ];
-  return days.map((d) => weekDays[d]).join(', ');
-}
-
-// Function that formats the list of days of the month into a String
-String formatMonthDays(List<int> days) {
-  return days.map((d) => d.toString()).join(', ');
-}
-
-// Function that formats the time for the Timed activities
-String formatTime(int h, int m, int s) {
-  return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
 }
