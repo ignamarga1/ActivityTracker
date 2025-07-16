@@ -53,6 +53,30 @@ class ActivityUtils {
     }
   }
 
+  // Function that returns the Category's label and icon
+  Map<String, dynamic> getCategoryInfo(ActivityCategory category) {
+    // Activity categories
+    final List<Map<String, dynamic>> categories = [
+      {'category': ActivityCategory.nutrition, 'label': 'Alimentación', 'icon': Icons.restaurant_rounded},
+      {'category': ActivityCategory.sport, 'label': 'Deporte', 'icon': Icons.fitness_center_sharp},
+      {'category': ActivityCategory.reading, 'label': 'Lectura', 'icon': Icons.menu_book_rounded},
+      {'category': ActivityCategory.health, 'label': 'Salud', 'icon': Icons.local_hospital_rounded},
+      {'category': ActivityCategory.meditation, 'label': 'Meditación', 'icon': Icons.self_improvement_rounded},
+      {'category': ActivityCategory.quitBadHabit, 'label': 'Dejar mal hábito', 'icon': Icons.not_interested_rounded},
+      {'category': ActivityCategory.home, 'label': 'Hogar', 'icon': Icons.home_rounded},
+      {'category': ActivityCategory.entertainment, 'label': 'Ocio', 'icon': Icons.movie_creation_rounded},
+      {'category': ActivityCategory.work, 'label': 'Trabajo', 'icon': Icons.work},
+      {'category': ActivityCategory.study, 'label': 'Estudio', 'icon': Icons.school_rounded},
+      {'category': ActivityCategory.social, 'label': 'Social', 'icon': Icons.groups_rounded},
+      {'category': ActivityCategory.other, 'label': 'Otro', 'icon': Icons.more_horiz_rounded},
+    ];
+
+    return categories.firstWhere(
+      (c) => c['category'] == category,
+      orElse: () => {'label': 'Desconocido', 'icon': Icons.help_outline_rounded},
+    );
+  }
+
   // Function that returns the Milestone's label
   String getMilestoneLabel(MilestoneType type) {
     return {MilestoneType.yesNo: "Sí/No", MilestoneType.quantity: "Cantidad", MilestoneType.timed: "Tiempo"}[type] ??
@@ -79,6 +103,22 @@ class ActivityUtils {
     final hour = time.hour.toString().padLeft(2, '0');
     final minute = time.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
+  }
+
+  // Function that formats the list of days of the week into a String
+  String formatWeekDays(List<int> days) {
+    const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    return days.map((d) => weekDays[d]).join(', ');
+  }
+
+  // Function that formats the list of days of the month into a String
+  String formatMonthDays(List<int> days) {
+    return days.map((d) => d.toString()).join(', ');
+  }
+
+  // Function that formats the time for the Timed activities
+  String formatTime(int h, int m, int s) {
+    return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
   // Converts String time to TimeOfDay
