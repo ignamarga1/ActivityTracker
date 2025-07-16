@@ -10,6 +10,7 @@ class FriendsPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Amigos')),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: HomeDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width / 3,
     );
   }
 }

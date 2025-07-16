@@ -10,6 +10,7 @@ class ChallengesPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Desafíos')),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: HomeDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width / 3,
     );
   }
 }

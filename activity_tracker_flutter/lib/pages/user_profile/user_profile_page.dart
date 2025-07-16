@@ -35,6 +35,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: const HomeDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width / 3,
 
       // User data
       body: user == null

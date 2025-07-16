@@ -10,6 +10,7 @@ class MessagesPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Mensajes')),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: HomeDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width / 3,
     );
   }
 }
