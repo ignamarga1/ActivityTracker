@@ -108,7 +108,7 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Crear actividad por plantilla'), scrolledUnderElevation: 0),
+      appBar: AppBar(title: const Text('Crear actividad con plantilla'), scrolledUnderElevation: 0),
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: false,
 
@@ -280,7 +280,7 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                                 ActivityUtils().buildTimePicker(
                                   context: context,
                                   label: "Horas",
-                                  value: activity!.durationHours!,
+                                  value: selectedHours,
                                   max: 23,
                                   onChanged: (value) {
                                     setState(() {
@@ -294,7 +294,7 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                                 ActivityUtils().buildTimePicker(
                                   context: context,
                                   label: "Minutos",
-                                  value: activity!.durationMinutes!,
+                                  value: selectedMinutes,
                                   max: 59,
                                   onChanged: (value) {
                                     setState(() {
@@ -308,7 +308,7 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                                 ActivityUtils().buildTimePicker(
                                   context: context,
                                   label: "Segundos",
-                                  value: activity!.durationSeconds!,
+                                  value: selectedSeconds,
                                   max: 59,
                                   onChanged: (value) {
                                     setState(() {
@@ -344,8 +344,17 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                                 showCheckmark: false,
                                 label: Text(ActivityUtils().getFrequencyLabel(type)),
                                 selected: isSelected,
+                                selectedColor: Theme.of(context).colorScheme.primary,
                                 onSelected: (_) {
-                                  setState(() => selectedFrequency = type);
+                                  setState(() {
+                                    selectedFrequency = type;
+                                    if (type != FrequencyType.specificDayWeek) {
+                                      selectedDaysOfWeek.clear();
+                                    }
+                                    if (type != FrequencyType.specificDayMonth) {
+                                      selectedDaysOfMonth.clear();
+                                    }
+                                  });
                                 },
                               );
                             }).toList(),
@@ -367,6 +376,7 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                                     showCheckmark: false,
                                     label: Text(daysOfWeek[index]),
                                     selected: isSelected,
+                                    selectedColor: Theme.of(context).colorScheme.primary,
                                     onSelected: (_) {
                                       setState(() {
                                         isSelected ? selectedDaysOfWeek.remove(index) : selectedDaysOfWeek.add(index);
@@ -402,6 +412,7 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                                         ),
                                         padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
                                         selected: isSelected,
+                                        selectedColor: Theme.of(context).colorScheme.primary,
                                         showCheckmark: false,
                                         onSelected: (_) {
                                           setState(() {
@@ -490,7 +501,23 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                           onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
 
-                            if (_formKey.currentState!.validate()) {
+                            bool validMilestone =
+                                selectedMilestone != null &&
+                                (selectedMilestone == MilestoneType.yesNo ||
+                                    (selectedMilestone == MilestoneType.quantity &&
+                                        _formKey.currentState?.validate() == true) ||
+                                    (selectedMilestone == MilestoneType.timed &&
+                                        (selectedHours + selectedMinutes + selectedSeconds > 0)));
+
+                            bool validFrequency =
+                                selectedFrequency != null &&
+                                (selectedFrequency == FrequencyType.everyday ||
+                                    (selectedFrequency == FrequencyType.specificDayWeek &&
+                                        selectedDaysOfWeek.isNotEmpty) ||
+                                    (selectedFrequency == FrequencyType.specificDayMonth &&
+                                        selectedDaysOfMonth.isNotEmpty));
+
+                            if (_formKey.currentState!.validate() && validMilestone && validFrequency) {
                               ActivityService().createActivity(
                                 userId: FirebaseAuth.instance.currentUser!.uid,
 
@@ -526,6 +553,12 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                               // FlutterToast message
                               StdFluttertoast.show(
                                 '¡Actividad creada con éxito!',
+                                Toast.LENGTH_LONG,
+                                ToastGravity.BOTTOM,
+                              );
+                            } else {
+                              StdFluttertoast.show(
+                                'Hay opciones o campos obligatorios sin completar',
                                 Toast.LENGTH_LONG,
                                 ToastGravity.BOTTOM,
                               );
