@@ -24,10 +24,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
 
   // Selects an image from the phones gallery
   Future<String?> selectImage() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.gallery,
-      preferredCameraDevice: CameraDevice.rear,
-    );
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery, preferredCameraDevice: CameraDevice.rear);
     if (image == null) return null;
 
     return image.path;
@@ -35,10 +32,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
 
   // Lets the user take a photo
   Future<String?> takePhoto() async {
-    final XFile? photo = await _picker.pickImage(
-      source: ImageSource.camera,
-      preferredCameraDevice: CameraDevice.rear,
-    );
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.rear);
     if (photo == null) return null;
 
     return photo.path;
@@ -75,13 +69,9 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                               radius: 60,
                               backgroundImage: _selectedImagePath != null
                                   ? FileImage(File(_selectedImagePath!))
-                                  : (user.profilePictureURL != ''
-                                        ? NetworkImage(user.profilePictureURL!)
-                                        : null),
+                                  : (user.profilePictureURL != '' ? NetworkImage(user.profilePictureURL!) : null),
                               backgroundColor: Colors.grey.shade700,
-                              child:
-                                  (_selectedImagePath == null &&
-                                      user.profilePictureURL == '')
+                              child: (_selectedImagePath == null && user.profilePictureURL == '')
                                   ? const Icon(Icons.person, size: 80)
                                   : null,
                             ),
@@ -105,13 +95,10 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                                               child: Container(
                                                 width: 40,
                                                 height: 4,
-                                                margin: const EdgeInsets.only(
-                                                  bottom: 15,
-                                                ),
+                                                margin: const EdgeInsets.only(bottom: 15),
                                                 decoration: BoxDecoration(
                                                   color: Colors.grey.shade700,
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
+                                                  borderRadius: BorderRadius.circular(2),
                                                 ),
                                               ),
                                             ),
@@ -120,15 +107,10 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
 
                                             // Options: library and camera
                                             ListTile(
-                                              leading: const Icon(
-                                                Icons.photo_library,
-                                              ),
-                                              title: const Text(
-                                                'Elegir de la galería',
-                                              ),
+                                              leading: const Icon(Icons.photo_library),
+                                              title: const Text('Elegir de la galería'),
                                               onTap: () async {
-                                                final path =
-                                                    await selectImage();
+                                                final path = await selectImage();
                                                 if (path != null) {
                                                   setState(() {
                                                     _selectedImagePath = path;
@@ -141,12 +123,8 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                                             ),
 
                                             ListTile(
-                                              leading: const Icon(
-                                                Icons.photo_camera,
-                                              ),
-                                              title: const Text(
-                                                'Hacer una foto',
-                                              ),
+                                              leading: const Icon(Icons.photo_camera),
+                                              title: const Text('Hacer una foto'),
                                               onTap: () async {
                                                 final path = await takePhoto();
                                                 if (path != null) {
@@ -169,9 +147,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                                 // Camera button
                                 child: ClipOval(
                                   child: Container(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
+                                    color: Theme.of(context).colorScheme.surface,
                                     padding: EdgeInsets.all(4),
                                     child: ClipOval(
                                       child: Container(
@@ -180,9 +156,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                                         child: Icon(
                                           Icons.photo_camera,
                                           size: 18,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surface,
+                                          color: Theme.of(context).colorScheme.surface,
                                         ),
                                       ),
                                     ),
@@ -198,10 +172,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                         TextFormField(
                           controller: nickNameController,
                           obscureText: false,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Nuevo apodo",
-                          ),
+                          decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Nuevo apodo"),
                         ),
 
                         const Spacer(),
@@ -213,29 +184,20 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                             style: FilledButton.styleFrom(
                               backgroundColor: Colors.blue,
                               padding: const EdgeInsets.all(15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                             ),
 
                             child: const Text(
                               'Guardar cambios',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
 
                             onPressed: () async {
                               FocusManager.instance.primaryFocus?.unfocus();
                               String? imageUrl;
-                              final String newNickname = nickNameController.text
-                                  .trim();
-                              final bool isNickNameChanged =
-                                  newNickname.isNotEmpty &&
-                                  (newNickname != user.nickname);
-                              final bool isImageChanged =
-                                  _selectedImagePath != null;
+                              final String newNickname = nickNameController.text.trim();
+                              final bool isNickNameChanged = newNickname.isNotEmpty && (newNickname != user.nickname);
+                              final bool isImageChanged = _selectedImagePath != null;
 
                               // Checks if there are any changes in case the user presses the button (for not showing the Fluttertoast)
                               if (!isNickNameChanged && !isImageChanged) {
@@ -246,24 +208,20 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                               }
 
                               // Uploads image to Cloudinary
-
                               if (_selectedImagePath != null) {
                                 // Loading dialog
                                 showDialog(
                                   context: context,
                                   barrierDismissible: false,
                                   builder: (context) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
+                                    return const Center(child: CircularProgressIndicator());
                                   },
                                 );
                                 isDialogShown = true;
 
-                                final uploadedUrl = await CloudinaryService()
-                                    .uploadImageToCloudinary(
-                                      File(_selectedImagePath!),
-                                    );
+                                final uploadedUrl = await CloudinaryService().uploadImageToCloudinary(
+                                  File(_selectedImagePath!),
+                                );
                                 if (uploadedUrl == null) {
                                   // Checks if the photo dialog has been used and closes it
                                   if (isDialogShown && context.mounted) {
@@ -282,10 +240,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                               }
 
                               // Updates user nickname and imageUrl
-                              await UserService().updateUserDocument(
-                                newNickname: newNickname,
-                                newImageUrl: imageUrl,
-                              );
+                              await UserService().updateUserDocument(newNickname: newNickname, newImageUrl: imageUrl);
 
                               // Pops loading if active
                               if (isDialogShown && context.mounted) {

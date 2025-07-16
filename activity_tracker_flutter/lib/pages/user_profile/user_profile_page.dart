@@ -49,34 +49,21 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       // Profile picture
                       CircleAvatar(
                         radius: 60,
-                        backgroundImage: user.profilePictureURL != ''
-                            ? NetworkImage(user.profilePictureURL!)
-                            : null,
+                        backgroundImage: user.profilePictureURL != '' ? NetworkImage(user.profilePictureURL!) : null,
                         backgroundColor: Colors.grey.shade700,
-                        child: user.profilePictureURL == ''
-                            ? const Icon(Icons.person, size: 80)
-                            : null,
+                        child: user.profilePictureURL == '' ? const Icon(Icons.person, size: 80) : null,
                       ),
                       const SizedBox(height: 12),
 
                       // Username
-                      Text(
-                        '@${user.username}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('@${user.username}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 30),
 
                       // User data section
                       const Text(
                         'Mis datos',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
 
                       Column(
@@ -86,15 +73,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           _buildInfoRow('Apodo:', user.nickname),
 
                           // Email
-                          _buildInfoRow('Correo electrónico:', user.email),
+                          _buildInfoRow('Email:', user.email),
 
                           // Account createdDate
-                          _buildInfoRow(
-                            'Fecha de unión:',
-                            DateFormat(
-                              'd/M/y, HH:mm',
-                            ).format(user.createdAt.toDate()),
-                          ),
+                          _buildInfoRow('Fecha de unión:', DateFormat('d/M/y, HH:mm').format(user.createdAt.toDate())),
                         ],
                       ),
 
@@ -103,10 +85,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       const Text(
                         'Mis estadísticas',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
 
                       Column(
@@ -135,17 +114,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           style: FilledButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: const EdgeInsets.all(15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           ),
 
                           child: const Text(
                             'Eliminar cuenta',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
 
                           onPressed: () async {
@@ -161,65 +135,42 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     return Form(
                                       key: formKey,
                                       child: AlertDialog(
-                                        insetPadding:
-                                            const EdgeInsets.symmetric(
-                                              horizontal: 30,
-                                              vertical: 24,
-                                            ),
-                                        titlePadding: const EdgeInsets.only(
-                                          top: 16,
-                                          left: 24,
-                                          right: 8,
-                                        ),
+                                        insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 24),
+                                        titlePadding: const EdgeInsets.only(top: 24, left: 24, right: 8),
 
                                         // Title and close button
-                                        title: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text(
-                                              'Eliminar cuenta',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.close),
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                            ),
-                                          ],
+                                        title: const Text(
+                                          'Eliminar cuenta',
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,
                                         ),
 
                                         // Information and textField
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Esta acción es permanente.',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.redAccent,
-                                              ),
+                                              'Esta acción es permanente',
+                                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
                                             ),
                                             SizedBox(height: 12),
                                             Text(
                                               'Toda tu información será eliminada de forma permanente y no se podrá recuperar.',
+                                              textAlign: TextAlign.justify,
                                             ),
                                             SizedBox(height: 12),
                                             Text(
                                               'Introduce tu contraseña para confirmar la eliminación de tu cuenta:',
+                                              textAlign: TextAlign.justify,
                                             ),
-                                            SizedBox(height: 20),
+                                            SizedBox(height: 30),
 
                                             TextFormField(
                                               controller: passwordController,
                                               obscureText: isObscuredPassword,
                                               validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
+                                                if (value == null || value.isEmpty) {
                                                   return 'El campo es obligatorio';
                                                 }
                                                 return null;
@@ -230,35 +181,33 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                                 suffixIcon: IconButton(
                                                   onPressed: () {
                                                     setState(() {
-                                                      isObscuredPassword =
-                                                          !isObscuredPassword;
+                                                      isObscuredPassword = !isObscuredPassword;
                                                     });
                                                   },
                                                   icon: isObscuredPassword
-                                                      ? const Icon(
-                                                          Icons.visibility_off,
-                                                        )
-                                                      : const Icon(
-                                                          Icons.visibility,
-                                                        ),
+                                                      ? const Icon(Icons.visibility_off)
+                                                      : const Icon(Icons.visibility),
                                                 ),
                                               ),
                                             ),
                                           ],
                                         ),
 
-                                        // Actions (just the confirm button as the close is next to title)
                                         actions: [
                                           TextButton(
+                                            child: const Text('Cancelar'),
                                             onPressed: () {
-                                              FocusManager.instance.primaryFocus
-                                                  ?.unfocus();
-                                              if (formKey.currentState!
-                                                  .validate()) {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+
+                                          TextButton(
+                                            onPressed: () {
+                                              FocusManager.instance.primaryFocus?.unfocus();
+                                              if (formKey.currentState!.validate()) {
                                                 AuthService().deleteAccount(
                                                   context: context,
-                                                  password:
-                                                      passwordController.text,
+                                                  password: passwordController.text,
                                                 );
                                               }
                                             },
@@ -290,10 +239,7 @@ Widget _buildInfoRow(String title, String value) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-        ),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
