@@ -1,11 +1,11 @@
 import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:activity_tracker_flutter/services/activity_service.dart';
+import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 class CreateActivityPage extends StatefulWidget {
   const CreateActivityPage({super.key});
@@ -24,62 +24,18 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   // Selected category
   ActivityCategory? selectedCategory;
   final List<Map<String, dynamic>> categories = [
-    {
-      'category': ActivityCategory.nutrition,
-      'label': 'Alimentación',
-      'icon': Icons.restaurant_rounded,
-    },
-    {
-      'category': ActivityCategory.sport,
-      'label': 'Deporte',
-      'icon': Icons.fitness_center_sharp,
-    },
-    {
-      'category': ActivityCategory.reading,
-      'label': 'Lectura',
-      'icon': Icons.menu_book_rounded,
-    },
-    {
-      'category': ActivityCategory.health,
-      'label': 'Salud',
-      'icon': Icons.local_hospital_rounded,
-    },
-    {
-      'category': ActivityCategory.meditation,
-      'label': 'Meditación',
-      'icon': Icons.self_improvement_rounded,
-    },
-    {
-      'category': ActivityCategory.quitBadHabit,
-      'label': 'Dejar mal hábito',
-      'icon': Icons.not_interested_rounded,
-    },
-    {
-      'category': ActivityCategory.home,
-      'label': 'Hogar',
-      'icon': Icons.home_rounded,
-    },
-    {
-      'category': ActivityCategory.entertainment,
-      'label': 'Ocio',
-      'icon': Icons.movie_creation_rounded,
-    },
+    {'category': ActivityCategory.nutrition, 'label': 'Alimentación', 'icon': Icons.restaurant_rounded},
+    {'category': ActivityCategory.sport, 'label': 'Deporte', 'icon': Icons.fitness_center_sharp},
+    {'category': ActivityCategory.reading, 'label': 'Lectura', 'icon': Icons.menu_book_rounded},
+    {'category': ActivityCategory.health, 'label': 'Salud', 'icon': Icons.local_hospital_rounded},
+    {'category': ActivityCategory.meditation, 'label': 'Meditación', 'icon': Icons.self_improvement_rounded},
+    {'category': ActivityCategory.quitBadHabit, 'label': 'Dejar mal hábito', 'icon': Icons.not_interested_rounded},
+    {'category': ActivityCategory.home, 'label': 'Hogar', 'icon': Icons.home_rounded},
+    {'category': ActivityCategory.entertainment, 'label': 'Ocio', 'icon': Icons.movie_creation_rounded},
     {'category': ActivityCategory.work, 'label': 'Trabajo', 'icon': Icons.work},
-    {
-      'category': ActivityCategory.study,
-      'label': 'Estudio',
-      'icon': Icons.school_rounded,
-    },
-    {
-      'category': ActivityCategory.social,
-      'label': 'Social',
-      'icon': Icons.groups_rounded,
-    },
-    {
-      'category': ActivityCategory.other,
-      'label': 'Otro',
-      'icon': Icons.more_horiz_rounded,
-    },
+    {'category': ActivityCategory.study, 'label': 'Estudio', 'icon': Icons.school_rounded},
+    {'category': ActivityCategory.social, 'label': 'Social', 'icon': Icons.groups_rounded},
+    {'category': ActivityCategory.other, 'label': 'Otro', 'icon': Icons.more_horiz_rounded},
   ];
 
   // Selected milestone
@@ -115,10 +71,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Crear actividad'),
-        scrolledUnderElevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Crear actividad'), scrolledUnderElevation: 0),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.translucent,
@@ -145,24 +98,17 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   isValid =
                       selectedMilestone != null &&
                       (selectedMilestone == MilestoneType.yesNo ||
-                          (selectedMilestone == MilestoneType.quantity &&
-                              _formKey.currentState?.validate() == true) ||
+                          (selectedMilestone == MilestoneType.quantity && _formKey.currentState?.validate() == true) ||
                           (selectedMilestone == MilestoneType.timed &&
-                              (selectedHours +
-                                      selectedMinutes +
-                                      selectedSeconds >
-                                  0)));
+                              (selectedHours + selectedMinutes + selectedSeconds > 0)));
                   break;
 
                 case 3:
                   isValid =
                       selectedFrequency != null &&
                       (selectedFrequency == FrequencyType.everyday ||
-                          (selectedFrequency == FrequencyType.specificDayWeek &&
-                              selectedDaysOfWeek.isNotEmpty) ||
-                          (selectedFrequency ==
-                                  FrequencyType.specificDayMonth &&
-                              selectedDaysOfMonth.isNotEmpty));
+                          (selectedFrequency == FrequencyType.specificDayWeek && selectedDaysOfWeek.isNotEmpty) ||
+                          (selectedFrequency == FrequencyType.specificDayMonth && selectedDaysOfMonth.isNotEmpty));
                   break;
 
                 default:
@@ -187,34 +133,22 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                       quantity: selectedMilestone == MilestoneType.quantity
                           ? int.tryParse(quantityController.text) ?? 0
                           : null,
-                      measurementUnit:
-                          selectedMilestone == MilestoneType.quantity
+                      measurementUnit: selectedMilestone == MilestoneType.quantity
                           ? measurementeUnitController.text.trim()
                           : null,
-                      durationHours: selectedMilestone == MilestoneType.timed
-                          ? selectedHours
-                          : null,
-                      durationMinutes: selectedMilestone == MilestoneType.timed
-                          ? selectedMinutes
-                          : null,
-                      durationSeconds: selectedMilestone == MilestoneType.timed
-                          ? selectedSeconds
-                          : null,
+                      durationHours: selectedMilestone == MilestoneType.timed ? selectedHours : null,
+                      durationMinutes: selectedMilestone == MilestoneType.timed ? selectedMinutes : null,
+                      durationSeconds: selectedMilestone == MilestoneType.timed ? selectedSeconds : null,
                       frequency: selectedFrequency!,
                       frequencyDaysOfWeek: selectedDaysOfWeek,
                       frequencyDaysOfMonth: selectedDaysOfMonth,
                       reminder: notificationToggled,
-                      reminderTime:
-                          (notificationToggled && timeOfDayForReminder != null)
-                          ? _formatTime24h(timeOfDayForReminder!)
+                      reminderTime: (notificationToggled && timeOfDayForReminder != null)
+                          ? ActivityUtils().formatTime24h(timeOfDayForReminder!)
                           : null,
                       createdAt: Timestamp.now(),
                     );
-                    StdFluttertoast.show(
-                      '¡Actividad creada con éxito!',
-                      Toast.LENGTH_LONG,
-                      ToastGravity.BOTTOM,
-                    );
+                    StdFluttertoast.show('¡Actividad creada con éxito!', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
 
                     if (context.mounted) {
                       Navigator.of(context).popUntil((route) => route.isFirst);
@@ -242,17 +176,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
 
               return Row(
                 children: [
-                  TextButton(
-                    onPressed: details.onStepContinue,
-                    child: Text(isLastStep ? 'Confirmar' : 'Continuar'),
-                  ),
+                  TextButton(onPressed: details.onStepContinue, child: Text(isLastStep ? 'Confirmar' : 'Continuar')),
                   const SizedBox(width: 8),
 
-                  if (currentStep > 0)
-                    TextButton(
-                      onPressed: details.onStepCancel,
-                      child: const Text('Atrás'),
-                    ),
+                  if (currentStep > 0) TextButton(onPressed: details.onStepCancel, child: const Text('Atrás')),
                 ],
               );
             },
@@ -280,20 +207,14 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                 }
                 return null;
               },
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Título",
-              ),
+              decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Título"),
             ),
             const SizedBox(height: 15),
 
             // Description
             TextFormField(
               controller: descriptionController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Descripción (opcional)",
-              ),
+              decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Descripción (opcional)"),
             ),
           ],
         ),
@@ -310,10 +231,8 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
             // Descriptive text
             Text.rich(
               textAlign: TextAlign.center,
-              style: TextStyle(fontStyle: FontStyle.italic),
-              TextSpan(
-                text: 'Selecciona la categoría más adecuada para la actividad',
-              ),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              TextSpan(text: 'Selecciona la categoría más adecuada para la actividad'),
             ),
             const SizedBox(height: 15),
 
@@ -342,21 +261,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.grey.shade600,
+                        color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.shade600,
                         width: 2,
                       ),
-                      color: isSelected
-                          ? Theme.of(
-                              context,
-                            ).colorScheme.primary
-                          : Theme.of(context).colorScheme.surface,
+                      color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Row(
                       children: [
                         Icon(
@@ -371,9 +281,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                             category['label'],
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               color: isSelected
                                   ? Theme.of(context).colorScheme.onPrimary
                                   : Theme.of(context).colorScheme.onSurface,
@@ -397,13 +305,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         content: Column(
           children: [
             // Descriptive text
-            const Text.rich(
+            Text.rich(
               textAlign: TextAlign.center,
-              style: TextStyle(fontStyle: FontStyle.italic),
-              TextSpan(
-                text:
-                    'Selecciona el tipo de hito con el que quieres evaluar el progreso de la actividad',
-              ),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              TextSpan(text: 'Selecciona el tipo de hito con el que quieres evaluar el progreso de la actividad'),
             ),
 
             const SizedBox(height: 15),
@@ -425,6 +330,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   showCheckmark: false,
                   label: Text(label!),
                   selected: isSelected,
+                  selectedColor: Theme.of(context).colorScheme.primary,
                   onSelected: (_) {
                     setState(() => selectedMilestone = type);
                   },
@@ -445,10 +351,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   return null;
                 },
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Cantidad',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Cantidad', border: OutlineInputBorder()),
               ),
 
               const SizedBox(height: 15),
@@ -462,10 +365,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   }
                   return null;
                 },
-                decoration: const InputDecoration(
-                  labelText: 'Unidad de medida',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Unidad de medida', border: OutlineInputBorder()),
               ),
             ],
 
@@ -476,7 +376,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Hours
-                  _buildTimePicker(
+                  ActivityUtils().buildTimePicker(
                     context: context,
                     label: "Horas",
                     value: selectedHours,
@@ -490,7 +390,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   const SizedBox(height: 15),
 
                   // Minutes
-                  _buildTimePicker(
+                  ActivityUtils().buildTimePicker(
                     context: context,
                     label: "Minutos",
                     value: selectedMinutes,
@@ -504,7 +404,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   const SizedBox(height: 15),
 
                   // Seconds
-                  _buildTimePicker(
+                  ActivityUtils().buildTimePicker(
                     context: context,
                     label: "Segundos",
                     value: selectedSeconds,
@@ -532,10 +432,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
             const Text.rich(
               textAlign: TextAlign.center,
               style: TextStyle(fontStyle: FontStyle.italic),
-              TextSpan(
-                text:
-                    'Selecciona la frecuencia con la que deseas realizar la actividad',
-              ),
+              TextSpan(text: 'Selecciona la frecuencia con la que deseas realizar la actividad'),
             ),
             const SizedBox(height: 15),
 
@@ -547,8 +444,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
               children: FrequencyType.values.map((type) {
                 final label = {
                   FrequencyType.everyday: "Diaria",
-                  FrequencyType.specificDayWeek:
-                      "Día/s concreto/s de la semana",
+                  FrequencyType.specificDayWeek: "Día/s concreto/s de la semana",
                   FrequencyType.specificDayMonth: "Día/s concreto/s del mes",
                 }[type];
 
@@ -558,8 +454,17 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   showCheckmark: false,
                   label: Text(label!),
                   selected: isSelected,
+                  selectedColor: Theme.of(context).colorScheme.primary,
                   onSelected: (_) {
-                    setState(() => selectedFrequency = type);
+                    setState(() {
+                      selectedFrequency = type;
+                      if (type != FrequencyType.specificDayWeek) {
+                        selectedDaysOfWeek.clear();
+                      }
+                      if (type != FrequencyType.specificDayMonth) {
+                        selectedDaysOfMonth.clear();
+                      }
+                    });
                   },
                 );
               }).toList(),
@@ -581,11 +486,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                       showCheckmark: false,
                       label: Text(daysOfWeek[index]),
                       selected: isSelected,
+                      selectedColor: Theme.of(context).colorScheme.primary,
                       onSelected: (_) {
                         setState(() {
-                          isSelected
-                              ? selectedDaysOfWeek.remove(index)
-                              : selectedDaysOfWeek.add(index);
+                          isSelected ? selectedDaysOfWeek.remove(index) : selectedDaysOfWeek.add(index);
                         });
                       },
                     );
@@ -611,16 +515,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                       return SizedBox(
                         width: chipWidth,
                         child: FilterChip(
-                          label: Text(
-                            '$day',
-                            style: const TextStyle(fontSize: 12),
-                            textAlign: TextAlign.center,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 2,
-                            vertical: 0,
-                          ),
+                          label: Text('$day', style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
+                          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
                           selected: isSelected,
+                          selectedColor: Theme.of(context).colorScheme.primary,
                           showCheckmark: false,
                           onSelected: (_) {
                             setState(() {
@@ -667,7 +565,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                 Expanded(
                   child: Text(
                     notificationToggled && timeOfDayForReminder != null
-                        ? 'Recordatorio: ${_formatTime24h(timeOfDayForReminder!)}'
+                        ? 'Recordatorio: ${ActivityUtils().formatTime24h(timeOfDayForReminder!)}'
                         : 'Recordatorio:',
                   ),
                 ),
@@ -675,10 +573,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   value: notificationToggled,
                   onChanged: (value) async {
                     if (value) {
-                      final pickedTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
+                      final pickedTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
                       if (pickedTime != null) {
                         setState(() {
                           notificationToggled = true;
@@ -699,44 +594,5 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         ),
       ),
     ];
-  }
-
-  // Custom numberpicker function for time selection
-  Widget _buildTimePicker({
-    required BuildContext context,
-    required String label,
-    required int value,
-    required int max,
-    required void Function(int) onChanged,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-        NumberPicker(
-          value: value,
-          minValue: 0,
-          maxValue: max,
-          itemWidth: 80,
-          itemHeight: 40,
-          axis: Axis.vertical,
-          infiniteLoop: true,
-          onChanged: onChanged,
-          selectedTextStyle: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-          textStyle: const TextStyle(color: Colors.grey),
-        ),
-      ],
-    );
-  }
-
-  // Converts time format for TimePicker
-  String _formatTime24h(TimeOfDay time) {
-    final hour = time.hour.toString().padLeft(2, '0');
-    final minute = time.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
   }
 }
