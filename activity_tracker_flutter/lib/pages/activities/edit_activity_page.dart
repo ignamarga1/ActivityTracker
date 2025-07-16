@@ -1,6 +1,7 @@
 import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:activity_tracker_flutter/services/activity_service.dart';
+import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -20,62 +21,18 @@ class _EditActivityPageState extends State<EditActivityPage> {
   // Selected category
   ActivityCategory? selectedCategory;
   final List<Map<String, dynamic>> categories = [
-    {
-      'category': ActivityCategory.nutrition,
-      'label': 'Alimentación',
-      'icon': Icons.restaurant_rounded,
-    },
-    {
-      'category': ActivityCategory.sport,
-      'label': 'Deporte',
-      'icon': Icons.fitness_center_sharp,
-    },
-    {
-      'category': ActivityCategory.reading,
-      'label': 'Lectura',
-      'icon': Icons.menu_book_rounded,
-    },
-    {
-      'category': ActivityCategory.health,
-      'label': 'Salud',
-      'icon': Icons.local_hospital_rounded,
-    },
-    {
-      'category': ActivityCategory.meditation,
-      'label': 'Meditación',
-      'icon': Icons.self_improvement_rounded,
-    },
-    {
-      'category': ActivityCategory.quitBadHabit,
-      'label': 'Dejar mal hábito',
-      'icon': Icons.not_interested_rounded,
-    },
-    {
-      'category': ActivityCategory.home,
-      'label': 'Hogar',
-      'icon': Icons.home_rounded,
-    },
-    {
-      'category': ActivityCategory.entertainment,
-      'label': 'Ocio',
-      'icon': Icons.movie_creation_rounded,
-    },
+    {'category': ActivityCategory.nutrition, 'label': 'Alimentación', 'icon': Icons.restaurant_rounded},
+    {'category': ActivityCategory.sport, 'label': 'Deporte', 'icon': Icons.fitness_center_sharp},
+    {'category': ActivityCategory.reading, 'label': 'Lectura', 'icon': Icons.menu_book_rounded},
+    {'category': ActivityCategory.health, 'label': 'Salud', 'icon': Icons.local_hospital_rounded},
+    {'category': ActivityCategory.meditation, 'label': 'Meditación', 'icon': Icons.self_improvement_rounded},
+    {'category': ActivityCategory.quitBadHabit, 'label': 'Dejar mal hábito', 'icon': Icons.not_interested_rounded},
+    {'category': ActivityCategory.home, 'label': 'Hogar', 'icon': Icons.home_rounded},
+    {'category': ActivityCategory.entertainment, 'label': 'Ocio', 'icon': Icons.movie_creation_rounded},
     {'category': ActivityCategory.work, 'label': 'Trabajo', 'icon': Icons.work},
-    {
-      'category': ActivityCategory.study,
-      'label': 'Estudio',
-      'icon': Icons.school_rounded,
-    },
-    {
-      'category': ActivityCategory.social,
-      'label': 'Social',
-      'icon': Icons.groups_rounded,
-    },
-    {
-      'category': ActivityCategory.other,
-      'label': 'Otro',
-      'icon': Icons.more_horiz_rounded,
-    },
+    {'category': ActivityCategory.study, 'label': 'Estudio', 'icon': Icons.school_rounded},
+    {'category': ActivityCategory.social, 'label': 'Social', 'icon': Icons.groups_rounded},
+    {'category': ActivityCategory.other, 'label': 'Otro', 'icon': Icons.more_horiz_rounded},
   ];
 
   // Reminder
@@ -103,16 +60,13 @@ class _EditActivityPageState extends State<EditActivityPage> {
     descriptionController.text = activity!.description!;
     selectedCategory = activity!.category;
     notificationToggled = activity!.reminder;
-    timeOfDayForReminder = parseTimeOfDay(activity!.reminderTime);
+    timeOfDayForReminder = ActivityUtils().parseTimeOfDay(activity!.reminderTime);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edición de actividad'),
-        scrolledUnderElevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Editar actividad'), scrolledUnderElevation: 0),
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: false,
 
@@ -129,6 +83,13 @@ class _EditActivityPageState extends State<EditActivityPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      // INFORMATION
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Información', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
+                      const SizedBox(height: 20),
+
                       // New title textfield
                       TextFormField(
                         controller: titleController,
@@ -138,10 +99,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
                           }
                           return null;
                         },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Nuevo título",
-                        ),
+                        decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Nuevo título"),
                       ),
                       const SizedBox(height: 15),
 
@@ -153,8 +111,14 @@ class _EditActivityPageState extends State<EditActivityPage> {
                           labelText: "Nueva descripción (opcional)",
                         ),
                       ),
-
                       const SizedBox(height: 30),
+
+                      // CATEGORY
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Categoría', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
+                      const SizedBox(height: 20),
 
                       Column(
                         children: [
@@ -163,17 +127,15 @@ class _EditActivityPageState extends State<EditActivityPage> {
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: categories.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 8,
-                                  childAspectRatio: 2.5,
-                                ),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 8,
+                              childAspectRatio: 2.5,
+                            ),
                             itemBuilder: (context, index) {
                               final category = categories[index];
-                              final isSelected =
-                                  selectedCategory == category['category'];
+                              final isSelected = selectedCategory == category['category'];
 
                               return GestureDetector(
                                 onTap: () {
@@ -185,32 +147,21 @@ class _EditActivityPageState extends State<EditActivityPage> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: isSelected
-                                          ? Theme.of(
-                                              context,
-                                            ).colorScheme.primary
-                                          : Colors.grey.shade600,
+                                      color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.shade600,
                                       width: 2,
                                     ),
                                     color: isSelected
                                         ? Theme.of(context).colorScheme.primary
                                         : Theme.of(context).colorScheme.surface,
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                   child: Row(
                                     children: [
                                       Icon(
                                         category['icon'],
                                         color: isSelected
-                                            ? Theme.of(
-                                                context,
-                                              ).colorScheme.onPrimary
-                                            : Theme.of(
-                                                context,
-                                              ).colorScheme.onSurface,
+                                            ? Theme.of(context).colorScheme.onPrimary
+                                            : Theme.of(context).colorScheme.onSurface,
                                       ),
                                       const SizedBox(width: 10),
                                       Expanded(
@@ -218,16 +169,10 @@ class _EditActivityPageState extends State<EditActivityPage> {
                                           category['label'],
                                           style: TextStyle(
                                             fontSize: 12,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                             color: isSelected
-                                                ? Theme.of(
-                                                    context,
-                                                  ).colorScheme.onPrimary
-                                                : Theme.of(
-                                                    context,
-                                                  ).colorScheme.onSurface,
+                                                ? Theme.of(context).colorScheme.onPrimary
+                                                : Theme.of(context).colorScheme.onSurface,
                                           ),
                                         ),
                                       ),
@@ -241,6 +186,13 @@ class _EditActivityPageState extends State<EditActivityPage> {
                       ),
                       const SizedBox(height: 30),
 
+                      // NOTIFICATION
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Notificación', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
+                      const SizedBox(height: 20),
+
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -250,9 +202,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  notificationToggled &&
-                                          timeOfDayForReminder != null
-                                      ? 'Recordatorio: ${_formatTime24h(timeOfDayForReminder!)}'
+                                  notificationToggled && timeOfDayForReminder != null
+                                      ? 'Recordatorio: ${ActivityUtils().formatTime24h(timeOfDayForReminder!)}'
                                       : 'Recordatorio:',
                                 ),
                               ),
@@ -292,17 +243,12 @@ class _EditActivityPageState extends State<EditActivityPage> {
                           style: FilledButton.styleFrom(
                             backgroundColor: Colors.blue,
                             padding: const EdgeInsets.all(15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           ),
 
                           child: const Text(
                             'Guardar cambios',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
 
                           onPressed: () async {
@@ -310,25 +256,16 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
                             // Checks if any attribute was changed
                             final String newTitle = titleController.text.trim();
-                            final String newDescription = descriptionController
-                                .text
-                                .trim();
-                            final ActivityCategory? newCategory =
-                                selectedCategory;
-                            final bool isTitleChanged =
-                                newTitle.isNotEmpty &&
-                                (newTitle != activity!.title);
-                            final bool isDescriptionChanged =
-                                newDescription != activity!.description;
-                            final bool isCategoryChanged =
-                                newCategory != activity!.category;
-                            final bool isReminderChanged =
-                                notificationToggled != activity!.reminder;
+                            final String newDescription = descriptionController.text.trim();
+                            final ActivityCategory? newCategory = selectedCategory;
+                            final bool isTitleChanged = newTitle.isNotEmpty && (newTitle != activity!.title);
+                            final bool isDescriptionChanged = newDescription != activity!.description;
+                            final bool isCategoryChanged = newCategory != activity!.category;
+                            final bool isReminderChanged = notificationToggled != activity!.reminder;
                             final bool isReminderTimeChanged =
                                 notificationToggled &&
                                 timeOfDayForReminder != null &&
-                                _formatTime24h(timeOfDayForReminder!) !=
-                                    activity!.reminderTime;
+                                ActivityUtils().formatTime24h(timeOfDayForReminder!) != activity!.reminderTime;
 
                             // Checks if there are any changes in case the user presses the button (for not showing the Fluttertoast)
                             if (!isTitleChanged &&
@@ -338,6 +275,11 @@ class _EditActivityPageState extends State<EditActivityPage> {
                                 !isReminderTimeChanged) {
                               if (context.mounted) {
                                 Navigator.pop(context);
+                                StdFluttertoast.show(
+                                  'No se ha realizado ningún cambio',
+                                  Toast.LENGTH_SHORT,
+                                  ToastGravity.BOTTOM,
+                                );
                                 return;
                               }
                             }
@@ -349,10 +291,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
                                 description: descriptionController.text.trim(),
                                 category: selectedCategory,
                                 reminder: notificationToggled,
-                                reminderTime:
-                                    (notificationToggled &&
-                                        timeOfDayForReminder != null)
-                                    ? _formatTime24h(timeOfDayForReminder!)
+                                reminderTime: (notificationToggled && timeOfDayForReminder != null)
+                                    ? ActivityUtils().formatTime24h(timeOfDayForReminder!)
                                     : null,
                               );
 
@@ -381,26 +321,4 @@ class _EditActivityPageState extends State<EditActivityPage> {
       ),
     );
   }
-}
-
-// Converts time format for TimePicker
-String _formatTime24h(TimeOfDay time) {
-  final hour = time.hour.toString().padLeft(2, '0');
-  final minute = time.minute.toString().padLeft(2, '0');
-  return '$hour:$minute';
-}
-
-// Converts String time to TimeOfDay
-TimeOfDay? parseTimeOfDay(String? timeString) {
-  if (timeString == null) return null;
-
-  final parts = timeString.split(':');
-  if (parts.length != 2) return null;
-
-  final hour = int.tryParse(parts[0]);
-  final minute = int.tryParse(parts[1]);
-
-  if (hour == null || minute == null) return null;
-
-  return TimeOfDay(hour: hour, minute: minute);
 }
