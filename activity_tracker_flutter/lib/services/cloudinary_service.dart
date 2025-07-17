@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -24,10 +25,7 @@ class CloudinaryService {
       final resJson = json.decode(resStr);
       return resJson['secure_url'];
     } else {
-      Fluttertoast.showToast(
-        msg: 'No se ha podido subir la imagen. Inténtalo de nuevo',
-        toastLength: Toast.LENGTH_LONG,
-      );
+      StdFluttertoast.show('No se ha podido subir la imagen. Inténtalo de nuevo', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
       return null;
     }
   }

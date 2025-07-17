@@ -96,7 +96,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                   onPressed: () async {
                     // Sends again the verification email
                     await _firebaseAuth.currentUser?.sendEmailVerification();
-                    Fluttertoast.showToast(msg: 'Correo de verificación reenviado', toastLength: Toast.LENGTH_LONG);
+                    StdFluttertoast.show('Correo de verificación reenviado', Toast.LENGTH_SHORT, ToastGravity.BOTTOM);
                   },
                 ),
 
