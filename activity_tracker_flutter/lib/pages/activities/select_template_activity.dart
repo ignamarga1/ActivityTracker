@@ -1,24 +1,20 @@
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:activity_tracker_flutter/services/activity_service.dart';
+import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:flutter/material.dart';
 
 class SelectTemplateActivityPage extends StatefulWidget {
   const SelectTemplateActivityPage({super.key});
 
   @override
-  State<SelectTemplateActivityPage> createState() =>
-      _SelectTemplateActivityPageState();
+  State<SelectTemplateActivityPage> createState() => _SelectTemplateActivityPageState();
 }
 
-class _SelectTemplateActivityPageState
-    extends State<SelectTemplateActivityPage> {
+class _SelectTemplateActivityPageState extends State<SelectTemplateActivityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plantillas de actividades'),
-        scrolledUnderElevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Plantillas de actividades'), scrolledUnderElevation: 0),
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: false,
 
@@ -30,15 +26,11 @@ class _SelectTemplateActivityPageState
             const SizedBox(height: 30),
             // Information text
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Text(
                 "Selecciona una de las siguientes plantillas para ayudarte a crear una nueva actividad",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             const SizedBox(height: 30),
@@ -62,11 +54,7 @@ class _SelectTemplateActivityPageState
 
                   // No activities for the selected date
                   if (templateActivities.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        "No hay ninguna plantilla creada. Vuelve más tarde",
-                      ),
-                    );
+                    return const Center(child: Text("No hay ninguna plantilla creada. Vuelve más tarde"));
                   }
 
                   // List view for every activity
@@ -82,20 +70,13 @@ class _SelectTemplateActivityPageState
                         color: Theme.of(context).colorScheme.surface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
-                          side: BorderSide(
-                            color: Colors.grey.shade700,
-                            width: 2,
-                          ),
+                          side: BorderSide(color: Colors.grey.shade700, width: 2),
                         ),
 
                         child: InkWell(
                           // Open Activity details
                           onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/createTemplateActivity',
-                              arguments: activity,
-                            );
+                            Navigator.pushNamed(context, '/createTemplateActivity', arguments: activity);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(25),
@@ -106,46 +87,26 @@ class _SelectTemplateActivityPageState
                                 Text(
                                   activity.title,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                                 const SizedBox(height: 10),
 
                                 if (activity.description!.isNotEmpty)
-                                  _buildInfoRow(
-                                    'Descripción:',
-                                    activity.description!,
-                                  ),
-                                _buildCategoryRow(
-                                  'Categoría:',
-                                  activity.category,
-                                ),
+                                  _buildInfoRow('Descripción:', activity.description!),
+                                _buildCategoryRow('Categoría:', activity.category),
 
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildInfoRow(
-                                      'Tipo de hito:',
-                                      getMilestoneLabel(activity.milestone),
-                                    ),
-                                    if (activity.milestone ==
-                                        MilestoneType.quantity) ...[
-                                      _buildInfoRow(
-                                        'Cantidad:',
-                                        activity.quantity.toString(),
-                                      ),
-                                      _buildInfoRow(
-                                        'Unidad de medida:',
-                                        activity.measurementUnit.toString(),
-                                      ),
+                                    _buildInfoRow('Tipo de hito:', getMilestoneLabel(activity.milestone)),
+                                    if (activity.milestone == MilestoneType.quantity) ...[
+                                      _buildInfoRow('Cantidad:', activity.quantity.toString()),
+                                      _buildInfoRow('Unidad de medida:', activity.measurementUnit.toString()),
                                     ],
-                                    if (activity.milestone ==
-                                        MilestoneType.timed)
+                                    if (activity.milestone == MilestoneType.timed)
                                       _buildInfoRow(
                                         'Tiempo:',
-                                        formatTime(
+                                        ActivityUtils().formatTime(
                                           activity.durationHours!,
                                           activity.durationMinutes!,
                                           activity.durationSeconds!,
@@ -157,31 +118,18 @@ class _SelectTemplateActivityPageState
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildInfoRow(
-                                      'Se repite:',
-                                      getFrequencyLabel(activity.frequency),
-                                    ),
-                                    if (activity.frequency ==
-                                            FrequencyType.specificDayWeek &&
-                                        activity
-                                            .frequencyDaysOfWeek!
-                                            .isNotEmpty)
+                                    _buildInfoRow('Se repite:', getFrequencyLabel(activity.frequency)),
+                                    if (activity.frequency == FrequencyType.specificDayWeek &&
+                                        activity.frequencyDaysOfWeek!.isNotEmpty)
                                       _buildInfoRow(
                                         'Días de la semana:',
-                                        formatWeekDays(
-                                          activity.frequencyDaysOfWeek!,
-                                        ),
+                                        ActivityUtils().formatWeekDays(activity.frequencyDaysOfWeek!),
                                       ),
-                                    if (activity.frequency ==
-                                            FrequencyType.specificDayMonth &&
-                                        activity
-                                            .frequencyDaysOfMonth!
-                                            .isNotEmpty)
+                                    if (activity.frequency == FrequencyType.specificDayMonth &&
+                                        activity.frequencyDaysOfMonth!.isNotEmpty)
                                       _buildInfoRow(
                                         'Días del mes:',
-                                        formatMonthDays(
-                                          activity.frequencyDaysOfMonth!,
-                                        ),
+                                        ActivityUtils().formatMonthDays(activity.frequencyDaysOfMonth!),
                                       ),
                                   ],
                                 ),
@@ -189,18 +137,9 @@ class _SelectTemplateActivityPageState
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildInfoRow(
-                                      'Notificación:',
-                                      activity.reminder
-                                          ? 'Activada'
-                                          : 'Desactivada',
-                                    ),
+                                    _buildInfoRow('Notificación:', activity.reminder ? 'Activada' : 'Desactivada'),
 
-                                    if (activity.reminder)
-                                      _buildInfoRow(
-                                        'Hora:',
-                                        activity.reminderTime!,
-                                      ),
+                                    if (activity.reminder) _buildInfoRow('Hora:', activity.reminderTime!),
                                   ],
                                 ),
                               ],
@@ -227,10 +166,7 @@ Widget _buildInfoRow(String title, String value) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-        ),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -248,17 +184,14 @@ Widget _buildInfoRow(String title, String value) {
 
 // Similar to buildInfoRow but with some modifications to fit Category necessities
 Widget _buildCategoryRow(String title, ActivityCategory category) {
-  final info = getCategoryInfo(category);
+  final info = ActivityUtils().getCategoryInfo(category);
 
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-        ),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
         const SizedBox(width: 10),
 
         Row(
@@ -279,75 +212,7 @@ Widget _buildCategoryRow(String title, ActivityCategory category) {
   );
 }
 
-// Function that returns the category's label and icon
-Map<String, dynamic> getCategoryInfo(ActivityCategory category) {
-  // Activity categories
-  final List<Map<String, dynamic>> categories = [
-    {
-      'category': ActivityCategory.nutrition,
-      'label': 'Alimentación',
-      'icon': Icons.restaurant_rounded,
-    },
-    {
-      'category': ActivityCategory.sport,
-      'label': 'Deporte',
-      'icon': Icons.fitness_center_sharp,
-    },
-    {
-      'category': ActivityCategory.reading,
-      'label': 'Lectura',
-      'icon': Icons.menu_book_rounded,
-    },
-    {
-      'category': ActivityCategory.health,
-      'label': 'Salud',
-      'icon': Icons.local_hospital_rounded,
-    },
-    {
-      'category': ActivityCategory.meditation,
-      'label': 'Meditación',
-      'icon': Icons.self_improvement_rounded,
-    },
-    {
-      'category': ActivityCategory.quitBadHabit,
-      'label': 'Dejar mal hábito',
-      'icon': Icons.not_interested_rounded,
-    },
-    {
-      'category': ActivityCategory.home,
-      'label': 'Hogar',
-      'icon': Icons.home_rounded,
-    },
-    {
-      'category': ActivityCategory.entertainment,
-      'label': 'Ocio',
-      'icon': Icons.movie_creation_rounded,
-    },
-    {'category': ActivityCategory.work, 'label': 'Trabajo', 'icon': Icons.work},
-    {
-      'category': ActivityCategory.study,
-      'label': 'Estudio',
-      'icon': Icons.school_rounded,
-    },
-    {
-      'category': ActivityCategory.social,
-      'label': 'Social',
-      'icon': Icons.groups_rounded,
-    },
-    {
-      'category': ActivityCategory.other,
-      'label': 'Otro',
-      'icon': Icons.more_horiz_rounded,
-    },
-  ];
-
-  return categories.firstWhere(
-    (c) => c['category'] == category,
-    orElse: () => {'label': 'Desconocido', 'icon': Icons.help_outline_rounded},
-  );
-}
-
-// Function that returns the Frequency's label
+// Function that returns the Frequency's label (different text than the function in ActivityUtils)
 String getFrequencyLabel(FrequencyType type) {
   return {
         FrequencyType.everyday: "Diariamente",
@@ -357,7 +222,7 @@ String getFrequencyLabel(FrequencyType type) {
       "Desconocida";
 }
 
-// Function that returns the Milestone's label
+// Function that returns the Milestone's label (different text than the function in ActivityUtils)
 String getMilestoneLabel(MilestoneType type) {
   return {
         MilestoneType.yesNo: "Sí/No",
@@ -365,28 +230,4 @@ String getMilestoneLabel(MilestoneType type) {
         MilestoneType.timed: "Por tiempo",
       }[type] ??
       "Desconocida";
-}
-
-// Function that formats the list of days of the week into a String
-String formatWeekDays(List<int> days) {
-  const weekDays = [
-    'Lunes',
-    'Martes',
-    'Miércoles',
-    'Jueves',
-    'Viernes',
-    'Sábado',
-    'Domingo',
-  ];
-  return days.map((d) => weekDays[d]).join(', ');
-}
-
-// Function that formats the list of days of the month into a String
-String formatMonthDays(List<int> days) {
-  return days.map((d) => d.toString()).join(', ');
-}
-
-// Function that formats the time for the Timed activities
-String formatTime(int h, int m, int s) {
-  return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
 }
