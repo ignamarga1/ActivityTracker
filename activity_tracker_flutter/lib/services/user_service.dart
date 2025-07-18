@@ -4,12 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class UserService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final _collection = FirebaseFirestore.instance.collection('Users');
 
   // Create new user document in Firestore
-  Future<void> createUserDocument({
-    required UserCredential? userCredential,
-    required String username,
-  }) async {
+  Future<void> createUserDocument({required UserCredential? userCredential, required String username}) async {
     final user = userCredential?.user;
 
     if (user != null) {
@@ -22,10 +20,7 @@ class UserService {
         createdAt: Timestamp.now(),
       );
 
-      await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(user.uid)
-          .set(newUser.toMap());
+      await _collection.doc(user.uid).set(newUser.toMap());
     }
   }
 
@@ -36,14 +31,30 @@ class UserService {
       return Stream.value(null);
     }
 
-    return FirebaseFirestore.instance
-        .collection("Users")
-        .doc(currentUser.uid)
-        .snapshots()
-        .map((snapshot) {
-          if (!snapshot.exists) return null;
-          return AppUser.fromMap(snapshot.data()!);
-        });
+    return _collection.doc(currentUser.uid).snapshots().map((snapshot) {
+      if (!snapshot.exists) return null;
+      return AppUser.fromMap(snapshot.data()!);
+    });
+  }
+
+  // Get user data by user id
+  Future<AppUser?> getUserById(String uid) async {
+    final doc = await _collection.doc(uid).get();
+
+    if (!doc.exists) return null;
+
+    return AppUser.fromMap(doc.data()!);
+  }
+
+  // Get user data by username
+  Future<String?> getUserIdByUsername(String username) async {
+    final querySnapshot = await _collection.where('username', isEqualTo: username).limit(1).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    } else {
+      return null;
+    }
   }
 
   // Delete user
@@ -52,18 +63,12 @@ class UserService {
     final currentUser = _firebaseAuth.currentUser;
 
     if (currentUser != null) {
-      await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(currentUser.uid)
-          .delete();
+      await _collection.doc(currentUser.uid).delete();
     }
   }
 
   // Update user profile data
-  Future<void> updateUserDocument({
-    String? newNickname,
-    String? newImageUrl,
-  }) async {
+  Future<void> updateUserDocument({String? newNickname, String? newImageUrl}) async {
     final currentUser = _firebaseAuth.currentUser;
 
     if (currentUser != null) {
@@ -78,10 +83,7 @@ class UserService {
       }
 
       if (profileDataToUpdate.isNotEmpty) {
-        await FirebaseFirestore.instance
-            .collection("Users")
-            .doc(currentUser.uid)
-            .update(profileDataToUpdate);
+        await _collection.doc(currentUser.uid).update(profileDataToUpdate);
       }
     }
   }
