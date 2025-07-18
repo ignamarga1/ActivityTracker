@@ -146,16 +146,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // All my activities button
-                      IconButton(
-                        icon: Icon(Icons.category_rounded),
-                        tooltip: 'Todas mis actividades',
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/myActivities');
-                        },
-                      ),
-
-                      //
                       IconButton(
                         icon: Icon(Icons.filter_list_rounded),
                         tooltip: 'Filtrar actividades',
