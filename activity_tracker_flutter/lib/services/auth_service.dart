@@ -106,7 +106,7 @@ class AuthService {
       if (context.mounted) {
         Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
 
-        StdFluttertoast.show('¡Sesión iniciada con éxito!', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
+        StdFluttertoast.show('¡Sesión iniciada con éxito!', Toast.LENGTH_SHORT, ToastGravity.BOTTOM);
       }
     } on FirebaseAuthException catch (e) {
       // Pops loading dialog when there is an error
@@ -144,7 +144,7 @@ class AuthService {
         // Clear app route stack leaving just the login page
         Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
 
-        StdFluttertoast.show('¡Sesión cerrada con éxito!', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
+        StdFluttertoast.show('¡Sesión cerrada con éxito!', Toast.LENGTH_SHORT, ToastGravity.BOTTOM);
       }
     } catch (e) {
       StdFluttertoast.show('No se ha podido cerrar sesión', Toast.LENGTH_LONG, ToastGravity.BOTTOM);
