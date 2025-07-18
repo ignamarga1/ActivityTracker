@@ -4,6 +4,8 @@ import 'package:activity_tracker_flutter/pages/activities/create_template_activi
 import 'package:activity_tracker_flutter/pages/activities/edit_activity_page.dart';
 import 'package:activity_tracker_flutter/pages/activities/select_template_activity.dart';
 import 'package:activity_tracker_flutter/pages/challenges/challenges_page.dart';
+import 'package:activity_tracker_flutter/pages/friends/add_friend_page.dart';
+import 'package:activity_tracker_flutter/pages/friends/friendship_requests_page.dart';
 import 'package:activity_tracker_flutter/pages/home_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/email_verification_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/forgot_password_page.dart';
@@ -88,6 +90,10 @@ class MyApp extends StatelessWidget {
         '/createTemplateActivity': (context) => CreateTemplateActivityPage(),
         '/activityDetails': (context) => ActivityDetailsPage(),
         '/editActivity': (context) => EditActivityPage(),
+
+        // FRIENDS
+        '/addFriend': (context) => AddFriendPage(),
+        '/friendRequests': (context) => FriendshipRequestsPage(),
       },
     );
   }
