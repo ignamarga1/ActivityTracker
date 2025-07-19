@@ -95,18 +95,19 @@ Widget _buildReceivedFriendshipRequests(BuildContext context, AppUser user) {
                 itemBuilder: (context, index) {
                   final friendshipRequest = allFriendshipRequests[index];
 
-                  return FutureBuilder<AppUser?>(
-                    future: UserService().getUserById(friendshipRequest.senderUserId),
+                  return StreamBuilder<AppUser?>(
+                    stream: UserService().getUserById(friendshipRequest.senderUserId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        // return const Center(child: CircularProgressIndicator());
+                        return const Center();
                       }
 
                       final senderUser = snapshot.data;
 
-                      if (senderUser == null) {
-                        return const ListTile(title: Text("Usuario no encontrado"));
-                      }
+                      // if (senderUser == null) {
+                      //   return const ListTile(title: Text("Usuario no encontrado"));
+                      // }
 
                       // User information
                       return Card(
@@ -121,7 +122,7 @@ Widget _buildReceivedFriendshipRequests(BuildContext context, AppUser user) {
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage:
-                                senderUser.profilePictureURL != null && senderUser.profilePictureURL!.isNotEmpty
+                                senderUser!.profilePictureURL != null && senderUser.profilePictureURL!.isNotEmpty
                                 ? NetworkImage(senderUser.profilePictureURL!)
                                 : null,
                             backgroundColor: Colors.grey.shade600,
@@ -220,18 +221,19 @@ Widget _buildSentFriendshipRequests(BuildContext context, AppUser user) {
                 itemBuilder: (context, index) {
                   final friendshipRequest = allFriendshipRequests[index];
 
-                  return FutureBuilder<AppUser?> (
-                    future: UserService().getUserById(friendshipRequest.receiverUserId),
+                  return StreamBuilder<AppUser?> (
+                    stream: UserService().getUserById(friendshipRequest.receiverUserId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        // return const Center(child: CircularProgressIndicator());
+                        return const Center();
                       }
 
                       final receiverUser = snapshot.data;
 
-                      if (receiverUser == null) {
-                        return const ListTile(title: Text("Usuario no encontrado"));
-                      }
+                      // if (receiverUser == null) {
+                      //   return const ListTile(title: Text("Usuario no encontrado"));
+                      // }
 
                       // User information
                       return Card(
@@ -246,7 +248,7 @@ Widget _buildSentFriendshipRequests(BuildContext context, AppUser user) {
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage:
-                                receiverUser.profilePictureURL != null && receiverUser.profilePictureURL!.isNotEmpty
+                                receiverUser!.profilePictureURL != null && receiverUser.profilePictureURL!.isNotEmpty
                                 ? NetworkImage(receiverUser.profilePictureURL!)
                                 : null,
                             backgroundColor: Colors.grey.shade600,

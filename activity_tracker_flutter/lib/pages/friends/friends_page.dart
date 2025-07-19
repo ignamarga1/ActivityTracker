@@ -134,18 +134,18 @@ class _FriendsPageState extends State<FriendsPage> {
                           ? friendshipRequest.receiverUserId
                           : friendshipRequest.senderUserId;
 
-                      return FutureBuilder<AppUser?>(
-                        future: UserService().getUserById(otherUserId),
+                      return StreamBuilder<AppUser?>(
+                        stream: UserService().getUserById(otherUserId),
                         builder: (context, snapshot) {
-                          // if (snapshot.connectionState == ConnectionState.waiting) {
-                          //   return const Center(child: CircularProgressIndicator());
-                          // }
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
 
                           final senderUser = snapshot.data;
 
-                          if (senderUser == null) {
-                            return const ListTile(title: Text("Usuario no encontrado"));
-                          }
+                          // if (senderUser == null) {
+                          //   return const ListTile(title: Text("Usuario no encontrado"));
+                          // }
                           
                           // User information
                           return Card(
@@ -161,7 +161,7 @@ class _FriendsPageState extends State<FriendsPage> {
                               contentPadding: const EdgeInsets.all(10),
                               leading: CircleAvatar(
                                 backgroundImage:
-                                    senderUser.profilePictureURL != null && senderUser.profilePictureURL!.isNotEmpty
+                                    senderUser!.profilePictureURL != null && senderUser.profilePictureURL!.isNotEmpty
                                     ? NetworkImage(senderUser.profilePictureURL!)
                                     : null,
                                 backgroundColor: Colors.grey.shade600,
