@@ -38,13 +38,13 @@ class UserService {
   }
 
   // Get user data by user id
-  Future<AppUser?> getUserById(String uid) async {
-    final doc = await _collection.doc(uid).get();
-
+  Stream<AppUser?> getUserById(String uid) {
+  return _collection.doc(uid).snapshots().map((doc) {
     if (!doc.exists) return null;
-
     return AppUser.fromMap(doc.data()!);
-  }
+  });
+}
+
 
   // Get user data by username
   Future<String?> getUserIdByUsername(String username) async {
