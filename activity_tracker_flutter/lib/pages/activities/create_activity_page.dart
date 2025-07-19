@@ -429,9 +429,9 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         content: Column(
           children: [
             // Descriptive text
-            const Text.rich(
+            Text.rich(
               textAlign: TextAlign.center,
-              style: TextStyle(fontStyle: FontStyle.italic),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
               TextSpan(text: 'Selecciona la frecuencia con la que deseas realizar la actividad'),
             ),
             const SizedBox(height: 15),
@@ -548,12 +548,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Descriptive text
-            const Text.rich(
+            Text.rich(
               textAlign: TextAlign.center,
-              style: TextStyle(fontStyle: FontStyle.italic),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
               TextSpan(
                 text:
-                    'Selecciona si deseas recibir un recordatorio para realizar la actividad y elige la hora a la que quieres que se te notifique',
+                    'Selecciona si deseas recibir un recordatorio para no olvidarte de realizar la actividad y elige la hora a la que quieres que se te notifique',
               ),
             ),
             const SizedBox(height: 15),
