@@ -4,6 +4,7 @@ import 'package:activity_tracker_flutter/pages/activities/create_template_activi
 import 'package:activity_tracker_flutter/pages/activities/edit_activity_page.dart';
 import 'package:activity_tracker_flutter/pages/activities/select_template_activity.dart';
 import 'package:activity_tracker_flutter/pages/challenges/challenges_page.dart';
+import 'package:activity_tracker_flutter/pages/conversations/conversations_page.dart';
 import 'package:activity_tracker_flutter/pages/friends/add_friend_page.dart';
 import 'package:activity_tracker_flutter/pages/friends/friendship_requests_page.dart';
 import 'package:activity_tracker_flutter/pages/home_page.dart';
@@ -11,7 +12,7 @@ import 'package:activity_tracker_flutter/pages/login_register/email_verification
 import 'package:activity_tracker_flutter/pages/login_register/forgot_password_page.dart';
 import 'package:activity_tracker_flutter/pages/friends/friends_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/login_page.dart';
-import 'package:activity_tracker_flutter/pages/messages/messages_page.dart';
+import 'package:activity_tracker_flutter/pages/conversations/conversation_chat_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/register_page.dart';
 import 'package:activity_tracker_flutter/pages/settings_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile/edit_user_profile_page.dart';
@@ -55,7 +56,15 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-        child: child!,
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              dialBackgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade400,
+              dialHandColor: Colors.blue,
+            ),
+          ),
+          child: child!,
+        ),
       ),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
@@ -65,7 +74,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: [
         Locale('es'), // Spanish
       ],
-      //home: AuthGate(), 
+      //home: AuthGate(),
       initialRoute: FirebaseAuth.instance.currentUser == null ? '/login' : '/',
 
       routes: {
@@ -80,7 +89,7 @@ class MyApp extends StatelessWidget {
         // DRAWER ROUTER OPTIONS
         '/userProfile': (context) => UserProfilePage(),
         '/friends': (context) => FriendsPage(),
-        '/messages': (context) => MessagesPage(),
+        '/conversations': (context) => ConversationsPage(),
         '/challenges': (context) => ChallengesPage(),
         '/settings': (context) => SettingsPage(),
 
@@ -94,6 +103,9 @@ class MyApp extends StatelessWidget {
         // FRIENDS
         '/addFriend': (context) => AddFriendPage(),
         '/friendRequests': (context) => FriendshipRequestsPage(),
+
+        // MESSAGES
+        '/conversationChat' : (context) => ConversationChatPage(),
       },
     );
   }
