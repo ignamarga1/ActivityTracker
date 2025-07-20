@@ -130,11 +130,21 @@ Widget _buildReceivedFriendshipRequests(BuildContext context, AppUser user) {
                                 ? const Icon(Icons.person_rounded, color: Colors.white)
                                 : null,
                           ),
-                          title: Text('@${senderUser.username}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                senderUser.nickname,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text('@${senderUser.username}', overflow: TextOverflow.ellipsis),
+                              const SizedBox(height: 5),
+                            ],
+                          ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(senderUser.nickname, overflow: TextOverflow.ellipsis),
                               Text(getStatusLabel(friendshipRequest.status)),
                               Text(DateFormat('dd-MM-yyyy (HH:mm)').format(friendshipRequest.createdAt.toDate())),
                             ],
@@ -221,7 +231,7 @@ Widget _buildSentFriendshipRequests(BuildContext context, AppUser user) {
                 itemBuilder: (context, index) {
                   final friendshipRequest = allFriendshipRequests[index];
 
-                  return StreamBuilder<AppUser?> (
+                  return StreamBuilder<AppUser?>(
                     stream: UserService().getUserById(friendshipRequest.receiverUserId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -256,11 +266,21 @@ Widget _buildSentFriendshipRequests(BuildContext context, AppUser user) {
                                 ? const Icon(Icons.person_rounded, color: Colors.white)
                                 : null,
                           ),
-                          title: Text('@${receiverUser.username}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                receiverUser.nickname,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text('@${receiverUser.username}', overflow: TextOverflow.ellipsis),
+                              const SizedBox(height: 5),
+                            ],
+                          ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(receiverUser.nickname, overflow: TextOverflow.ellipsis),
                               Text(getStatusLabel(friendshipRequest.status)),
                               Text(DateFormat('dd-MM-yyyy (HH:mm)').format(friendshipRequest.createdAt.toDate())),
                             ],
