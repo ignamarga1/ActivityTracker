@@ -2,6 +2,7 @@ import 'package:activity_tracker_flutter/components/home_drawer.dart';
 import 'package:activity_tracker_flutter/models/friendship_request.dart';
 import 'package:activity_tracker_flutter/models/user.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
+import 'package:activity_tracker_flutter/services/conversation_service.dart';
 import 'package:activity_tracker_flutter/services/friendship_request_service.dart';
 import 'package:activity_tracker_flutter/services/user_service.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class _FriendsPageState extends State<FriendsPage> {
         child: Column(
           children: [
             const SizedBox(height: 10),
-            
+
             // Manage received friendship requests and Add friend buttons
             Center(
               child: Padding(
@@ -128,7 +129,7 @@ class _FriendsPageState extends State<FriendsPage> {
                     itemCount: allFriendshipRequests.length,
                     itemBuilder: (context, index) {
                       final friendshipRequest = allFriendshipRequests[index];
-                      
+
                       // Makes sure we see our friends instead of us in the friends list
                       final otherUserId = friendshipRequest.senderUserId == user.uid
                           ? friendshipRequest.receiverUserId
@@ -138,7 +139,8 @@ class _FriendsPageState extends State<FriendsPage> {
                         stream: UserService().getUserById(otherUserId),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
+                            // return const Center(child: CircularProgressIndicator());
+                            return const Center();
                           }
 
                           final senderUser = snapshot.data;
@@ -146,7 +148,7 @@ class _FriendsPageState extends State<FriendsPage> {
                           // if (senderUser == null) {
                           //   return const ListTile(title: Text("Usuario no encontrado"));
                           // }
-                          
+
                           // User information
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8),
@@ -158,7 +160,7 @@ class _FriendsPageState extends State<FriendsPage> {
 
                             // Profile picture
                             child: ListTile(
-                              contentPadding: const EdgeInsets.all(10),
+                              minVerticalPadding: 15,
                               leading: CircleAvatar(
                                 backgroundImage:
                                     senderUser!.profilePictureURL != null && senderUser.profilePictureURL!.isNotEmpty
@@ -169,10 +171,16 @@ class _FriendsPageState extends State<FriendsPage> {
                                     ? const Icon(Icons.person_rounded, color: Colors.white)
                                     : null,
                               ),
-                              title: Text(
-                                '@${senderUser.username}',
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.ellipsis,
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    senderUser.nickname,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text('@${senderUser.username}', overflow: TextOverflow.ellipsis),
+                                ],
                               ),
 
                               // Messages, challenges and delete friend buttons
@@ -182,7 +190,20 @@ class _FriendsPageState extends State<FriendsPage> {
                                   IconButton(
                                     icon: const Icon(Icons.chat_rounded),
                                     tooltip: 'Enviar mensaje',
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      final conversation = await ConversationService().createConversation(
+                                        user.uid,
+                                        senderUser.uid,
+                                      );
+
+                                      if (context.mounted) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/conversationChat',
+                                          arguments: {'conversationId': conversation.id, 'friend': senderUser},
+                                        );
+                                      }
+                                    },
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.emoji_events_rounded),
