@@ -52,7 +52,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
                 // Profile
                 DrawerTile(
-                  icon: Icons.person,
+                  icon: Icons.person_rounded,
                   label: 'Perfil',
                   iconSize: iconSize,
                   textStyle: textStyle,
@@ -68,7 +68,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
                 // Friends
                 DrawerTile(
-                  icon: Icons.groups,
+                  icon: Icons.groups_rounded,
                   label: 'Amigos',
                   iconSize: iconSize,
                   textStyle: textStyle,
@@ -82,21 +82,21 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   },
                 ),
                 DrawerTile(
-                  icon: Icons.mail,
+                  icon: Icons.mail_rounded,
                   label: 'Mensajes',
                   iconSize: iconSize,
                   textStyle: textStyle,
-                  selected: currentRoute == '/messages',
+                  selected: currentRoute == '/conversations',
                   onTap: () {
-                    if (currentRoute != '/messages') {
-                      Navigator.pushNamedAndRemoveUntil(context, '/messages', (route) => false);
+                    if (currentRoute != '/conversations') {
+                      Navigator.pushNamedAndRemoveUntil(context, '/conversations', (route) => false);
                     } else {
                       Navigator.of(context).pop();
                     }
                   },
                 ),
                 DrawerTile(
-                  icon: Icons.shield,
+                  icon: Icons.emoji_events_rounded,
                   label: 'Desafíos',
                   iconSize: iconSize,
                   textStyle: textStyle,
