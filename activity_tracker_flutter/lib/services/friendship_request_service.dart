@@ -1,4 +1,5 @@
 import 'package:activity_tracker_flutter/models/friendship_request.dart';
+import 'package:activity_tracker_flutter/services/conversation_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -101,7 +102,29 @@ class FriendshipRequestService {
 
   // Delete friendship request
   Future<void> deleteFriendshipRequestById(String id) async {
-    // Deletes the activity
     await _collection.doc(id).delete();
+  }
+
+  // Delete friendship request
+  Future<void> deleteFriend(String user1Id, String user2Id) async {
+    // Deletes the accepted friendship request between the users
+    final query = await _collection
+        .where('senderUserId', whereIn: [user1Id, user2Id])
+        .where('receiverUserId', whereIn: [user1Id, user2Id])
+        .where('status', isEqualTo: RequestStatus.accepted.name)
+        .get();
+
+    for (final doc in query.docs) {
+      final data = doc.data();
+      final sender = data['senderUserId'];
+      final receiver = data['receiverUserId'];
+
+      if ((sender == user1Id && receiver == user2Id) || (sender == user2Id && receiver == user1Id)) {
+        await _collection.doc(doc.id).delete();
+      }
+    }
+
+    // Deletes the conversation and the messages (if they exist)
+    await ConversationService().deleteConversationBetweenUsers(user1Id, user2Id);
   }
 }

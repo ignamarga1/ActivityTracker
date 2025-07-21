@@ -1,4 +1,5 @@
 import 'package:activity_tracker_flutter/components/home_drawer.dart';
+import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/friendship_request.dart';
 import 'package:activity_tracker_flutter/models/user.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
@@ -6,6 +7,7 @@ import 'package:activity_tracker_flutter/services/conversation_service.dart';
 import 'package:activity_tracker_flutter/services/friendship_request_service.dart';
 import 'package:activity_tracker_flutter/services/user_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class FriendsPage extends StatefulWidget {
@@ -213,7 +215,10 @@ class _FriendsPageState extends State<FriendsPage> {
                                   IconButton(
                                     icon: const Icon(Icons.person_remove_rounded),
                                     tooltip: 'Eliminar amigo',
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      FriendshipRequestService().deleteFriend(user.uid, senderUser.uid);
+                                      StdFluttertoast.show('Amigo eliminado con éxito', Toast.LENGTH_SHORT, ToastGravity.BOTTOM);
+                                    },
                                   ),
                                 ],
                               ),

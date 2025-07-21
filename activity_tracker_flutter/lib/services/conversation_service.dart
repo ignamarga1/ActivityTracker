@@ -1,4 +1,5 @@
 import 'package:activity_tracker_flutter/models/conversation.dart';
+import 'package:activity_tracker_flutter/services/message_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ConversationService {
@@ -40,5 +41,17 @@ class ConversationService {
 
       return conversations;
     });
+  }
+
+  // Deletes a conversation between two users (and the messages if there are any)
+  Future<void> deleteConversationBetweenUsers(String user1Id, String user2Id) async {
+    final docId = _generateDocId(user1Id, user2Id);
+    final doc = await _collection.doc(docId).get();
+
+    // Checks if the conversation exists to delete its messages and then the conversation
+    if (doc.exists) {
+      await MessageService().deleteMessagesByConversationId(docId);
+      await _collection.doc(docId).delete();
+    }
   }
 }

@@ -45,4 +45,13 @@ class MessageService {
           return Message.fromMap(doc.data(), id: doc.id);
         });
   }
+
+  // Deletes every message in a conversation
+  Future<void> deleteMessagesByConversationId(String conversationId) async {
+    final query = await _collection.where('conversationId', isEqualTo: conversationId).get();
+
+    for (final doc in query.docs) {
+      await doc.reference.delete();
+    }
+  }
 }
