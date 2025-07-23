@@ -18,6 +18,7 @@ import 'package:activity_tracker_flutter/pages/settings_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile/edit_user_profile_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile/user_profile_page.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
+import 'package:activity_tracker_flutter/services/notification_service.dart';
 import 'package:activity_tracker_flutter/themes/dark_mode.dart';
 import 'package:activity_tracker_flutter/themes/light_mode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,9 +30,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService().initNotifications();
   await dotenv.load(fileName: ".env");
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Normal Portrait
