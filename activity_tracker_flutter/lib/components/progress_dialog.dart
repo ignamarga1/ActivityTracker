@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/activity_progress.dart';
 import 'package:activity_tracker_flutter/services/activity_progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProgressDialog extends StatefulWidget {
   final Activity activity;
@@ -264,6 +266,14 @@ class _ProgressDialogState extends State<ProgressDialog> {
             );
 
             Navigator.pop(context);
+
+            if (isCompleted) {
+              StdFluttertoast.show(
+                '¡Enhorabuena! Has completado la actividad 🎉',
+                Toast.LENGTH_SHORT,
+                ToastGravity.BOTTOM,
+              );
+            }
           },
           child: const Text('Guardar'),
         ),
