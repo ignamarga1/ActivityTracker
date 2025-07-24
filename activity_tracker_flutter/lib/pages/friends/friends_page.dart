@@ -216,8 +216,40 @@ class _FriendsPageState extends State<FriendsPage> {
                                     icon: const Icon(Icons.person_remove_rounded),
                                     tooltip: 'Eliminar amigo',
                                     onPressed: () {
-                                      FriendshipRequestService().deleteFriend(user.uid, senderUser.uid);
-                                      StdFluttertoast.show('Amigo eliminado con éxito', Toast.LENGTH_SHORT, ToastGravity.BOTTOM);
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            '¿Estás seguro de que deseas eliminar a @${senderUser.username} de red de amistades?',
+                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              child: const Text('No'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+
+                                            TextButton(
+                                              child: const Text('Sí'),
+                                              onPressed: () {
+                                                // Pops dialog
+                                                Navigator.of(context).pop();
+
+                                                // Deletes the friend and shows toast
+                                                FriendshipRequestService().deleteFriend(user.uid, senderUser.uid);
+                                                StdFluttertoast.show(
+                                                  'Amigo eliminado con éxito',
+                                                  Toast.LENGTH_SHORT,
+                                                  ToastGravity.BOTTOM,
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
                                     },
                                   ),
                                 ],
