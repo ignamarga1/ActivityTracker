@@ -52,7 +52,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         radius: 60,
                         backgroundImage: user.profilePictureURL != '' ? NetworkImage(user.profilePictureURL!) : null,
                         backgroundColor: Colors.grey.shade700,
-                        child: user.profilePictureURL == '' ? const Icon(Icons.person, size: 80) : null,
+                        child: user.profilePictureURL == ''
+                            ? const Icon(Icons.person, size: 80, color: Colors.white)
+                            : null,
                       ),
                       const SizedBox(height: 12),
 

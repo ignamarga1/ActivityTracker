@@ -165,7 +165,7 @@ Widget _buildReceivedFriendshipRequests(BuildContext context, AppUser user) {
                                         );
 
                                         StdFluttertoast.show(
-                                          'Has aceptado la solicitud de ${senderUser.username}',
+                                          'Has aceptado la solicitud de @${senderUser.username}',
                                           Toast.LENGTH_LONG,
                                           ToastGravity.BOTTOM,
                                         );
@@ -181,7 +181,7 @@ Widget _buildReceivedFriendshipRequests(BuildContext context, AppUser user) {
                                         );
 
                                         StdFluttertoast.show(
-                                          'Has rechazado la solicitud de ${senderUser.username}',
+                                          'Has rechazado la solicitud de @${senderUser.username}',
                                           Toast.LENGTH_LONG,
                                           ToastGravity.BOTTOM,
                                         );

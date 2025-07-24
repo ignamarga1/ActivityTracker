@@ -72,7 +72,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                                   : (user.profilePictureURL != '' ? NetworkImage(user.profilePictureURL!) : null),
                               backgroundColor: Colors.grey.shade700,
                               child: (_selectedImagePath == null && user.profilePictureURL == '')
-                                  ? const Icon(Icons.person, size: 80)
+                                  ? const Icon(Icons.person, size: 80, color: Colors.white)
                                   : null,
                             ),
 

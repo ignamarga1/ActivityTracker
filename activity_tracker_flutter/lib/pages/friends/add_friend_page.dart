@@ -94,7 +94,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                           receiverUserId,
                         )) {
                           StdFluttertoast.show(
-                            'Ya existe una solicitud de amistad con $receiverUsername',
+                            'Ya existe una solicitud de amistad con @$receiverUsername',
                             Toast.LENGTH_LONG,
                             ToastGravity.BOTTOM,
                           );
@@ -113,7 +113,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
 
                           // FlutterToast message
                           StdFluttertoast.show(
-                            '¡Solicitud de amistad enviada con éxito a $receiverUsername!',
+                            '¡Solicitud de amistad enviada con éxito a @$receiverUsername!',
                             Toast.LENGTH_LONG,
                             ToastGravity.BOTTOM,
                           );
