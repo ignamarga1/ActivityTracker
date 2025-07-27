@@ -1,6 +1,10 @@
 import 'package:activity_tracker_flutter/components/home_drawer.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
+import 'package:activity_tracker_flutter/services/activity_service.dart';
 import 'package:activity_tracker_flutter/services/auth_service.dart';
+import 'package:activity_tracker_flutter/services/challenge_request_service.dart';
+import 'package:activity_tracker_flutter/services/friendship_request_service.dart';
+import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -73,13 +77,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Nickname
-                          _buildInfoRow('Apodo:', user.nickname),
+                          ActivityUtils().buildInfoRow('Apodo:', user.nickname),
 
                           // Email
-                          _buildInfoRow('Email:', user.email),
+                          ActivityUtils().buildInfoRow('Email:', user.email),
 
                           // Account createdDate
-                          _buildInfoRow('Fecha de unión:', DateFormat('d/M/y, HH:mm').format(user.createdAt.toDate())),
+                          ActivityUtils().buildInfoRow('Fecha de unión:', DateFormat('dd/MM/yyyy, HH:mm').format(user.createdAt.toDate())),
                         ],
                       ),
 
@@ -95,16 +99,28 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Friends
-                          _buildInfoRow('Número de amigos:', '0'),
+                          buildInfoRowFromStream(
+                            title: 'Número de amigos:',
+                            stream: FriendshipRequestService().getUserFriends(user.uid),
+                          ),
 
                           // Activities
-                          _buildInfoRow('Número de actividades creadas:', '0'),
-
-                          // Sent challenges
-                          _buildInfoRow('Número de desafíos enviados:', '0'),
+                          buildInfoRowFromStream(
+                            title: 'Número de actividades:',
+                            stream: ActivityService().getUserActivitiesStream(user.uid),
+                          ),
 
                           // Received challenges
-                          _buildInfoRow('Número de desafíos recibidos:', '0'),
+                          buildInfoRowFromStream(
+                            title: 'Número de desafíos recibidos:',
+                            stream: ChallengeRequestService().getUserReceivedChallengeRequests(user.uid),
+                          ),
+
+                          // Sent challenges
+                          buildInfoRowFromStream(
+                            title: 'Número de desafíos enviados:',
+                            stream: ChallengeRequestService().getUserSentChallengeRequests(user.uid),
+                          ),
                         ],
                       ),
 
@@ -235,25 +251,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 }
 
-// Widget that builds a row with the information information passed by parameters
-Widget _buildInfoRow(String title, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
-    ),
+// Widget that uses buildInfoRow and converts the stream to get its length in a String
+Widget buildInfoRowFromStream<T>({required String title, required Stream<List<T>> stream}) {
+  return StreamBuilder<List<T>>(
+    stream: stream,
+    builder: (context, snapshot) {
+      final count = snapshot.hasData ? snapshot.data!.length : 0;
+      return ActivityUtils().buildInfoRow(title, count.toString());
+    },
   );
 }
+
+
