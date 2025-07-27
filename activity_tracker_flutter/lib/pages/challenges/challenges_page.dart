@@ -29,7 +29,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
       appBar: AppBar(title: const Text('Desafíos'), scrolledUnderElevation: 0),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: HomeDrawer(),
-      drawerEdgeDragWidth: MediaQuery.of(context).size.width / 3,
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width,
 
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

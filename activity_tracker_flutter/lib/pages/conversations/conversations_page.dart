@@ -26,7 +26,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
       appBar: AppBar(title: const Text('Mensajes')),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: HomeDrawer(),
-      drawerEdgeDragWidth: MediaQuery.of(context).size.width / 3,
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width,
 
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

@@ -28,7 +28,7 @@ class _FriendsPageState extends State<FriendsPage> {
       appBar: AppBar(title: const Text('Amigos')),
       backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: HomeDrawer(),
-      drawerEdgeDragWidth: MediaQuery.of(context).size.width / 3,
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width,
 
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
