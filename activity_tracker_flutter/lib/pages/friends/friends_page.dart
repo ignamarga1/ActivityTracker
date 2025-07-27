@@ -53,9 +53,7 @@ class _FriendsPageState extends State<FriendsPage> {
                           iconSize: 35,
                           tooltip: 'Solicitudes recibidas',
                           onPressed: () {
-                            setState(() {
-                              Navigator.pushNamed(context, '/friendRequests');
-                            });
+                            Navigator.pushNamed(context, '/friendRequests');
                           },
                         ),
 
@@ -79,7 +77,7 @@ class _FriendsPageState extends State<FriendsPage> {
                                 decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
                                 margin: const EdgeInsets.only(bottom: 5, right: 5),
                                 child: Text(
-                                  '$pendingRequests',
+                                  pendingRequests > 9 ? '9+' : '$pendingRequests',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
@@ -100,9 +98,7 @@ class _FriendsPageState extends State<FriendsPage> {
                       iconSize: 35,
                       tooltip: 'Añadir amigo',
                       onPressed: () {
-                        setState(() {
-                          Navigator.pushNamed(context, '/addFriend');
-                        });
+                        Navigator.pushNamed(context, '/addFriend');
                       },
                     ),
                   ],
@@ -210,7 +206,15 @@ class _FriendsPageState extends State<FriendsPage> {
                                   IconButton(
                                     icon: const Icon(Icons.emoji_events_rounded),
                                     tooltip: 'Mandar desafío',
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      if (context.mounted) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/sendChallenge',
+                                          arguments: {'preselectedFriend': senderUser},
+                                        );
+                                      }
+                                    },
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.person_remove_rounded),
