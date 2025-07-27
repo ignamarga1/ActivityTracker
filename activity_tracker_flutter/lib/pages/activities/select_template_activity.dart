@@ -92,19 +92,19 @@ class _SelectTemplateActivityPageState extends State<SelectTemplateActivityPage>
                                 const SizedBox(height: 10),
 
                                 if (activity.description!.isNotEmpty)
-                                  _buildInfoRow('Descripción:', activity.description!),
-                                _buildCategoryRow('Categoría:', activity.category),
+                                  ActivityUtils().buildInfoRow('Descripción:', activity.description!),
+                                ActivityUtils().buildCategoryRow('Categoría:', activity.category),
 
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildInfoRow('Tipo de hito:', getMilestoneLabel(activity.milestone)),
+                                    ActivityUtils().buildInfoRow('Tipo de hito:', ActivityUtils().getDetailedMilestoneLabel(activity.milestone)),
                                     if (activity.milestone == MilestoneType.quantity) ...[
-                                      _buildInfoRow('Cantidad:', activity.quantity.toString()),
-                                      _buildInfoRow('Unidad de medida:', activity.measurementUnit.toString()),
+                                      ActivityUtils().buildInfoRow('Cantidad:', activity.quantity.toString()),
+                                      ActivityUtils().buildInfoRow('Unidad de medida:', activity.measurementUnit.toString()),
                                     ],
                                     if (activity.milestone == MilestoneType.timed)
-                                      _buildInfoRow(
+                                      ActivityUtils().buildInfoRow(
                                         'Tiempo:',
                                         ActivityUtils().formatTime(
                                           activity.durationHours!,
@@ -118,16 +118,16 @@ class _SelectTemplateActivityPageState extends State<SelectTemplateActivityPage>
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildInfoRow('Se repite:', getFrequencyLabel(activity.frequency)),
+                                    ActivityUtils().buildInfoRow('Se repite:', ActivityUtils().getDetailedFrequencyLabel(activity.frequency)),
                                     if (activity.frequency == FrequencyType.specificDayWeek &&
                                         activity.frequencyDaysOfWeek!.isNotEmpty)
-                                      _buildInfoRow(
+                                      ActivityUtils().buildInfoRow(
                                         'Días de la semana:',
                                         ActivityUtils().formatWeekDays(activity.frequencyDaysOfWeek!),
                                       ),
                                     if (activity.frequency == FrequencyType.specificDayMonth &&
                                         activity.frequencyDaysOfMonth!.isNotEmpty)
-                                      _buildInfoRow(
+                                      ActivityUtils().buildInfoRow(
                                         'Días del mes:',
                                         ActivityUtils().formatMonthDays(activity.frequencyDaysOfMonth!),
                                       ),
@@ -137,9 +137,9 @@ class _SelectTemplateActivityPageState extends State<SelectTemplateActivityPage>
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildInfoRow('Notificación:', activity.reminder ? 'Activada' : 'Desactivada'),
+                                    ActivityUtils().buildInfoRow('Notificación:', activity.reminder ? 'Activada' : 'Desactivada'),
 
-                                    if (activity.reminder) _buildInfoRow('Hora:', activity.reminderTime!),
+                                    if (activity.reminder) ActivityUtils().buildInfoRow('Hora:', activity.reminderTime!),
                                   ],
                                 ),
                               ],
@@ -157,77 +157,4 @@ class _SelectTemplateActivityPageState extends State<SelectTemplateActivityPage>
       ),
     );
   }
-}
-
-// Widget that builds a row with the information information passed by parameters
-Widget _buildInfoRow(String title, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-// Similar to buildInfoRow but with some modifications to fit Category necessities
-Widget _buildCategoryRow(String title, ActivityCategory category) {
-  final info = ActivityUtils().getCategoryInfo(category);
-
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
-        const SizedBox(width: 10),
-
-        Row(
-          children: [
-            Icon(info['icon'], size: 20),
-            const SizedBox(width: 10),
-            Text(
-              info['label'],
-              textAlign: TextAlign.right,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-// Function that returns the Frequency's label (different text than the function in ActivityUtils)
-String getFrequencyLabel(FrequencyType type) {
-  return {
-        FrequencyType.everyday: "Diariamente",
-        FrequencyType.specificDayWeek: "Día/s concreto/s de la semana",
-        FrequencyType.specificDayMonth: "Día/s concreto/s del mes",
-      }[type] ??
-      "Desconocida";
-}
-
-// Function that returns the Milestone's label (different text than the function in ActivityUtils)
-String getMilestoneLabel(MilestoneType type) {
-  return {
-        MilestoneType.yesNo: "Sí/No",
-        MilestoneType.quantity: "Por cantidad",
-        MilestoneType.timed: "Por tiempo",
-      }[type] ??
-      "Desconocida";
 }

@@ -93,6 +93,26 @@ class ActivityUtils {
         "Desconocida";
   }
 
+  // Function that returns the Frequency's label (different text than the function in ActivityUtils)
+  String getDetailedFrequencyLabel(FrequencyType type) {
+    return {
+          FrequencyType.everyday: "Diariamente",
+          FrequencyType.specificDayWeek: "Día/s concreto/s de la semana",
+          FrequencyType.specificDayMonth: "Día/s concreto/s del mes",
+        }[type] ??
+        "Desconocida";
+  }
+
+  // Function that returns the Milestone's label (different text than the function in ActivityUtils)
+  String getDetailedMilestoneLabel(MilestoneType type) {
+    return {
+          MilestoneType.yesNo: "Sí/No",
+          MilestoneType.quantity: "Por cantidad",
+          MilestoneType.timed: "Por tiempo",
+        }[type] ??
+        "Desconocida";
+  }
+
   // Converts Datetime.weekday to Firestore index (1-7 -> 0-6)
   int getDayOfWeekIndex(DateTime date) {
     return (date.weekday + 6) % 7;
@@ -173,6 +193,59 @@ class ActivityUtils {
           textStyle: const TextStyle(color: Colors.grey),
         ),
       ],
+    );
+  }
+
+  // Widget that builds a row with the the specified information 
+  Widget buildInfoRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Similar to buildInfoRow but with some modifications to fit Category needs
+  Widget buildCategoryRow(String title, ActivityCategory category) {
+    final info = ActivityUtils().getCategoryInfo(category);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+          const SizedBox(width: 10),
+
+          Row(
+            children: [
+              Icon(info['icon'], size: 20),
+              const SizedBox(width: 10),
+              Text(
+                info['label'],
+                textAlign: TextAlign.right,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
