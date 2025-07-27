@@ -3,7 +3,9 @@ import 'package:activity_tracker_flutter/pages/activities/create_activity_page.d
 import 'package:activity_tracker_flutter/pages/activities/create_template_activity.dart';
 import 'package:activity_tracker_flutter/pages/activities/edit_activity_page.dart';
 import 'package:activity_tracker_flutter/pages/activities/select_template_activity.dart';
+import 'package:activity_tracker_flutter/pages/challenges/challenge_requests_page.dart';
 import 'package:activity_tracker_flutter/pages/challenges/challenges_page.dart';
+import 'package:activity_tracker_flutter/pages/challenges/send_challenge_page.dart';
 import 'package:activity_tracker_flutter/pages/conversations/conversations_page.dart';
 import 'package:activity_tracker_flutter/pages/friends/add_friend_page.dart';
 import 'package:activity_tracker_flutter/pages/friends/friendship_requests_page.dart';
@@ -110,6 +112,10 @@ class MyApp extends StatelessWidget {
 
         // MESSAGES
         '/conversationChat' : (context) => ConversationChatPage(),
+
+        // CHALLENGES
+        '/sendChallenge' : (context) => SendChallengePage(),
+        '/challengeRequests' : (context) => ChallengeRequestsPage(),
       },
     );
   }
