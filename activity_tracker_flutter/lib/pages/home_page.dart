@@ -423,7 +423,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                             child: ListTile(
                               leading: Icon(ActivityUtils().getCategoryIcon(activity.category)),
-                              title: Text(activity.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              title: Row(
+                                children: [
+                                  if (activity.type == ActivityType.challenge) ...[
+                                    const Icon(Icons.emoji_events_rounded, size: 20),
+                                    const SizedBox(width: 6),
+                                  ],
+                                  Flexible(
+                                    child: Text(
+                                      activity.title,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               subtitle: activity.description != null && activity.description!.isNotEmpty
                                   ? Text(activity.description!)
                                   : null,
