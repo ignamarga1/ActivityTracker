@@ -118,63 +118,45 @@ class _HomeDrawerState extends State<HomeDrawer> {
           // DRAWER BOTTOM OPTIONS
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: Column(
-              children: [
-                DrawerTile(
-                  icon: Icons.settings,
-                  label: 'Ajustes',
-                  iconSize: iconSize,
-                  textStyle: textStyle,
-                  selected: currentRoute == '/settings',
-                  onTap: () {
-                    if (currentRoute != '/settings') {
-                      Navigator.pushNamedAndRemoveUntil(context, '/settings', (route) => false);
-                    } else {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                ),
-                DrawerTile(
-                  icon: Icons.logout_outlined,
-                  label: 'Cerrar sesión',
-                  iconSize: iconSize,
-                  textStyle: textStyle,
-                  selected: false,
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text(
-                            '¿Estás seguro de que deseas cerrar sesión?',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          actions: [
-                            TextButton(
-                              child: const Text('No'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-
-                            TextButton(
-                              child: const Text('Sí'),
-                              onPressed: () {
-                                // Pops dialog
-                                Navigator.of(context).pop();
-
-                                // Logs out, pops to login and show toast
-                                AuthService().logOut(context: context);
-                              },
-                            ),
-                          ],
-                        );
-                      },
+            child: DrawerTile(
+              icon: Icons.logout_rounded,
+              label: 'Cerrar sesión',
+              iconSize: iconSize,
+              textStyle: textStyle,
+              selected: false,
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text(
+                        '¿Estás seguro de que deseas cerrar sesión?',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text('No'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+            
+                        TextButton(
+                          child: const Text('Sí'),
+                          onPressed: () {
+                            // Pops dialog
+                            Navigator.of(context).pop();
+            
+                            // Logs out, pops to login and show toast
+                            AuthService().logOut(context: context);
+                          },
+                        ),
+                      ],
                     );
                   },
-                ),
-              ],
+                );
+              },
             ),
           ),
         ],

@@ -16,7 +16,6 @@ import 'package:activity_tracker_flutter/pages/friends/friends_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/login_page.dart';
 import 'package:activity_tracker_flutter/pages/conversations/conversation_chat_page.dart';
 import 'package:activity_tracker_flutter/pages/login_register/register_page.dart';
-import 'package:activity_tracker_flutter/pages/settings_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile/edit_user_profile_page.dart';
 import 'package:activity_tracker_flutter/pages/user_profile/user_profile_page.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
@@ -97,7 +96,6 @@ class MyApp extends StatelessWidget {
         '/friends': (context) => FriendsPage(),
         '/conversations': (context) => ConversationsPage(),
         '/challenges': (context) => ChallengesPage(),
-        '/settings': (context) => SettingsPage(),
 
         // ACTIVITIES
         '/createActivity': (context) => CreateActivityPage(),
