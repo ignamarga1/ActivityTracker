@@ -12,6 +12,7 @@ class ActivityService {
 
     required String title,
     String? description,
+    required ActivityType type,
     required ActivityCategory category,
 
     required MilestoneType milestone,
@@ -36,6 +37,7 @@ class ActivityService {
 
       title: title,
       description: description,
+      type: type,
       category: category,
 
       milestone: milestone,
@@ -68,24 +70,23 @@ class ActivityService {
     );
   }
 
-  // Get activities by user (ordered by title by default)
+  // Get all activities (custom and challenge) by user (ordered by title by default)
   Stream<List<Activity>> getUserActivitiesStream(String userId) {
     return _collection
         .where("userId", isEqualTo: userId)
         .orderBy("title")
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => Activity.fromMap(doc.data(), id: doc.id))
-              .toList(),
-        );
+        .map((snapshot) => snapshot.docs.map((doc) => Activity.fromMap(doc.data(), id: doc.id)).toList());
   }
 
-  // Get activity by id
-  Stream<Activity> getActivityById(String activityId) {
-    return _collection.doc(activityId).snapshots().map((snapshot) {
-      return Activity.fromMap(snapshot.data()!, id: snapshot.id);
-    });
+  // Get custom activities by user (ordered by title by default)
+  Stream<List<Activity>> getUserCustomActivitiesStream(String userId) {
+    return _collection
+        .where("userId", isEqualTo: userId)
+        .where("type", isEqualTo: "custom")
+        .orderBy("title")
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => Activity.fromMap(doc.data(), id: doc.id)).toList());
   }
 
   // Get template activities (ordered by title by default)
@@ -94,11 +95,23 @@ class ActivityService {
         .where("type", isEqualTo: "template")
         .orderBy("title")
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => Activity.fromMap(doc.data(), id: doc.id))
-              .toList(),
-        );
+        .map((snapshot) => snapshot.docs.map((doc) => Activity.fromMap(doc.data(), id: doc.id)).toList());
+  }
+
+  // Get activity by id (stream)
+  Stream<Activity> getActivityById(String activityId) {
+    return _collection.doc(activityId).snapshots().map((snapshot) {
+      return Activity.fromMap(snapshot.data()!, id: snapshot.id);
+    });
+  }
+
+  // Get activity by id (future)
+  Future<Activity?> getActivityByIdOnce(String activityId) async {
+    final snapshot = await _collection.doc(activityId).get();
+
+    if (!snapshot.exists || snapshot.data() == null) return null;
+
+    return Activity.fromMap(snapshot.data()!, id: snapshot.id);
   }
 
   // Update activity
