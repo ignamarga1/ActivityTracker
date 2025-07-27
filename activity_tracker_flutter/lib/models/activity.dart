@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum ActivityType { custom, template }
+enum ActivityType { custom, template, challenge }
 
 enum ActivityCategory {
   // art,
@@ -55,7 +55,7 @@ class Activity {
 
     required String title,
     String? description,
-    ActivityType type = ActivityType.custom,
+    required ActivityType type,
     required ActivityCategory category,
 
     required MilestoneType milestone,

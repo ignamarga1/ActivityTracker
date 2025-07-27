@@ -127,6 +127,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
 
                       title: titleController.text.trim(),
                       description: descriptionController.text.trim(),
+                      type: ActivityType.custom,
                       category: selectedCategory!,
 
                       milestone: selectedMilestone!,
