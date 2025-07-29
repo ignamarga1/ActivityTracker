@@ -113,6 +113,33 @@ class ActivityUtils {
         "Desconocida";
   }
 
+  // Checks if an activity is scheduled for a selected date (taking into account the activity's creation date)
+  bool isActivityForSelectedDate(Activity activity, DateTime selectedDate) {
+    final selected = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+
+    final created = DateTime(
+      activity.createdAt.toDate().year,
+      activity.createdAt.toDate().month,
+      activity.createdAt.toDate().day,
+    );
+
+    // Ensures new activities don't show up in days previous to its creation
+    if (selected.isBefore(created)) return false;
+
+    // Filters the activities by their frequency
+    switch (activity.frequency) {
+      case FrequencyType.everyday:
+        return true;
+
+      case FrequencyType.specificDayWeek:
+        final dayIndex = ActivityUtils().getDayOfWeekIndex(selectedDate);
+        return activity.frequencyDaysOfWeek?.contains(dayIndex) ?? false;
+
+      case FrequencyType.specificDayMonth:
+        return activity.frequencyDaysOfMonth?.contains(selectedDate.day) ?? false;
+    }
+  }
+
   // Converts Datetime.weekday to Firestore index (1-7 -> 0-6)
   int getDayOfWeekIndex(DateTime date) {
     return (date.weekday + 6) % 7;
@@ -196,7 +223,7 @@ class ActivityUtils {
     );
   }
 
-  // Widget that builds a row with the the specified information 
+  // Widget that builds a row with the the specified information
   Widget buildInfoRow(String title, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),

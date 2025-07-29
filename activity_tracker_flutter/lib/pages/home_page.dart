@@ -283,7 +283,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   // Filters user's activity list by the selected date
                   final allActivities = snapshot.data!;
                   final visibleActivities = allActivities.where((activity) {
-                    final matchesDate = isActivityForSelectedDate(activity, _selectedDate);
+                    final matchesDate = ActivityUtils().isActivityForSelectedDate(activity, _selectedDate);
                     final matchesTitle =
                         _selectedFilterTitle.isEmpty || activity.title.toLowerCase().contains(_selectedFilterTitle);
                     final matchesCategory =
@@ -534,33 +534,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         },
       ),
     );
-  }
-}
-
-// Checks if an activity is scheduled for a selected date (taking into account the activity's creation date)
-bool isActivityForSelectedDate(Activity activity, DateTime selectedDate) {
-  final selected = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-
-  final created = DateTime(
-    activity.createdAt.toDate().year,
-    activity.createdAt.toDate().month,
-    activity.createdAt.toDate().day,
-  );
-
-  // Ensures new activities don't show up in days previous to its creation
-  if (selected.isBefore(created)) return false;
-
-  // Filters the activities by their frequency
-  switch (activity.frequency) {
-    case FrequencyType.everyday:
-      return true;
-
-    case FrequencyType.specificDayWeek:
-      final dayIndex = ActivityUtils().getDayOfWeekIndex(selectedDate);
-      return activity.frequencyDaysOfWeek?.contains(dayIndex) ?? false;
-
-    case FrequencyType.specificDayMonth:
-      return activity.frequencyDaysOfMonth?.contains(selectedDate.day) ?? false;
   }
 }
 
