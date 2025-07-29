@@ -1,3 +1,4 @@
+import 'package:activity_tracker_flutter/components/activity_progress_calendar.dart';
 import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:activity_tracker_flutter/services/activity_service.dart';
@@ -84,7 +85,148 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> with TickerPr
 
 // Widget that shows the statistics of the activity
 Widget _buildStatisticsTab(BuildContext context, Activity activity) {
-  return const Center(child: Text('Estadísticas'));
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      return SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Padding(
+            padding: const EdgeInsets.all(25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ROW 1: Completion calendar
+                const Text(
+                  'Calendario de compleción',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(height: 5),
+
+                // Calendar
+                Card(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: BorderSide(color: Colors.grey.shade700, width: 2),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ActivityProgressCalendar(activity: activity),
+                  ),
+                ),
+                const SizedBox(height: 25),
+
+                // ROW 2: Streak info
+                const Text(
+                  'Racha',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(height: 5),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Streak
+                    Expanded(
+                      child: Card(
+                        color: Theme.of(context).colorScheme.surface,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(color: Colors.grey.shade700, width: 2),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Racha actual', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(Icons.local_fire_department, color: Colors.orange, size: 30),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      '${activity.completionStreak}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+
+                    // Max streak
+                    Expanded(
+                      child: Card(
+                        color: Theme.of(context).colorScheme.surface,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(color: Colors.grey.shade700, width: 2),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Máxima racha', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(Icons.military_tech, color: Colors.amberAccent, size: 30),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      '${activity.maxCompletionStreak}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 25),
+
+                // ROW 3: Streak info
+                const Text(
+                  'Gráfica de seguimiento',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(height: 5),
+
+                // Graphic
+                // Card(
+                //   color: Theme.of(context).colorScheme.surface,
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.circular(15),
+                //     side: BorderSide(color: Colors.grey.shade700, width: 2),
+                //   ),
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(16),
+                //     child: ActivityCalendar(activity: activity),
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 // Widget that shows the details of the activity

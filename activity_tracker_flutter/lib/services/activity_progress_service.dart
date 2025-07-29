@@ -12,15 +12,18 @@ class ActivityProgressService {
   }
 
   // Get activity progress
-  Stream<ActivityProgress?> getActivityProgress(
-    String activityId,
-    DateTime date,
-  ) {
+  Stream<ActivityProgress?> getActivityProgress(String activityId, DateTime date) {
     final docId = _generateDocId(activityId, date);
     return _collection.doc(docId).snapshots().map((snapshot) {
       if (!snapshot.exists) return null;
       return ActivityProgress.fromMap(snapshot.data()!, id: snapshot.id);
     });
+  }
+
+  Future<List<ActivityProgress>> getAllProgressForActivity(String activityId) async {
+    final querySnapshot = await _collection.where('activityId', isEqualTo: activityId).get();
+
+    return querySnapshot.docs.map((doc) => ActivityProgress.fromMap(doc.data(), id: doc.id)).toList();
   }
 
   // Stream to get the activity progress or create it if doesn't exist
@@ -39,7 +42,7 @@ class ActivityProgressService {
     // Stream
     return docRef.snapshots().asyncMap((snapshot) async {
       // Create progress if it doesn't exist for the selected activity and date
-      if (!snapshot.exists) { 
+      if (!snapshot.exists) {
         final newProgress = ActivityProgress(
           id: docRef.id,
           activityId: activityId,
@@ -86,9 +89,7 @@ class ActivityProgressService {
 
   // Deletes every progress of the activity
   Future<void> deleteProgressForActivity(String activityId) async {
-    final query = await _collection
-        .where('activityId', isEqualTo: activityId)
-        .get();
+    final query = await _collection.where('activityId', isEqualTo: activityId).get();
     for (var doc in query.docs) {
       await doc.reference.delete();
     }
