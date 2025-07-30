@@ -54,6 +54,7 @@ class _ActivityProgressCalendarState extends State<ActivityProgressCalendar> {
           calendarFormat: calendarFormat,
           startingDayOfWeek: StartingDayOfWeek.monday,
           locale: 'es_ES',
+          availableGestures: AvailableGestures.horizontalSwipe,
 
           // Styles
           calendarStyle: const CalendarStyle(outsideDaysVisible: false),
