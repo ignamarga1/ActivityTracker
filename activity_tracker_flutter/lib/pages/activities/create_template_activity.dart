@@ -537,8 +537,8 @@ class _CreateTemplateActivityPageState extends State<CreateTemplateActivityPage>
                                 durationMinutes: selectedMilestone == MilestoneType.timed ? selectedMinutes : null,
                                 durationSeconds: selectedMilestone == MilestoneType.timed ? selectedSeconds : null,
                                 frequency: selectedFrequency!,
-                                frequencyDaysOfWeek: selectedDaysOfWeek,
-                                frequencyDaysOfMonth: selectedDaysOfMonth,
+                                frequencyDaysOfWeek: selectedDaysOfWeek..sort(),
+                                frequencyDaysOfMonth: selectedDaysOfMonth..sort(),
                                 reminder: notificationToggled,
                                 reminderTime: (notificationToggled && timeOfDayForReminder != null)
                                     ? ActivityUtils().formatTime24h(timeOfDayForReminder!)
