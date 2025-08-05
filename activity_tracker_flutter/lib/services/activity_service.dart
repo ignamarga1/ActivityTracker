@@ -1,6 +1,8 @@
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:activity_tracker_flutter/services/activity_progress_service.dart';
+import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ActivityService {
   final _collection = FirebaseFirestore.instance.collection('Activity');
@@ -140,5 +142,94 @@ class ActivityService {
 
     // Deletes the activity
     await _collection.doc(id).delete();
+  }
+
+  // Update activity streak
+  Future<void> updateStreak(Activity activity) async {
+    final progressRef = FirebaseFirestore.instance.collection('ActivityProgress');
+    
+    int newStreak = 1;
+
+    final now = DateTime.now();
+    final todayKey = DateFormat('dd-MM-yyyy').format(now);
+
+    // If the activity isn't scheduled for today nothing happens
+    if (!ActivityUtils().isActivityForSelectedDate(activity, now)) return;
+
+    // Checks if the activity progress doesn't exist or it hasn't already been completed today
+    final todayProgressSnap = await progressRef.doc('${activity.id}_$todayKey').get();
+    final isCompletedToday = todayProgressSnap.exists && todayProgressSnap['completed'] == true;
+    if (!isCompletedToday) return;
+
+    // The activity is scheduled for today, the progress exists and it has been completed
+    // Searchs for the previous day the activity was scheduled
+    DateTime? lastScheduledDate;
+    for (int i = 1; i <= 30; i++) {
+      final previousDate = now.subtract(Duration(days: i));
+      if (ActivityUtils().isActivityForSelectedDate(activity, previousDate)) {
+        lastScheduledDate = previousDate;
+        break;
+      }
+    }
+
+    // Checks if the previous day was completed
+    if (lastScheduledDate != null) {
+      final lastKey = DateFormat('dd-MM-yyyy').format(lastScheduledDate);
+      final lastProgressSnap = await progressRef.doc('${activity.id}_$lastKey').get();
+      final completedLast = lastProgressSnap.exists && lastProgressSnap['completed'] == true;
+
+      // Increases the streak
+      if (completedLast) {
+        newStreak = activity.completionStreak + 1;
+      }
+    }
+
+    // Updates the streak (and the maximum streak if it has surpassed it)
+    final newMaxStreak = newStreak > activity.maxCompletionStreak ? newStreak : activity.maxCompletionStreak;
+
+    await FirebaseFirestore.instance.collection('Activity').doc(activity.id).update({
+      'completionStreak': newStreak,
+      'maxCompletionStreak': newMaxStreak,
+    });
+  }
+
+  // Reset activity broken streak
+  Future<void> checkAndResetBrokenStreak(Activity activity) async {
+    final progressRef = FirebaseFirestore.instance.collection('ActivityProgress');
+    final activityRef = FirebaseFirestore.instance.collection('Activity').doc(activity.id);
+    
+    final now = DateTime.now();
+    final todayKey = DateFormat('dd-MM-yyyy').format(now);
+
+    // If the activity isn't scheduled for today nothing happens
+    if (!ActivityUtils().isActivityForSelectedDate(activity, now)) return;
+
+    // Checks if the activity has already been completed today
+    final todayProgressSnap = await progressRef.doc('${activity.id}_$todayKey').get();
+    final isCompletedToday = todayProgressSnap.exists && todayProgressSnap['completed'] == true;
+    if (isCompletedToday) return;
+
+    // The activity hasn't been completed for today
+    // Searchs the previous day the activity was scheduled
+    DateTime? lastScheduledDate;
+    for (int i = 1; i <= 30; i++) {
+      final previousDate = now.subtract(Duration(days: i));
+      if (ActivityUtils().isActivityForSelectedDate(activity, previousDate)) {
+        lastScheduledDate = previousDate;
+        break;
+      }
+    }
+
+    // Checks if the previous day was completed
+    if (lastScheduledDate != null) {
+      final lastKey = DateFormat('dd-MM-yyyy').format(lastScheduledDate);
+      final lastProgressSnap = await progressRef.doc('${activity.id}_$lastKey').get();
+      final completedLast = lastProgressSnap.exists && lastProgressSnap['completed'] == true;
+
+      // If it wasn't completed and it's not already 0, the streak gets set to 0
+      if (!completedLast && activity.completionStreak != 0) {
+        await activityRef.update({'completionStreak': 0});
+      }
+    }
   }
 }

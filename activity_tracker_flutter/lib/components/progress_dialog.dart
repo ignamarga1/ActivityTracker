@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/activity_progress.dart';
 import 'package:activity_tracker_flutter/services/activity_progress_service.dart';
+import 'package:activity_tracker_flutter/services/activity_service.dart';
 import 'package:flutter/material.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -273,6 +274,7 @@ class _ProgressDialogState extends State<ProgressDialog> {
                 Toast.LENGTH_SHORT,
                 ToastGravity.BOTTOM,
               );
+              ActivityService().updateStreak(activity);
             }
           },
           child: const Text('Guardar'),

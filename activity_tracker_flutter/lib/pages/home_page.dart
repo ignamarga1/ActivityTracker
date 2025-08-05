@@ -306,6 +306,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     itemBuilder: (context, index) {
                       final activity = visibleActivities[index];
 
+                      ActivityService().checkAndResetBrokenStreak(activity);
+
                       // Activity progress
                       return StreamBuilder<ActivityProgress>(
                         stream: ActivityProgressService().getOrCreateProgress(
