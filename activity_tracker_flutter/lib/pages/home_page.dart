@@ -212,6 +212,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   },
                                 ),
                               ),
+                              const SizedBox(width: 10,),
 
                               // Milestone filter (dropdown)
                               DropdownMenu<MilestoneType?>(
