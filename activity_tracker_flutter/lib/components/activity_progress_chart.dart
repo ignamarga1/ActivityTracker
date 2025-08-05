@@ -269,7 +269,7 @@ class _ActivityProgressChartState extends State<ActivityProgressChart> {
       case ChartView.week:
         return ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index];
       case ChartView.month:
-        return DateFormat.MMM('es').format(DateTime(0, index + 1));
+        return DateFormat('MMMMM', 'es').format(DateTime(0, index + 1));
       case ChartView.quarter:
         return 'T${index + 1}';
     }
