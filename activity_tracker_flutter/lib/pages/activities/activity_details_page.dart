@@ -1,4 +1,5 @@
 import 'package:activity_tracker_flutter/components/activity_progress_calendar.dart';
+import 'package:activity_tracker_flutter/components/activity_progress_chart.dart';
 import 'package:activity_tracker_flutter/components/std_fluttertoast.dart';
 import 'package:activity_tracker_flutter/models/activity.dart';
 import 'package:activity_tracker_flutter/services/activity_service.dart';
@@ -209,17 +210,17 @@ Widget _buildStatisticsTab(BuildContext context, Activity activity) {
                 const SizedBox(height: 5),
 
                 // Graphic
-                // Card(
-                //   color: Theme.of(context).colorScheme.surface,
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(15),
-                //     side: BorderSide(color: Colors.grey.shade700, width: 2),
-                //   ),
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(16),
-                //     child: ActivityCalendar(activity: activity),
-                //   ),
-                // ),
+                Card(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: BorderSide(color: Colors.grey.shade700, width: 2),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ActivityProgressChart(activity: activity),
+                  ),
+                ),
               ],
             ),
           ),
