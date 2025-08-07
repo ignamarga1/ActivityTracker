@@ -1,90 +1,100 @@
-// ignore_for_file: avoid_print
-
-import 'dart:convert';
-
-import 'package:activity_tracker_flutter/main.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart' as tz;
 
 class NotificationService {
-  final _firebaseMessaging = FirebaseMessaging.instance;
-  final _localNotifications = FlutterLocalNotificationsPlugin();
-  final _androidChannel = const AndroidNotificationChannel(
-    'high_importance_channel',
-    'High Importance Notifications',
-    description: 'This channel is used for important notifications',
-    importance: Importance.high,
-  );
+  final notificationsPlugin = FlutterLocalNotificationsPlugin();
+  final bool _isInitialized = false;
+
+  bool get isInitialized => _isInitialized;
 
   // Initialize notifications
   Future<void> initNotifications() async {
-    await _firebaseMessaging.requestPermission();
-    final fCMToken = await _firebaseMessaging.getToken();
-    print('Token $fCMToken');
-    initPushNotifications();
-    initLocalNotifications();
+    if (_isInitialized) return;
+
+    // Initialize timezone
+    tz.initializeTimeZones();
+    final String currentTimezone = await tz.FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(currentTimezone));
+
+    // Initialize Android settings
+    const initAndroidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    // Initialize settings
+    const initSettings = InitializationSettings(android: initAndroidSettings);
+    await notificationsPlugin.initialize(initSettings);
   }
 
-  // Initialize local notifications
-  Future<void> initLocalNotifications() async {
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const settings = InitializationSettings(android: android);
-
-    await _localNotifications.initialize(
-      settings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        final responsePayload = response.payload;
-        final message = RemoteMessage.fromMap(jsonDecode(responsePayload!));
-        handleMessage(message);
-      },
+  // Notification details
+  NotificationDetails notificationDetails() {
+    return const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'activity_reminders',
+        'Activity Reminders',
+        channelDescription: 'Activity Reminders channel',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
     );
+  }
 
-    final platform = _localNotifications
+  // Shows the content of the notification
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+    required String payload,
+  }) async {
+    return notificationsPlugin.show(id, title, body, notificationDetails());
+  }
+
+  // Schedules an activity reminder notification
+  Future<void> scheduleNotification({
+    required int id,
+    required String title,
+    required String body,
+    String? payload,
+    required int year,
+    required int month,
+    required int day,
+    required int hour,
+    required int minute,
+  }) async {
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduledDate = tz.TZDateTime(tz.local, year, month, day, hour, minute);
+
+    // If it's a previous date, no notifications will be scheduled
+    if (scheduledDate.isBefore(now)) return;
+
+    await notificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      scheduledDate,
+      notificationDetails(),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+    );
+  }
+
+  // Cancels all notifications
+  Future<void> cancelAllNotifications() async {
+    await notificationsPlugin.cancelAll();
+  }
+
+  // Generates a custom id for each activity and date
+  int generateNotificationId(String activityId, DateTime date) {
+    final dateStr = DateFormat('dd-MM-yyyy').format(date);
+    final uniqueString = '$activityId-$dateStr';
+    return uniqueString.hashCode;
+  }
+
+  // Request user permission for notifications
+  Future<void> requestPermissions() async {
+    final androidImplementation = notificationsPlugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    await platform?.createNotificationChannel(_androidChannel);
+
+    await androidImplementation?.requestNotificationsPermission();
   }
-
-  // Initialize push notifications
-  Future initPushNotifications() async {
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
-    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
-    FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
-    FirebaseMessaging.onMessage.listen((message) {
-      final notification = message.notification;
-      if (notification == null) return;
-
-      _localNotifications.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            _androidChannel.id,
-            _androidChannel.name,
-            channelDescription: _androidChannel.description,
-            icon: '@mipmap/ic_launcher',
-          ),
-        ),
-        payload: jsonEncode(message.toMap()),
-      );
-    });
-  }
-}
-
-Future<void> handleBackgroundMessage(RemoteMessage message) async {
-  print('Title: ${message.notification?.title}');
-  print('Title: ${message.notification?.body}');
-  print('Title: ${message.data}');
-}
-
-void handleMessage(RemoteMessage? message) {
-  if (message == null) return;
-
-  navigatorKey.currentState?.pushNamed('/', arguments: message);
 }

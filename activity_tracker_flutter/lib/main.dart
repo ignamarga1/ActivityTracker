@@ -36,6 +36,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService().requestPermissions();
   await NotificationService().initNotifications();
   await dotenv.load(fileName: ".env");
   await SystemChrome.setPreferredOrientations([

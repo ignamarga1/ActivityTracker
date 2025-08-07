@@ -6,6 +6,7 @@ import 'package:activity_tracker_flutter/models/activity_progress.dart';
 import 'package:activity_tracker_flutter/providers/user_provider.dart';
 import 'package:activity_tracker_flutter/services/activity_progress_service.dart';
 import 'package:activity_tracker_flutter/services/activity_service.dart';
+import 'package:activity_tracker_flutter/services/notification_service.dart';
 import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
@@ -212,7 +213,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   },
                                 ),
                               ),
-                              const SizedBox(width: 10,),
+                              const SizedBox(width: 10),
 
                               // Milestone filter (dropdown)
                               DropdownMenu<MilestoneType?>(
@@ -306,8 +307,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     itemCount: visibleActivities.length,
                     itemBuilder: (context, index) {
                       final activity = visibleActivities[index];
+                      final now = DateTime.now();
+                      final today = DateTime(now.year, now.month, now.day);
+                      final scheduledDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
 
+                      // Sets the broken streaks to 0
                       ActivityService().checkAndResetBrokenStreak(activity);
+
+                      // Schedules the reminder for the activity
+                      if (!scheduledDate.isBefore(today) && activity.reminder && activity.reminderTime != null) {
+                        final timeParts = activity.reminderTime!.split(':');
+
+                        NotificationService().scheduleNotification(
+                          id: NotificationService().generateNotificationId(activity.id, _selectedDate),
+                          title: activity.title,
+                          body: '¡Recuerda completar esta actividad antes de que acabe el día!',
+                          year: _selectedDate.year,
+                          month: _selectedDate.month,
+                          day: _selectedDate.day,
+                          hour: int.parse(timeParts[0]),
+                          minute: int.parse(timeParts[1]),
+                        );
+                      }
 
                       // Activity progress
                       return StreamBuilder<ActivityProgress>(
