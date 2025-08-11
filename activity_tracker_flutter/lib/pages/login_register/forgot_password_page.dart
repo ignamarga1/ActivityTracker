@@ -37,7 +37,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   children: [
                     /// App name
                     SvgPicture.asset(
-                      'activity_tracker_logo.svg',
+                      'assets/activity_tracker_logo.svg',
                       width: 65,
                       height: 65,
                       colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
