@@ -11,7 +11,7 @@ class ActivityProgressService {
     return '${activityId}_$formattedDate';
   }
 
-  // Get activity progress
+  // Get activity progress in a Stream
   Stream<ActivityProgress?> getActivityProgress(String activityId, DateTime date) {
     final docId = _generateDocId(activityId, date);
     return _collection.doc(docId).snapshots().map((snapshot) {
@@ -20,6 +20,19 @@ class ActivityProgressService {
     });
   }
 
+  // Get activity progress in a Future
+  Future<ActivityProgress?> getProgressOnce(String activityId, DateTime date) async {
+    final docId = _generateDocId(activityId, date);
+    final docSnapshot = await _collection.doc(docId).get();
+
+    if (!docSnapshot.exists) {
+      return null;
+    }
+
+    return ActivityProgress.fromMap(docSnapshot.data()!, id: docSnapshot.id);
+  }
+
+  // Get all the progress from an activity
   Future<List<ActivityProgress>> getAllProgressForActivity(String activityId) async {
     final querySnapshot = await _collection.where('activityId', isEqualTo: activityId).get();
 

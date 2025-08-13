@@ -3,6 +3,7 @@ import 'package:activity_tracker_flutter/services/activity_progress_service.dart
 import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:home_widget/home_widget.dart';
 
 class ActivityService {
   final _collection = FirebaseFirestore.instance.collection('Activity');
@@ -147,7 +148,7 @@ class ActivityService {
   // Update activity streak
   Future<void> updateStreak(Activity activity) async {
     final progressRef = FirebaseFirestore.instance.collection('ActivityProgress');
-    
+
     int newStreak = 1;
 
     final now = DateTime.now();
@@ -197,7 +198,7 @@ class ActivityService {
   Future<void> checkAndResetBrokenStreak(Activity activity) async {
     final progressRef = FirebaseFirestore.instance.collection('ActivityProgress');
     final activityRef = FirebaseFirestore.instance.collection('Activity').doc(activity.id);
-    
+
     final now = DateTime.now();
     final todayKey = DateFormat('dd-MM-yyyy').format(now);
 
@@ -231,5 +232,41 @@ class ActivityService {
         await activityRef.update({'completionStreak': 0});
       }
     }
+  }
+
+  // Saves all the activities information for the widget
+  Future<void> saveActivitiesSummaryForWidget(List<Activity> activities, DateTime date) async {
+    List<String> summaryLines = [];
+
+    for (final activity in activities) {
+      final progress = await ActivityProgressService().getProgressOnce(activity.id, date);
+      if (progress == null) continue;
+
+      String line = '${activity.title}: ';
+
+      switch (activity.milestone) {
+        case MilestoneType.yesNo:
+          line += progress.completed ? 'Completada' : 'Pendiente';
+          break;
+        case MilestoneType.quantity:
+          line += '${progress.progressQuantity} / ${activity.quantity}';
+          break;
+        case MilestoneType.timed:
+          final remaining = Duration(
+            hours: progress.remainingHours ?? 0,
+            minutes: progress.remainingMinutes ?? 0,
+            seconds: progress.remainingSeconds ?? 0,
+          );
+          line += ActivityUtils().formatDuration(remaining);
+          break;
+      }
+
+      summaryLines.add(line);
+    }
+
+    final summaryString = summaryLines.join('\n');
+
+    await HomeWidget.saveWidgetData<String>('activities_summary', summaryString);
+    await HomeWidget.updateWidget(name: 'ScheduledActivitiesWidgetProvider');
   }
 }

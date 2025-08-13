@@ -11,6 +11,7 @@ import 'package:activity_tracker_flutter/utils/activity_utils.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -287,7 +288,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   final visibleActivities = allActivities.where((activity) {
                     final matchesDate = ActivityUtils().isActivityForSelectedDate(activity, _selectedDate);
                     final matchesTitle =
-                        _selectedFilterTitle.isEmpty || activity.title.toLowerCase().contains(_selectedFilterTitle);
+                        _selectedFilterTitle.isEmpty || activity.title.toLowerCase().contains(_selectedFilterTitle.toLowerCase());
                     final matchesCategory =
                         _selectedFilterCategory == null || activity.category == _selectedFilterCategory;
                     final matchesMilestone =
@@ -301,15 +302,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     return const Center(child: Text("No hay actividades para este día"));
                   }
 
+                  final now = DateTime.now();
+                  final today = DateTime(now.year, now.month, now.day);
+                  final scheduledDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+
+                  ActivityService().saveActivitiesSummaryForWidget(visibleActivities, today);
+                  HomeWidget.updateWidget(name: 'ScheduledActivitiesWidget');
+
                   // List view for every activity
                   return ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     itemCount: visibleActivities.length,
                     itemBuilder: (context, index) {
                       final activity = visibleActivities[index];
-                      final now = DateTime.now();
-                      final today = DateTime(now.year, now.month, now.day);
-                      final scheduledDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
 
                       // Sets the broken streaks to 0
                       ActivityService().checkAndResetBrokenStreak(activity);

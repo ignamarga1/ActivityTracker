@@ -5,15 +5,27 @@
     android:theme="@style/Theme.Android.AppWidgetContainer">
 
     <TextView
-        android:id="@+id/appwidget_text"
-        style="@style/Widget.Android.AppWidget.InnerView"
-        android:layout_width="wrap_content"
+        android:id="@+id/appwidget_header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:text="Actividades para hoy"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="?android:attr/textColorPrimary"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/appwidget_text"
+        android:background="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appwidget_header"
         android:layout_margin="8dp"
-        android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:lineSpacingExtra="12dp"
+        android:gravity="start" />
 </RelativeLayout>

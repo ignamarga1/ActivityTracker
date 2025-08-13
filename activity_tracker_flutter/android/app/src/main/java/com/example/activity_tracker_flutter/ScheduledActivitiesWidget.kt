@@ -4,19 +4,25 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.widget.RemoteViews
+import es.antonborri.home_widget.HomeWidgetPlugin
 
 /**
  * Implementation of App Widget functionality.
  */
 class ScheduledActivitiesWidget : AppWidgetProvider() {
-    override fun onUpdate(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
-    ) {
-        // There may be multiple widgets active, so update all of them
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+            val views = RemoteViews(context.packageName, R.layout.scheduled_activities_widget)
+
+            // Get SharedPreferences with HomeWidgetPlugin.getData(context)
+            val prefs = HomeWidgetPlugin.getData(context)
+
+            // Set the default value for "activities_summary"
+            val summary = prefs.getString("activities_summary", "No hay actividades")
+
+            views.setTextViewText(R.id.appwidget_text, summary)
+
+            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
     }
 
@@ -35,6 +41,7 @@ internal fun updateAppWidget(
     appWidgetId: Int
 ) {
     val widgetText = context.getString(R.string.appwidget_text)
+    
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.scheduled_activities_widget)
     views.setTextViewText(R.id.appwidget_text, widgetText)
