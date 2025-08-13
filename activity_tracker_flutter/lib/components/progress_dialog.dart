@@ -275,6 +275,12 @@ class _ProgressDialogState extends State<ProgressDialog> {
                 ToastGravity.BOTTOM,
               );
               ActivityService().updateStreak(activity);
+            } else {
+              StdFluttertoast.show(
+                '¡Progreso actualizado con éxito!',
+                Toast.LENGTH_SHORT,
+                ToastGravity.BOTTOM,
+              );
             }
           },
           child: const Text('Guardar'),
