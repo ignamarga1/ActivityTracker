@@ -54,9 +54,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
                           iconSize: 35,
                           tooltip: 'Solicitudes recibidas',
                           onPressed: () {
-                            setState(() {
-                              Navigator.pushNamed(context, '/challengeRequests');
-                            });
+                            Navigator.pushNamed(context, '/challengeRequests');
                           },
                         ),
 
@@ -101,9 +99,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
                       iconSize: 35,
                       tooltip: 'Enviar desafío',
                       onPressed: () {
-                        setState(() {
-                          Navigator.pushNamed(context, '/sendChallenge');
-                        });
+                        Navigator.pushNamed(context, '/sendChallenge');
                       },
                     ),
                   ],
@@ -142,9 +138,9 @@ class _ChallengesPageState extends State<ChallengesPage> {
 
                           final senderUser = snapshot.data;
 
-                          // if (receiverUser == null) {
-                          //   return const ListTile(title: Text("Usuario no encontrado"));
-                          // }
+                          final senderNickname = senderUser?.nickname ?? 'Desconocido';
+                          final senderUsername = senderUser?.username ?? 'desconocido';
+                          final senderProfilePictureURL = senderUser?.profilePictureURL;
 
                           // User information
                           return Card(
@@ -163,11 +159,11 @@ class _ChallengesPageState extends State<ChallengesPage> {
                               // Profile picture
                               leading: CircleAvatar(
                                 backgroundImage:
-                                    senderUser!.profilePictureURL != null && senderUser.profilePictureURL!.isNotEmpty
-                                    ? NetworkImage(senderUser.profilePictureURL!)
+                                    senderProfilePictureURL != null && senderProfilePictureURL.isNotEmpty
+                                    ? NetworkImage(senderProfilePictureURL)
                                     : null,
                                 backgroundColor: Colors.grey.shade600,
-                                child: senderUser.profilePictureURL == null || senderUser.profilePictureURL!.isEmpty
+                                child: senderProfilePictureURL == null || senderProfilePictureURL.isEmpty
                                     ? const Icon(Icons.person_rounded, color: Colors.white)
                                     : null,
                               ),
@@ -176,11 +172,11 @@ class _ChallengesPageState extends State<ChallengesPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    senderUser.nickname,
+                                    senderNickname,
                                     style: const TextStyle(fontWeight: FontWeight.bold),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  Text('@${senderUser.username}', overflow: TextOverflow.ellipsis),
+                                  Text('@$senderUsername', overflow: TextOverflow.ellipsis),
                                   const SizedBox(height: 5),
                                 ],
                               ),

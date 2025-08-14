@@ -110,9 +110,9 @@ Widget _buildReceivedChallengesRequests(BuildContext context, AppUser user) {
 
                       final senderUser = snapshot.data;
 
-                      // if (senderUser == null) {
-                      //   return const ListTile(title: Text("Usuario no encontrado"));
-                      // }
+                      final senderNickname = senderUser?.nickname ?? 'Desconocido';
+                      final senderUsername = senderUser?.username ?? 'desconocido';
+                      final senderProfilePictureURL = senderUser?.profilePictureURL;
 
                       // User information
                       return Card(
@@ -131,11 +131,11 @@ Widget _buildReceivedChallengesRequests(BuildContext context, AppUser user) {
                           // Profile picture
                           leading: CircleAvatar(
                             backgroundImage:
-                                senderUser!.profilePictureURL != null && senderUser.profilePictureURL!.isNotEmpty
-                                ? NetworkImage(senderUser.profilePictureURL!)
+                                senderProfilePictureURL != null && senderProfilePictureURL.isNotEmpty
+                                ? NetworkImage(senderProfilePictureURL)
                                 : null,
                             backgroundColor: Colors.grey.shade600,
-                            child: senderUser.profilePictureURL == null || senderUser.profilePictureURL!.isEmpty
+                            child: senderProfilePictureURL == null || senderProfilePictureURL.isEmpty
                                 ? const Icon(Icons.person_rounded, color: Colors.white)
                                 : null,
                           ),
@@ -144,11 +144,11 @@ Widget _buildReceivedChallengesRequests(BuildContext context, AppUser user) {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                senderUser.nickname,
+                                senderNickname,
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              Text('@${senderUser.username}', overflow: TextOverflow.ellipsis),
+                              Text('@$senderUsername', overflow: TextOverflow.ellipsis),
                               const SizedBox(height: 5),
                             ],
                           ),
@@ -214,7 +214,7 @@ Widget _buildReceivedChallengesRequests(BuildContext context, AppUser user) {
                                         );
 
                                         StdFluttertoast.show(
-                                          'Has aceptado la solicitud de @${senderUser.username}',
+                                          'Has aceptado la solicitud de @$senderUsername',
                                           Toast.LENGTH_LONG,
                                           ToastGravity.BOTTOM,
                                         );
@@ -230,7 +230,7 @@ Widget _buildReceivedChallengesRequests(BuildContext context, AppUser user) {
                                         );
 
                                         StdFluttertoast.show(
-                                          'Has rechazado la solicitud de @${senderUser.username}',
+                                          'Has rechazado la solicitud de @$senderUsername',
                                           Toast.LENGTH_LONG,
                                           ToastGravity.BOTTOM,
                                         );
@@ -392,9 +392,9 @@ Widget _buildSentChallengesRequests(BuildContext context, AppUser user) {
 
                       final receiverUser = snapshot.data;
 
-                      // if (receiverUser == null) {
-                      //   return const ListTile(title: Text("Usuario no encontrado"));
-                      // }
+                      final receiverNickname = receiverUser?.nickname ?? 'Desconocido';
+                      final receiverUsername = receiverUser?.username ?? 'desconocido';
+                      final receiverProfilePictureURL = receiverUser?.profilePictureURL;
 
                       // User information
                       return Card(
@@ -413,11 +413,11 @@ Widget _buildSentChallengesRequests(BuildContext context, AppUser user) {
                           // Profile picture
                           leading: CircleAvatar(
                             backgroundImage:
-                                receiverUser!.profilePictureURL != null && receiverUser.profilePictureURL!.isNotEmpty
-                                ? NetworkImage(receiverUser.profilePictureURL!)
+                                receiverProfilePictureURL != null && receiverProfilePictureURL.isNotEmpty
+                                ? NetworkImage(receiverProfilePictureURL)
                                 : null,
                             backgroundColor: Colors.grey.shade600,
-                            child: receiverUser.profilePictureURL == null || receiverUser.profilePictureURL!.isEmpty
+                            child: receiverProfilePictureURL == null || receiverProfilePictureURL.isEmpty
                                 ? const Icon(Icons.person_rounded, color: Colors.white)
                                 : null,
                           ),
@@ -426,11 +426,11 @@ Widget _buildSentChallengesRequests(BuildContext context, AppUser user) {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                receiverUser.nickname,
+                                receiverNickname,
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              Text('@${receiverUser.username}', overflow: TextOverflow.ellipsis),
+                              Text('@$receiverUsername', overflow: TextOverflow.ellipsis),
                               const SizedBox(height: 5),
                             ],
                           ),
