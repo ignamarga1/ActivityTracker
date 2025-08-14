@@ -38,6 +38,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ],
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
+      resizeToAvoidBottomInset: false,
       drawer: const HomeDrawer(),
       drawerEdgeDragWidth: MediaQuery.of(context).size.width,
 
