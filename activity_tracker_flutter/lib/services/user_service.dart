@@ -1,4 +1,6 @@
 import 'package:activity_tracker_flutter/models/user.dart';
+import 'package:activity_tracker_flutter/services/activity_service.dart';
+import 'package:activity_tracker_flutter/services/friendship_request_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -6,8 +8,8 @@ class UserService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _collection = FirebaseFirestore.instance.collection('Users');
 
-  // Create new user document in Firestore
-  Future<void> createUserDocument({required UserCredential? userCredential, required String username}) async {
+  // Create new user in Firestore
+  Future<void> createUser({required UserCredential? userCredential, required String username}) async {
     final user = userCredential?.user;
 
     if (user != null) {
@@ -39,12 +41,11 @@ class UserService {
 
   // Get user data by user id
   Stream<AppUser?> getUserById(String uid) {
-  return _collection.doc(uid).snapshots().map((doc) {
-    if (!doc.exists) return null;
-    return AppUser.fromMap(doc.data()!);
-  });
-}
-
+    return _collection.doc(uid).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      return AppUser.fromMap(doc.data()!);
+    });
+  }
 
   // Get user data by username
   Future<String?> getUserIdByUsername(String username) async {
@@ -58,17 +59,24 @@ class UserService {
   }
 
   // Delete user
-  Future<void> deleteUserDocument() async {
+  Future<void> deleteCurrentUser() async {
     // Current user that has logged in
     final currentUser = _firebaseAuth.currentUser;
 
     if (currentUser != null) {
+      // Delete activities and their progress
+      await ActivityService().deleteAllActivitiesForUser(currentUser.uid);
+
+      // Delete frienship requests (friends)
+      await FriendshipRequestService().deleteAllFriendshipsForUser(currentUser.uid);
+
+      // Delete user
       await _collection.doc(currentUser.uid).delete();
     }
   }
 
   // Update user profile data
-  Future<void> updateUserDocument({String? newNickname, String? newImageUrl}) async {
+  Future<void> updateCurrentUser({String? newNickname, String? newImageUrl}) async {
     final currentUser = _firebaseAuth.currentUser;
 
     if (currentUser != null) {

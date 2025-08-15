@@ -44,7 +44,7 @@ class AuthService {
       await _firebaseAuth.currentUser?.sendEmailVerification();
 
       // Save new user into Firestore
-      await _userService.createUserDocument(userCredential: userCredential, username: username);
+      await _userService.createUser(userCredential: userCredential, username: username);
 
       // Restart UserProvider
       if (context.mounted) {
@@ -186,7 +186,7 @@ class AuthService {
       await user.reauthenticateWithCredential(userCredentials);
 
       // Delete the account from Firestore
-      await _userService.deleteUserDocument();
+      await _userService.deleteCurrentUser();
 
       // Delete the account from FirebaseAuth
       await user.delete();

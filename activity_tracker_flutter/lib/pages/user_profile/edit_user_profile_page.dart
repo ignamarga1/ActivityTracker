@@ -240,7 +240,7 @@ class _EditUserProfilePageState extends State<EditUserProfilePage> {
                               }
 
                               // Updates user nickname and imageUrl
-                              await UserService().updateUserDocument(newNickname: newNickname, newImageUrl: imageUrl);
+                              await UserService().updateCurrentUser(newNickname: newNickname, newImageUrl: imageUrl);
 
                               // Pops loading if active
                               if (isDialogShown && context.mounted) {

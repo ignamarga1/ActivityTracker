@@ -145,6 +145,19 @@ class ActivityService {
     await _collection.doc(id).delete();
   }
 
+  // Delete all the activities for a user
+  Future<void> deleteAllActivitiesForUser(String userId) async {
+    final querySnapshot = await _collection.where('userId', isEqualTo: userId).get();
+
+    for (final doc in querySnapshot.docs) {
+      // Deletes the whole progress of the activity
+      await _progressService.deleteProgressForActivity(doc.id);
+
+      // Deletes the activity
+      await doc.reference.delete();
+    }
+  }
+
   // Update activity streak
   Future<void> updateStreak(Activity activity) async {
     final progressRef = FirebaseFirestore.instance.collection('ActivityProgress');

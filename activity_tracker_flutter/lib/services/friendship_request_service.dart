@@ -127,4 +127,26 @@ class FriendshipRequestService {
     // Deletes the conversation and the messages (if they exist)
     await ConversationService().deleteConversationBetweenUsers(user1Id, user2Id);
   }
+
+  // Delete all the friends for an user
+  Future<void> deleteAllFriendshipsForUser(String userId) async {
+    final query = await _collection.where('senderUserId', isEqualTo: userId).get();
+    final query2 = await _collection.where('receiverUserId', isEqualTo: userId).get();
+
+    // Combine queries docs
+    final allDocs = {...query.docs, ...query2.docs};
+
+    // Delete every friendship request for the user
+    for (final doc in allDocs) {
+      final data = doc.data();
+      final sender = data['senderUserId'];
+      final receiver = data['receiverUserId'];
+
+      // Delete the frienship request
+      await _collection.doc(doc.id).delete();
+
+      // Deletes the conversation and the messages (if they are any)
+      await ConversationService().deleteConversationBetweenUsers(sender, receiver);
+    }
+  }
 }
