@@ -20,7 +20,9 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation(currentTimezone));
 
     // Initialize Android settings
-    const initAndroidSettings = AndroidInitializationSettings('@drawable/ic_stat_notify');
+    // const initAndroidSettings = AndroidInitializationSettings('@drawable/ic_stat_notify');
+    const initAndroidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+
 
     // Initialize settings
     const initSettings = InitializationSettings(android: initAndroidSettings);
