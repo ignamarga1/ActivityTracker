@@ -104,6 +104,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     _selectedDate = date;
                   });
                 },
+                monthYearPickerOptions: MonthYearPickerOptions(cancelText: 'Cancelar', confirmText: 'Aceptar'),
                 headerOptions: HeaderOptions(
                   headerBuilder: (context, date, onTap) {
                     return Container(
