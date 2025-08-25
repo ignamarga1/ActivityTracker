@@ -243,8 +243,6 @@ class _SendChallengePageState extends State<SendChallengePage> {
 
                     child: const Text('Enviar solicitud', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     onPressed: () async {
-                      final selectedFriend = await UserService().getUserById(_selectedFriendId!).first;
-
                       // Error control
                       if (_selectedFriendId == null || _selectedFriendId!.isEmpty) {
                         StdFluttertoast.show(
@@ -252,13 +250,21 @@ class _SendChallengePageState extends State<SendChallengePage> {
                           Toast.LENGTH_LONG,
                           ToastGravity.BOTTOM,
                         );
-                      } else if (_selectedActivityId == null || _selectedActivityId!.isEmpty) {
+                        return;
+                      }
+
+                      if (_selectedActivityId == null || _selectedActivityId!.isEmpty) {
                         StdFluttertoast.show(
                           'No has seleccionado ninguna actividad para el desafío',
                           Toast.LENGTH_LONG,
                           ToastGravity.BOTTOM,
                         );
-                      } else if (await ChallengeRequestService().doesChallengeRequestExist(
+                        return;
+                      }
+
+                      final selectedFriend = await UserService().getUserById(_selectedFriendId!).first;
+
+                      if (await ChallengeRequestService().doesChallengeRequestExist(
                         user.uid,
                         _selectedFriendId!,
                         _selectedActivityId!,
@@ -269,8 +275,6 @@ class _SendChallengePageState extends State<SendChallengePage> {
                           ToastGravity.BOTTOM,
                         );
                       } else {
-                        final selectedFriend = await UserService().getUserById(_selectedFriendId!).first;
-
                         // Creates the challenge request
                         ChallengeRequestService().createChallengeRequest(
                           senderUserId: user.uid,
