@@ -203,7 +203,7 @@ Widget _buildStatisticsTab(BuildContext context, Activity activity) {
 
                 // ROW 3: Streak info
                 const Text(
-                  'Gráfica de seguimiento',
+                  'Gráfico de seguimiento',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
