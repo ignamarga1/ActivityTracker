@@ -52,7 +52,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
                         IconButton(
                           icon: Icon(Icons.inbox_rounded),
                           iconSize: 35,
-                          tooltip: 'Solicitudes recibidas',
+                          tooltip: 'Solicitudes',
                           onPressed: () {
                             Navigator.pushNamed(context, '/challengeRequests');
                           },

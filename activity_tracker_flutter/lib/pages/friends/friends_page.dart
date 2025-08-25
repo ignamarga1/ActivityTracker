@@ -51,7 +51,7 @@ class _FriendsPageState extends State<FriendsPage> {
                         IconButton(
                           icon: Icon(Icons.group_rounded),
                           iconSize: 35,
-                          tooltip: 'Solicitudes recibidas',
+                          tooltip: 'Solicitudes',
                           onPressed: () {
                             Navigator.pushNamed(context, '/friendRequests');
                           },
