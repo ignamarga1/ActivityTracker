@@ -3,7 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class ActivityProgressService {
-  final _collection = FirebaseFirestore.instance.collection('ActivityProgress');
+  // final _collection = FirebaseFirestore.instance.collection('ActivityProgress');
+  final CollectionReference<Map<String, dynamic>> _collection;
+
+  ActivityProgressService({FirebaseFirestore? firestore})
+      : _collection = (firestore ?? FirebaseFirestore.instance).collection('ActivityProgress');
 
   // Creates a unique ID with the activity ID and the current date
   String _generateDocId(String activityId, DateTime date) {

@@ -6,8 +6,14 @@ import 'package:intl/intl.dart';
 import 'package:home_widget/home_widget.dart';
 
 class ActivityService {
-  final _collection = FirebaseFirestore.instance.collection('Activity');
-  final ActivityProgressService _progressService = ActivityProgressService();
+  // final _collection = FirebaseFirestore.instance.collection('Activity');
+  // final ActivityProgressService _progressService = ActivityProgressService();
+  final CollectionReference<Map<String, dynamic>> _collection;
+  final ActivityProgressService _progressService;
+
+  ActivityService({FirebaseFirestore? firestore, ActivityProgressService? progressService})
+    : _collection = (firestore ?? FirebaseFirestore.instance).collection('Activity'),
+      _progressService = progressService ?? ActivityProgressService();
 
   // Create a new activity
   Future<void> createActivity({
