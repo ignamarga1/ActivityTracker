@@ -104,7 +104,7 @@ class _SendChallengePageState extends State<SendChallengePage> {
 
                           final friendships = snapshot.data!;
                           if (friendships.isEmpty) {
-                            return const Text("No tienes añadidos amigos a los que enviarles un desafío");
+                            return const Text("No tienes añadidos amigos");
                           }
 
                           final friendIds = friendships.map((request) {
