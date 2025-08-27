@@ -37,14 +37,17 @@ void main() {
         createdAt: Timestamp.now(),
       );
 
-      final snapshot = await firestore.collection('Activity').get();
+      final activity = await firestore.collection('Activity').get();
       final expectedLenght = 1;
-      final expectedUserId = '1234567890AbCdEfGhIjKlMnOpQr';
-      final expectedTitle = 'Actividad de prueba';
+      final actualLength = activity.docs.length;
+      final expectedActivityUserId = '1234567890AbCdEfGhIjKlMnOpQr';
+      final actualActivityUserId = activity.docs.first['userId'];
+      final expectedActivityTitle = 'Actividad de prueba';
+      final actualActivityTitle = activity.docs.first['title'];
 
-      expect(snapshot.docs.length, expectedLenght);
-      expect(snapshot.docs.first['userId'], expectedUserId);
-      expect(snapshot.docs.first['title'], expectedTitle);
+      expect(actualLength, expectedLenght);
+      expect(actualActivityUserId, expectedActivityUserId);
+      expect(actualActivityTitle, expectedActivityTitle);
     });
 
     test('Get all the activities of the user', () async {
