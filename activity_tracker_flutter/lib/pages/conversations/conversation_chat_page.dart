@@ -190,44 +190,46 @@ class _ConversationChatPageState extends State<ConversationChatPage> {
             ),
 
             // Message input textfield
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  // Textfield
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: InputDecoration(
-                        hintText: 'Escribe un mensaje...',
-                        filled: true,
-                        fillColor: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.grey.shade700
-                            : Colors.grey.shade400,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide.none,
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    // Textfield
+                    Expanded(
+                      child: TextField(
+                        controller: _messageController,
+                        decoration: InputDecoration(
+                          hintText: 'Escribe un mensaje...',
+                          filled: true,
+                          fillColor: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey.shade700
+                              : Colors.grey.shade400,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Send button
-                  Container(
-                    // Cirle decoration
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blue, 
+                    const SizedBox(width: 8),
+              
+                    // Send button
+                    Container(
+                      // Cirle decoration
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.blue, 
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.send_rounded),
+                        color: Colors.white,
+                        onPressed: () => _sendMessage(user!.uid),
+                      ),
                     ),
-                    child: IconButton(
-                      icon: const Icon(Icons.send_rounded),
-                      color: Colors.white,
-                      onPressed: () => _sendMessage(user!.uid),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
