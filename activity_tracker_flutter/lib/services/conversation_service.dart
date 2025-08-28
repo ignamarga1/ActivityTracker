@@ -1,6 +1,7 @@
 import 'package:activity_tracker_flutter/models/conversation.dart';
 import 'package:activity_tracker_flutter/services/message_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ConversationService {
   final _collection = FirebaseFirestore.instance.collection('Conversations');
@@ -31,15 +32,9 @@ class ConversationService {
     final user1Stream = _collection.where('user1Id', isEqualTo: userId).snapshots();
     final user2Stream = _collection.where('user2Id', isEqualTo: userId).snapshots();
 
-    return user1Stream.asyncMap((user1Snapshot) async {
-      final user2Snapshot = await user2Stream.first;
-
+    return Rx.combineLatest2(user1Stream, user2Stream, (user1Snapshot, user2Snapshot) {
       final allDocs = [...user1Snapshot.docs, ...user2Snapshot.docs];
-      final conversations = allDocs.map((doc) {
-        return Conversation.fromMap(doc.data(), id: doc.id);
-      }).toList();
-
-      return conversations;
+      return allDocs.map((doc) => Conversation.fromMap(doc.data(), id: doc.id)).toList();
     });
   }
 
