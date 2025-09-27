@@ -4,13 +4,13 @@ Final Degree Project repository of the Software Engineering degree at University
 
 **Activity Tracker** is an Android app developed with Flutter and Firebase as my FDP, in which users can keep track of different activities and their progess. Its main functionalities are:
 
-- Create custom activities with different types of milestones and frequency
+- Create custom activities with different types of milestones and frequencies
 - Complete activities
 - Create activities using given templates
 - View information and statistics of the activities
 - Schedule reminder notifications for each activity
 - Send friendship requests to other users
-- Send activity challenges requests to other users
+- Send activity challenge requests to other users
 - Send messages through private chats
 - View your activities 
 
