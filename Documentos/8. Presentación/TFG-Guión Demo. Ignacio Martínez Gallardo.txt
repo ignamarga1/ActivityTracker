@@ -1,0 +1,33 @@
+Activity Tracker - Guión Demo
+- Utilizar cuenta de ignamarga
+- Enviar cosas a la cuenta de ignamargaUMA y enseñarlas al final
+
+- En la pantalla de iniciar sesión mostrar rápidamente lás páginas de registro y recuperación de la contraseña
+- Iniciar sesión
+- Mencionar que esta es la pantalla general 
+- Mencionar el menú navegable: opciones, como se abre y tarjeta personalizada
+- Perfil:
+	· Mencionar que puede ver sus datos el usuario y algunas estadísticas. 
+	· Botón de eliminar cuenta
+	· Editar apodo y foto de perfil por la del Toad
+- Amigos:
+	· Aquí se puede ver el listado de amigos con opciones
+	· Enviar solicitud a ignamargaUMA. Mostrar posibles fallos
+	· Acceder a las solicitudes enviadas y recibidas
+- Mensajes:
+	· Abrir chat con ignamarga1. Mencionar que tras añadir a un amigo, se crea la conversación
+	· Mostrar conversación y enviar mensaje
+- Actividades:
+	· Decir que aquí se ven las actividades programadas para el día de hoy
+	· Decir que hay tres tipos de hito y de frecuencia
+	· Filtrar por hito cantidad y luego categoría
+	· Mantener pulsado abre menú compleción, completar la de Beber agua
+	· Entrar a una actividad y mostrar detalles y estadísticas
+	· Navegar entre días
+	· Crear actividad de prueba y ponerla de Si/No, viernes y domingo, recordatorio al minuto
+- Desafío:
+	· Listado de desafíos
+	· Solicitudes igual y aceptar desafío 
+	· Enviar desafío a ignamargauma
+	· Salir y mostrar que el desafío ha sido aceptado
+- Salir y poner widget
